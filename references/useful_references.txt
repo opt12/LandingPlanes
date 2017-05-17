@@ -1,0 +1,10 @@
+Sammlung von Sourcen zum Bearbeiten von TIFF-Dateien:
+https://www.imnc.in2p3.fr/pagesperso/deroulers/software/largetifftools/
+
+Programm zum anzeigen von GeoTiff Dateien:
+https://sourceforge.net/projects/openev/
+
+Terrainmodell zur Verwendung:
+http://data.opendataportal.at/dataset/dtm-germany
+und konkret:
+http://data.opendataportal.at/dataset/dtm-germany/resource/08d8c183-a4cc-4a7b-84a0-d03f92076ed3
