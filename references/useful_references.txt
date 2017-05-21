@@ -8,3 +8,12 @@ Terrainmodell zur Verwendung:
 http://data.opendataportal.at/dataset/dtm-germany
 und konkret:
 http://data.opendataportal.at/dataset/dtm-germany/resource/08d8c183-a4cc-4a7b-84a0-d03f92076ed3
+
+Tags for TIFF, DNG, and Related Specifications:
+https://www.loc.gov/preservation/digital/formats/content/tiff_tags.shtml
+
+GeoTIFF SPecification: GeoTIFF, Revision 1.0
+https://www.loc.gov/preservation/digital/formats/fdd/fdd000279.shtml
+
+GeoTIFF Coordinate Transformation
+http://web.archive.org/web/20160327150030/http://www.remotesensing.org/geotiff/spec/geotiff2.6.html#2.6
