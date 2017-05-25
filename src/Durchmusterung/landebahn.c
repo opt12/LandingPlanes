@@ -16,54 +16,73 @@ void check_steigungen(int** const kachel, const int width, const int height, con
   int incy=0;
   int startx;
   int starty;
+
+  int orth_x=0;
+  int orth_y=0;
   switch (direction){
     case 1:
         startx=0;
         starty=0;
         incx=0;
         incy=1;
+        orth_x=1;
+        orth_y=0;
         break;
     case 2:
         startx=0;
         starty=0;
         incx=-1;
         incy=1;
+        orth_x=1;
+        orth_y=-1;
         break;
     case 3:
         startx=width-1;
         starty=0;
         incx=-1;
         incy=0;
+        orth_x=0;
+        orth_y=1;
         break;
     case 4:
         startx=width-1;
         starty=0;
         incx=-1;
         incy=-1;
+        orth_x=1;
+        orth_y=-1;
         break;
     case 5:
         startx=0;
         starty=height-1;
         incx=0;
         incy=-1;
+        orth_x=1;
+        orth_y=0;
          break;
     case 6:
         startx=0;
         starty=0;
         incx=1;
         incy=-1; 
+        orth_x=1;
+        orth_y=1;
         break;
     case 7:
         startx=0;
         starty=0;
         incx=1;
         incy=0;
+        orth_x=0;
+        orth_y=1;
         break;
     case 8:
         startx=0;
         starty=height-1;
         incx=1;
         incy=1;
+        orth_x=1;
+        orth_y=-1;
         break;
     default:
         return ; 
@@ -78,6 +97,8 @@ void check_steigungen(int** const kachel, const int width, const int height, con
   int previous_x=0;
   int previous_y=0;
   int previous_valid =0;
+  int accept_short_slope=35;
+  int accept_orthogonal_slope=10;
   while (! completed)
   {
     ++checksum;
@@ -86,6 +107,29 @@ void check_steigungen(int** const kachel, const int width, const int height, con
     if (previous_valid)
     {
       printf("compare point %d,%d with %d,%d\n",i,j,previous_x,previous_y);
+      if (abs(kachel[i][j] - kachel[previous_x][previous_y]) < accept_short_slope)
+      {
+        printf("accept  sh.sl. %d und %d\n",kachel[i][j],kachel[previous_x][previous_y]);
+        int new_x=i+orth_x;
+        int new_y=j+orth_y;
+        int ok=1;
+        if (((new_x>=0) && (new_x<width)) && ((new_y>=0) && (new_y < height)))
+          if (abs(kachel[i][j]-kachel[new_x][new_y]) > accept_orthogonal_slope)
+            ok=0;
+        if (ok)
+        {
+          new_x=i-orth_x;
+          new_y=j-orth_y;
+          if (((new_x>=0) && (new_x<width)) && ((new_y>=0) && (new_y < height)))
+            if (abs(kachel[i][j]-kachel[new_x][new_y]) > accept_orthogonal_slope)
+              ok=0;
+
+        }
+        if (ok)
+          printf("Ein fertiger Punkt ist %d, %d\n",i,j);  
+      }
+      else
+        printf("not accept sh.sl. %d und %d\n",kachel[i][j],kachel[previous_x][previous_y]); 
     }
     previous_x=i;
     previous_y=j;
