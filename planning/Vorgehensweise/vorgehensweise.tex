@@ -92,7 +92,8 @@ bibtotocnumbered,
 	\paragraph{Offene Punkte:} 
 	\begin{itemize}
 		\item Muss die Holprigkeit in Querrichtung vollständig geprüft werden, oder reicht es aus die maximale Querneigung über die (relativ kurze) Bahnbreite zu betrachten?
-		\item Sind verschiedenen Holprigkeitslimits in Längs und in Querrichtung notwendig?
+		\item Sind verschiedenen Holprigkeitslimits in Längs und in Querrichtung notwendig?\\
+		\item Ist es notwendig "`Zwischenlängen"' passend zu ergänzen? Z. B. indem eine kürzere Länge so lange verdoppelt wird, bis sich die nächst längere Länge ergibt. Dann müsste ein "`gewichteter"' Mittelwert der erlaubten maximalen Steigungen angegeben werden, damit eine Gesamtsteigung mit einem überlagerten "`Holpern"' noch OK ist. 
 	\end{itemize}
 	Diese offenen Punkte werden in der Erprobung sicherlich klar werden.
 
@@ -134,13 +135,76 @@ Für die ersten Experimente und die Validierung des Verfahrens wird ein Höhenda
 			\begin{itemize}
 				\item Es müssen nacheinander Kacheln mit Rücksicht auf vorhandenen Speicherausbau eingelesen werden können
 				\item Die Metadaten (Auflösung des Datensatzes, Ausdehung der Daten) muss bereit gestellt werden
-				\item Routinen zur umrechnung von/in Pixelkoordinaten von/in geographische Koordinaten müssen bereit gestellt werden.
+				\item Routinen zur Umrechnung von/in Pixelkoordinaten von/in geographische Koordinaten müssen bereit gestellt werden.
 			\end{itemize}
 	\end{minipage}}
+	\skippingparagraph	%Offensichtlich muss nach der Minipage noch etwas kommen, sonst kommt TeXStudio mit der Struktur durcheinander.
 	
 	
 
 \section{Durchmusterung}
+
+Die zentrale Funktion zum Auffinden von Notlandebahnen ist eine systematische Durchmusterung der eingelesenen Daten. Obwohl diese Funktion im Grundsatz sehr trivial scheint, so ergeben sich doch einige beachtenswerte Details, die nachfolgend angegeben werden sollen.
+
+\subsection{Einfache Durchmusterung}
+Eine Landebahn kann auf jedem beliebigen Rasterpunkt der Höhendaten beginnen. Von einem Startpunkt ausgehend muss in einer geraden Richtung ein Bereich existieren, in dem keines der angegebenen Kriterien verletzt wird. 
+
+Eine geeignete Landebahn ist gefunden, wenn ein rechteckiger Bereich gefunden ist, bei dem für jeden Rasterpunkt innerhalb der minimalen geforderten Länge und Breite die gegebenen Steigungslimits nicht überschritten werden.
+Auch wenn die kürzeste Vorausschaulänge länger ist als der Abstand der Rasterpunkte, so muss die Überprüfung der Steigungslimits doch für jeden Rasterpunkt innerhalb der Bahn erfolgen und entsprechend positiv ausfallen.
+
+Der Algorithmus zur Durchmusterung eines Datensatzes muss also von jedem vorhandenen Rasterpunkt in vorgegebener Richtung die Kriterien abtesten und festhalten, ob ein bestimmter Punkt als Startpunkt einer Landebahn in Frage kommt.
+
+Eine Kachel wird so groß gewählt, dass sie vollständig in den Speicher passt und zusätzlich Platz ist, für die einzelnen Punkte alle notwendigen Verwaltungs- und Ergebnisinformationen zu speichern.
+
+Eine Kachel wird in jedem Durchgang auf Bahnen in einer vorgegebenen Richtung durchmustert. Diese Richtung gibt die Längsachse der potentiellen Bahn an.
+
+Die Steigungsüberprüfung erfolgt immer vorwärts gerichtet und berechnet den Quotienten aus Höhenänderung über Vorausschaulänge. Es wird also überprüft, ob vom aktuellen Punkt aus vorwärts kein Hindernis eine Landung unmöglich macht.
+
+	\skippingparagraph
+	\fbox{\begin{minipage}{\textwidth}
+		{\bf\textsf{Brute Force:}}
+		\begin{itemize}
+			\item Berechne für einen Punkt die Steigungsmaße für die vorgegebenen Vorausschaulängen und speichere sie pro Punkt.
+			\item Wenn ein Limit gerissen wurde, dann schließe Punkt aus. Dieser darf nicht innerhalb einer Landebahn liegen.
+			\item Gehe zum nächsten Punkt.
+		\end{itemize}
+	
+		Alle Punkte, die sämtliche Steigungstests bestehen sind Kandidatenpunkte für eine Landebahn.
+		\begin{itemize}
+			\item Fasse die Kandidatenpunkte entlang der durchmusterten Bahn in möglichst lange Teilstrecken zusammen.
+			\item Streiche alle Teilstrecken kürzer als die Mindestbahnlänge
+			\item Überprüfe entlang der übrig gebliebenen Strecken die Querneigung.
+		\end{itemize}
+	\end{minipage}}
+	\skippingparagraph	%Offensichtlich muss nach der Minipage noch etwas kommen, sonst kommt TeXStudio mit der Struktur durcheinander.
+ 
+
+\subsection{Berücksichtigung unterschiedlicher Rasterweiten}
+
+\subsection{Optimierung}
+
+Idee zur Optimierung:
+
+Um die Menge der (genau) zu überprüfenden Daten möglichst schnell zu minimieren, ist es wichtig, dass bei einem frühen (grob gerasterten) Durchlauf schon möglichst viele Punkte als Kandidaten herausfallen.
+
+Wenn ein Punkt aus der KandidatenMenge herausfällt, dann wirft er einen „Schatten“ auf das zurückliegende Stück. Eine Bahn kann nicht geeignet sein, wenn sie innerhalb ihrer Mindestlänge diesen ungeeigneten Punkt zwangsläufig enthält.
+
+\begin{itemize}
+\item Wenn ein Punkt aufgrund eines Kriteriums herausfällt, dann kann die direkt vor ihm liegende Strecke auf keinen Fall Teil einer geeigneten Landebahn sein. 
+Es können also alle Punkte vom Ende der zugehörigen Vorausschaulänge bis zur minimalen Bahnlänge vor diesem Ende der Vorausschaulänge für weitere Berechnungen ausgeschlossen werden. Die Strecke zwischen Punkt und Vorausschauende darf dabei \emph{nicht} ausgeschlossen werden. Dort könnte ja gerade eine neue Ebene beginnen!
+\item Wenn also ein ungeeigneter Punkt gefunden wird, dann brauchen die Punkte, die innerhalb der Strecke vom aktuellen Punkt bis zur Mindestbahnlänge vor dem Vorausschauende liegen nicht mehr überprüft werden.
+\item Bei einer kurzen Vorausschau können also besonders viele Punkte aufgrund einer einzelnen Steigungsverletzung ausgeschlossen werden. (Fange mit den kurzen Vorausschaulängen an zu durchmustern)
+\item Die Schrittweite bei jedem Durchlauf sollte also der Mindestbahnlänge entsprechen. Wenn ein Punkt herausfällt, dann werden die davor liegenden Punkte aus der weiteren Durchmusterung ausgeschlossen.
+\item In einem nächsten Durchlauf wird der nächste noch zu besuchende Punkt gewählt, aber die Schrittweite bleibt bei der minimalen Bahnlänge. Wenn auf einen Punkt getroffen wird, der in einem vorherigen Durchlauf ausgeschlossen wurde, fahre mit dem Punkt fort, der eine minimale Bahnlänge Abstand vom auszulassenden Bereich hat.
+\item Wiederhole so lange, bis alle Punkte entlang einer Richtung entweder ausgeschlossen wurden, oder für das überprüfte Steigungskriterium als geeignet erscheinen.
+
+\end{itemize}
+Diese Optimierung bringt nur etwas, wenn die Vorausschaulänge kleiner als die minimale Landebahnlänge ist. Bei einem wirklich „globalen“ Kriterium (Maximalanstieg auf der gesamten Bahnlänge) muss also trotzdem jeder Punkt durchmustert werden.
+
+
+\subsection{Kachelränder}
+
+\subsection{Datenstrukturen während der Durchmusterung}
 
 \section{Datenhaltung gefundener Notlandeflächen}
 
