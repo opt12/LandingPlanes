@@ -74,7 +74,7 @@ bibtotocnumbered,
 	
 	\skippingparagraph
 	\fbox{\begin{minipage}{\textwidth}
-			{\bf\textsf{notwendige Eingabedaten:}}
+			{\bfseries\textsf{notwendige Eingabedaten:}}
 			
 			Um aus den Höhendaten geeignete Landebahnen zu ermitteln bekommt der zu beschreibende Algorithmus folgende Eingabedaten:
 			\begin{itemize}
@@ -129,7 +129,7 @@ Für die ersten Experimente und die Validierung des Verfahrens wird ein Höhenda
 	
 	\skippingparagraph
 	\fbox{\begin{minipage}{\textwidth}
-			{\bf\textsf{Einlesen der Eingabedaten:}}
+			{\bfseries\textsf{Einlesen der Eingabedaten:}}
 			
 			Als Anforderung an die Einlesung der Eingabedaten ergibt sich:
 			\begin{itemize}
@@ -162,26 +162,85 @@ Die Steigungsüberprüfung erfolgt immer vorwärts gerichtet und berechnet den Q
 
 	\skippingparagraph
 	\fbox{\begin{minipage}{\textwidth}
-		{\bf\textsf{Brute Force:}}
+		{\bfseries\textsf{Brute Force:}}
 		\begin{itemize}
 			\item Berechne für einen Punkt die Steigungsmaße für die vorgegebenen Vorausschaulängen und speichere sie pro Punkt.
-			\item Wenn ein Limit gerissen wurde, dann schließe Punkt aus. Dieser darf nicht innerhalb einer Landebahn liegen.
+			\begin{itemize}
+				\item Gesamtsteigung
+				\item Holprigkeit
+				\item Querneigung
+				\item Verwindung
+			\end{itemize}
+			\item Wenn ein Limit gerissen wurde, dann markiere das entsprechend.
 			\item Gehe zum nächsten Punkt.
 		\end{itemize}
 	
-		Alle Punkte, die sämtliche Steigungstests bestehen sind Kandidatenpunkte für eine Landebahn.
+		Alle Punkte, die sämtliche Steigungstests bestehen sind Kandidatenpunkte für den Beginn einer Landebahn.
 		\begin{itemize}
 			\item Fasse die Kandidatenpunkte entlang der durchmusterten Bahn in möglichst lange Teilstrecken zusammen.
 			\item Streiche alle Teilstrecken kürzer als die Mindestbahnlänge
-			\item Überprüfe entlang der übrig gebliebenen Strecken die Querneigung.
 		\end{itemize}
-	\end{minipage}}
+	
+		Beachte: Ein Punkt kann durchaus innerhalb einer Landebahn liegen, auch wenn er nicht Startpunkt einer Bahn sein kann. Jedes Kriterium hat eine eigene Vorausschaulänge. Ein Punkt muss nur dann endgültig ausgeschlossen werden, wenn die Kriterien gerissen wurden, deren Vorausschaulänge vollständig innerhalb der potentiellen Landebahn liegt.
+	\end{minipage}
+}
+
 	\skippingparagraph	%Offensichtlich muss nach der Minipage noch etwas kommen, sonst kommt TeXStudio mit der Struktur durcheinander.
  
 
 \subsection{Berücksichtigung unterschiedlicher Rasterweiten}
 
+	Die Durchmusterung muss mit allen möglichen Rasterweiten zurechtkommen. Der Durchmusterungsalgorithmus muss also so programmiert werden, dass die Rasterweite keine Rolle spielt. Der Algorithmus soll auch in der Lage sein, in horizontaler und in vertikaler Richtung mit unterschiedlichen Rasterweiten zurechtzukommen. Die Rasterweiten (in Metern) müssen von der Dateneinleseroutine in X- und Y-Richtung bereitgestellt werden.
+
+	Dazu sind folgende Überlegungen anzustellen:
+	
+ 	\begin{minipage}{\textwidth}
+ 		\skippingparagraph
+ 		
+		\begin{minipage}[t]{\textwidth-4cm}
+			\vspace{0pt}
+			Bei rechteckigen Rastern stimmt die Rasterrichtung nur in Ausnahmefällen mit der Durchmusterungsrichtung überein. Um sicher zu sein, dass die Landebahn an jeder Stelle die benötigten Kriterien erfüllt muss jedes Rasterpixel untersucht werden, das vom Durchmusterungsstrahl berührt wird. Ausgehend von einem Pixel wird der Strahl in die gewünschte Richtung über das Rater geworfen und jedes Pixel, das berührt wird muss als Prüfpunkt benutzt werden.
+			
+			Analog müssen die Pixel senkrecht zur gewählten Durchmusterungsrichtung ausgewählt werden.
+			
+			In der nebenstehenden Grafik ist dies grafisch verdeutlicht.
+		\end{minipage}
+		\begin{minipage}[t]{3cm}
+			\vspace{0pt}
+			\centering
+			\includegraphics{./drawings/Durchmusterungspfad.png}
+		\end{minipage}
+	\skippingparagraph
+	\end{minipage}
+	
+	
+	
+	Das Holprigkeitskriterium hat die kürzeste Vorausschaulänge. Es sind zwei Fälle zu unterscheiden: 
+	
+	Entweder ist die Vorausschaulänge kürzer als der Abstand zweier Pixel, oder die Vorausschaulänge ist mindestens so lang wie der aktuelle Pixelabstand.
+	
+	Bei Pixelabständen, die größer sind als die aktuelle Vorausschaulänge muss die Vorausschaulänge künstlich auf den Pixelabstand in Durchmusterungsrichtung erhöht werden. Die zugehörige Höhendifferenz muss entsprechend skaliert werden. 
+	
+	 	\begin{minipage}{\textwidth}
+		\skippingparagraph
+		
+		\begin{minipage}[t]{3cm}
+			\vspace{0pt}
+			\centering
+			\includegraphics[width=3cm]{./drawings/Vorausschaulaengen.png}
+		\end{minipage}
+			\begin{minipage}[t]{\textwidth-3cm}
+				\vspace{0pt}
+				Bei Pixelabständen, die kleiner oder gleich sind wie die aktuelle Vorausschaulänge wird die die Steigung aus der Höhendifferenz zweischen Start- und der Zielpixel berechnet. Eine Skalierung muss nicht stattfinden. Es ist aber zu beachten, dass entlang des Durchmusterungspfades jedes Pixel als Startpunkt betrachtet werden muss.			
+		\end{minipage}\skippingparagraph
+	\end{minipage}
+
+	Bei Vorausschaulängen, die kürzer sind als die aktuelle Rasterweite kann das vorgestellte Verfahren dazu führen, dass Hindernisse übersehen werden. Eine Interpolation innerhalb der Kacheln würde jedoch auch nichts nützen, da die Eingangsdaten einfach "`nicht mehr hergeben"'. Somit scheint das vorgeschlagene Vorgehen der beste Kompromiss zur Vorauswahl geeigneter Landeflächen zu sein. Bei ernsthafter Anwendung werden besser aufgelöste Daten benötigt.
+	
+
 \subsection{Optimierung}
+
+Das vorgestellte Verfahren geht stumpf über jeden Punkt der Daten und versucht dann zusammenhängende geeignete Punkte zu erkennen. Bei den zu erwartenden großen (weil hochaufgelösten) Datensätzen sollten soviele Punkte wie möglich so früh wie möglich ausgeschlossen werden um den Rechenaufwand so gering wie möglich zu halten.
 
 Idee zur Optimierung:
 
