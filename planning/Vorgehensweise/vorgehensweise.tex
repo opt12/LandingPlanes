@@ -29,14 +29,7 @@ bibtotocnumbered,
 
 
 
-\author{Felix Eckstein*, Dr. Björn Wittlich**} % The article author(s) - author affiliations need to be specified in the AUTHOR AFFILIATIONS block
-
-%----------------------------------------------------------------------------------------
-%	AUTHOR AFFILIATIONS
-%----------------------------------------------------------------------------------------
-
-%\affil[*]{Student im Bachelor of Science Informatik, FernUniversität Hagen, Matr.-\#: 8161569, \href{mailto:felix.eckstein@gmx.de}{felix.eckstein@gmx.de}}
-
+\author{Felix Eckstein*, Dr. Björn Wittlich**} % The article author(s) 
 
 \date{Juni 2017} % An optional date to appear under the author(s)
 
@@ -56,11 +49,96 @@ bibtotocnumbered,
 
 	\subsection{Grundsätzliche Überlegungen}
 	
+	
 	\subsection{Kriterien für geeignete Notlandeflächen}
+	
+	Zunächst muss definiert werden, was eine geeignete Landefläche ausmacht, und wie sie charakterisiert werden kann. Es ist sofort einsichtig, dass eine Landebahn auf einer ausreichend großen Fläche glatt und eben sein muss. Die Fläche wird durch eine Mindestlänge und eine Mindestbreite charakterisiert. Daraus ergibt sich auch direkt eine Richtung. Als globale Parameter einer Landebahn sind also folgende Daten festzuhalten:
+	\begin{itemize}
+		\item Richtung der Bahn
+		\item Breite
+		\item Länge
+	\end{itemize}
+
+	Das Kriterium "`glatt und eben"' muss weiter spezifiziert werden. Dazu bieten sich Steigungskriterien an:
+	
+	\paragraph{Charakterisierung durch Steigungsdaten}
+	Eine Landebahn kann durch einen Satz von Steigungsdaten charakterisiert werden:
+	\begin{itemize}
+		\item "`global"': Eine Landebahn darf auf Ihrer gesamten Länge nicht über ein gewisses Maß hinaus ansteigen. Ein Flugzeug kann nicht bergauf und auch nicht bergab landen. Es muss also für die gesamte minimale Bahnlänge ein maximaler Anstieg und ein maximaler Abfall gegeben werden.
+		\item "`lokal"': Für (deutlich) kürzere Strecken als die Gesamtbahnlänge ist ein anderer Satz von maximalen/minimalen Steigungslimits notwendig, welche die maximale "`Holperigkeit"' der potentiellen Bahn beschreiben.
+		\item "`Querneigung"': Eine optimale Landebahn ist senkrecht zur langen Achse perfekt eben. Eine reale Bahn darf geneigt bzw. in sich "`verwunden"' sein, solange kein kritischer Grenzwert für diese Querneigung überschritten wird. Diese maximale Querneigung wird über die Mindestbreite der Bahn angegeben.
+		\item "`Verwindung"': Die Änderung der Querneigung darf sicherlich ein bestimmtes Limit nicht überschreiten. Es sollte also nicht die maximale "`Linksneigung"' direkt auf die maximale "`Rechtsneigung"' folgen.
+	\end{itemize}
+
+	Das globale Limit der Steigung ist sicherlich geringer als das lokale Limit für die Holprigkeit. (Extremfall: Landen auf Kopfsteinpflaster kann lokal ziemlich große Steigungen verursachen, wenn das Raster klein genug ist, stellt aber eigentlich kein Problem dar, da die Strecken zwischen den Rasterpunkten kurz genug sind.)
+	
+	\skippingparagraph
+	\fbox{\begin{minipage}{\textwidth}
+			{\bf\textsf{notwendige Eingabedaten:}}
+			
+			Um aus den Höhendaten geeignete Landebahnen zu ermitteln bekommt der zu beschreibende Algorithmus folgende Eingabedaten:
+			\begin{itemize}
+				\item minimale Bahnlänge in Metern
+				\item Breite der Bahn in Metern
+				\item Richtung der Bahn in Grad
+				\item "`Holprigkeitslimit"': maximale Steigung im kurzen Bereich. Angegeben durch Höhendifferenz und Länge jeweils in Metern.
+				\item "`Gesamtsteigung"': maximaler Anstieg und maximaler Abfall über die angegebene minimale Bahnlänge in Metern
+				\item "`Querneigung"': maximale Querneigung der Bahn. Angegeben durch Höhendifferenz in Metern über der gewünschten Bahnbreite.
+				\item "`Verwindung"': Die maximale Änderungsrate der Querneigung angegeben in Prozent über Länge in Hauptrichtung.
+			\end{itemize}
+	\end{minipage}}
+
+
+	\paragraph{Offene Punkte:} 
+	\begin{itemize}
+		\item Muss die Holprigkeit in Querrichtung vollständig geprüft werden, oder reicht es aus die maximale Querneigung über die (relativ kurze) Bahnbreite zu betrachten?
+		\item Sind verschiedenen Holprigkeitslimits in Längs und in Querrichtung notwendig?
+	\end{itemize}
+	Diese offenen Punkte werden in der Erprobung sicherlich klar werden.
+
 
 \section{Datenbasis}
 
+Die Höhedaten liegen in Form eines GeoTIFF vor. Dabei handelt es sich um ein Rasterformat, bei dem jedem Rasterpunkt bestimmte Geodaten zugeordnet werden. Diese Daten werden in dem Grafikformat anstelle der ansonsten enthaltenen Farbwerte gespeichert und müssen entsprechend ihrer Bedeutung interpretiert werden. Prinzipiell ist es möglich mehrere Werte pro Rasterpunkt zu speichern. In unserem Fall ist für jeden Rasterpunkt die Höhe über normal Null in Metern angegeben. Dieser Wert liegt als einfach genaue 32bit Gleitkommazahl vor.
+
+Die Kodierung und Komprimierung der Werte wird das bekannte TIFF Format eingesetzt, das insbesondere auch die verlustlose Speicherung und Komprimierung unterstützt.
+
+Zusätzlich gehört zu dem in eine TIFF-Datei eingebetteten Nutzdatensatz gehören zu einem GeoTIFF noch Angaben über Auflösung und Projektion des Datensatzes. Damit wird es möglich jedes Pixel des GeoTIFF eindeutig einem Punkt auf der Erdoberfläche in den üblichen Koordinaten aus geographischer Länge und Breite zuzuordnen.
+
+Für die ersten Experimente und die Validierung des Verfahrens wird ein Höhendatensatz von Nordrheinwestfalen verwendet. Dieser ist verfügbar unter \href{http://data.opendataportal.at/dataset/dtm-germany/resource/08d8c183-a4cc-4a7b-84a0-d03f92076ed3}{DTM Germany\textunderscore Nordrhein-Westfalen, 20m}
+
+
 	\subsection{Auflösung}
+	Ob der zu entwickelnde Algorithmus zum Auffinden von möglichen Notlandefeldern in der Praxis tauglich ist hängt wesentlich von der Qualität und Auflösung der Eingabedaten ab. Der vorliegende Datensatz hat eine horizontale Auflösung von 20m und eine vertikale Auflösung von 0.1m. 
+	
+	Intuitiv wird eine 20m Auflösung für die Bestimmung der Holprigkeit einer Bahn zu grob sein. 
+	
+	Es ist angekündigt, dass im weiteren Verlauf dieses Praktikums ein deutlich höher aufgelöster Datensatz zur Verfügung gestellt werden kann. Dies ist bei der Auslegung der Algorithmen und Berechnungsmethoden von Anfang an einzuplanen. Dabei ist zu beachten, dass die Datenmenge quadratisch mit der Auflösung wächst. Ein mit 1m horizontal aufgelöster Datensatz ist also schon 400 Mal so groß wie der vorliegende Testdatensatz.
+	
+	\subsection{Dateneinlesung}
+	Für das Einlesen der Daten kann auf bewährte OpenSource Tools zurückgegriffen werden. Diese müssen für den speziellen Einsatzzweck angepasst, aber nicht von Grund auf neu entwickelt werden.
+	
+	Die Einlesung der Rasterdaten kann mit einer angepassten Version von \href{https://www.imnc.in2p3.fr/pagesperso/deroulers/software/largetifftools/tifffastcrop.html} erfolgen\footnote{
+	Details dazu siehe: Deroulers et al., \href{https://www.imnc.in2p3.fr/pagesperso/deroulers/software/ndpitools/article_diagnostic_pathology.pdf}{Analyzing huge pathology images with open source software}, \href{http://www.diagnosticpathology.org/content/8/1/92}{Diagnostic Pathology 8:92 (2013)}}. 
+	Dies hat im Prototypen problemlos funktioniert.
+	
+	Bei der Einlesung ist darauf zu achten, dass ein effizientes Verfahren zur Einlesung von Kacheln notwendig ist, da bei höher aufgelösten Daten nicht mehr davon ausgegangen werden kann, dass alle Daten auf einmal im RAM gehalten werden können.
+	
+	Zur Umrechnung der Pixelkoordinaten in geographische Koordinaten und zur Ermittlung der Metadaten des GeoTIFF Datensatzes kann auf \href{https://trac.osgeo.org/geotiff/}{libgeotiff} zurückgegriffen werden.
+	
+	\skippingparagraph
+	\fbox{\begin{minipage}{\textwidth}
+			{\bf\textsf{Einlesen der Eingabedaten:}}
+			
+			Als Anforderung an die Einlesung der Eingabedaten ergibt sich:
+			\begin{itemize}
+				\item Es müssen nacheinander Kacheln mit Rücksicht auf vorhandenen Speicherausbau eingelesen werden können
+				\item Die Metadaten (Auflösung des Datensatzes, Ausdehung der Daten) muss bereit gestellt werden
+				\item Routinen zur umrechnung von/in Pixelkoordinaten von/in geographische Koordinaten müssen bereit gestellt werden.
+			\end{itemize}
+	\end{minipage}}
+	
+	
 
 \section{Durchmusterung}
 
