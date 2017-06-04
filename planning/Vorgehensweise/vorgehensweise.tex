@@ -39,6 +39,8 @@ bibtotocnumbered,
 	
 	\maketitle % Print the title/author/date block
 
+	\tableofcontents % Print the table of contents
+
 	
 	{\let\thefootnote\relax\footnotetext{* \textit{Student im Bachelor of Science Informatik an der FernUniversität Hagen,\protect\\Matr.-\#: 8161569, \href{mailto:felix.eckstein@gmx.de}{felix.eckstein@gmx.de}}}}
 	{\let\thefootnote\relax\footnotetext{** \textit{Student im xxx xxxxx Informatik an der FernUniversität Hagen,\protect\\Matr.-\#: xxx xxxx, \href{mailto:BjoernWittich@gmx.de}{BjoernWittich@gmx.de}}}}
@@ -64,10 +66,11 @@ bibtotocnumbered,
 	\paragraph{Charakterisierung durch Steigungsdaten}
 	Eine Landebahn kann durch einen Satz von Steigungsdaten charakterisiert werden:
 	\begin{itemize}
-		\item "`global"': Eine Landebahn darf auf Ihrer gesamten Länge nicht über ein gewisses Maß hinaus ansteigen. Ein Flugzeug kann nicht bergauf und auch nicht bergab landen. Es muss also für die gesamte minimale Bahnlänge ein maximaler Anstieg und ein maximaler Abfall gegeben werden.
-		\item "`lokal"': Für (deutlich) kürzere Strecken als die Gesamtbahnlänge ist ein anderer Satz von maximalen/minimalen Steigungslimits notwendig, welche die maximale "`Holperigkeit"' der potentiellen Bahn beschreiben.
+		\item "`global"': Eine Landebahn darf auf Ihrer gesamten Länge nicht über ein gewisses Maß hinaus ansteigen. Ein Flugzeug kann nicht zu stark bergauf und auch nicht bergab landen. Es muss also für die gesamte minimale Bahnlänge ein maximaler Anstieg und ein maximaler Abfall vorgegeben werden.
+		\item "`lokal"': Für (deutlich) kürzere Strecken als die Gesamtbahnlänge ist ein anderer Satz von maximalen/minimalen Steigungslimits notwendig, welche die maximale "`Holprigkeit"' der potentiellen Bahn beschreiben.
 		\item "`Querneigung"': Eine optimale Landebahn ist senkrecht zur langen Achse perfekt eben. Eine reale Bahn darf geneigt bzw. in sich "`verwunden"' sein, solange kein kritischer Grenzwert für diese Querneigung überschritten wird. Diese maximale Querneigung wird über die Mindestbreite der Bahn angegeben.
 		\item "`Verwindung"': Die Änderung der Querneigung darf sicherlich ein bestimmtes Limit nicht überschreiten. Es sollte also nicht die maximale "`Linksneigung"' direkt auf die maximale "`Rechtsneigung"' folgen.
+%		TODO: Bei diesem Kriterium müssen wir uns nochmal überlegen, ob wir das tatsächlich mit aufnehmen wollen. Ist aber auch nicht schwierig zu implementieren. 
 	\end{itemize}
 
 	Das globale Limit der Steigung ist sicherlich geringer als das lokale Limit für die Holprigkeit. (Extremfall: Landen auf Kopfsteinpflaster kann lokal ziemlich große Steigungen verursachen, wenn das Raster klein genug ist, stellt aber eigentlich kein Problem dar, da die Strecken zwischen den Rasterpunkten kurz genug sind.)
@@ -84,7 +87,7 @@ bibtotocnumbered,
 				\item "`Holprigkeitslimit"': maximale Steigung im kurzen Bereich. Angegeben durch Höhendifferenz und Länge jeweils in Metern.
 				\item "`Gesamtsteigung"': maximaler Anstieg und maximaler Abfall über die angegebene minimale Bahnlänge in Metern
 				\item "`Querneigung"': maximale Querneigung der Bahn. Angegeben durch Höhendifferenz in Metern über der gewünschten Bahnbreite.
-				\item "`Verwindung"': Die maximale Änderungsrate der Querneigung angegeben in Prozent über Länge in Hauptrichtung.
+				\item "`Verwindung"': Die maximale Änderungsrate der Querneigung angegeben in Prozent pro Meter in Hauptrichtung.
 			\end{itemize}
 	\end{minipage}}
 
@@ -92,7 +95,7 @@ bibtotocnumbered,
 	\paragraph{Offene Punkte:} 
 	\begin{itemize}
 		\item Muss die Holprigkeit in Querrichtung vollständig geprüft werden, oder reicht es aus die maximale Querneigung über die (relativ kurze) Bahnbreite zu betrachten?
-		\item Sind verschiedenen Holprigkeitslimits in Längs und in Querrichtung notwendig?\\
+		\item Sind verschiedenen Holprigkeitslimits in Längs und in Querrichtung notwendig?
 		\item Ist es notwendig "`Zwischenlängen"' passend zu ergänzen? Z. B. indem eine kürzere Länge so lange verdoppelt wird, bis sich die nächst längere Länge ergibt. Dann müsste ein "`gewichteter"' Mittelwert der erlaubten maximalen Steigungen angegeben werden, damit eine Gesamtsteigung mit einem überlagerten "`Holpern"' noch OK ist. 
 	\end{itemize}
 	Diese offenen Punkte werden in der Erprobung sicherlich klar werden.
@@ -100,11 +103,11 @@ bibtotocnumbered,
 
 \section{Datenbasis}
 
-Die Höhedaten liegen in Form eines GeoTIFF vor. Dabei handelt es sich um ein Rasterformat, bei dem jedem Rasterpunkt bestimmte Geodaten zugeordnet werden. Diese Daten werden in dem Grafikformat anstelle der ansonsten enthaltenen Farbwerte gespeichert und müssen entsprechend ihrer Bedeutung interpretiert werden. Prinzipiell ist es möglich mehrere Werte pro Rasterpunkt zu speichern. In unserem Fall ist für jeden Rasterpunkt die Höhe über normal Null in Metern angegeben. Dieser Wert liegt als einfach genaue 32bit Gleitkommazahl vor.
+Die Höhedaten liegen in Form eines GeoTIFF vor. Dabei handelt es sich um ein Rasterformat, bei dem jedem Rasterpunkt bestimmte Geodaten zugeordnet werden. Diese Daten werden in dem Grafikformat anstelle der normalerweise enthaltenen Farbwerte gespeichert und müssen entsprechend ihrer Bedeutung interpretiert werden. Prinzipiell ist es möglich mehrere Werte pro Rasterpunkt zu speichern. In unserem Fall ist für jeden Rasterpunkt die Höhe über normal Null in Metern angegeben. Dieser Wert liegt als einfach genaue 32bit Gleitkommazahl vor.
 
-Die Kodierung und Komprimierung der Werte wird das bekannte TIFF Format eingesetzt, das insbesondere auch die verlustlose Speicherung und Komprimierung unterstützt.
+Für die Kodierung und Komprimierung der Werte wird das bekannte TIFF Format eingesetzt, das insbesondere auch die verlustlose Speicherung unterstützt.
 
-Zusätzlich gehört zu dem in eine TIFF-Datei eingebetteten Nutzdatensatz gehören zu einem GeoTIFF noch Angaben über Auflösung und Projektion des Datensatzes. Damit wird es möglich jedes Pixel des GeoTIFF eindeutig einem Punkt auf der Erdoberfläche in den üblichen Koordinaten aus geographischer Länge und Breite zuzuordnen.
+Zusätzlich zu dem in eine TIFF-Datei eingebetteten Nutzdatensatz gehören zu einem GeoTIFF noch Angaben über Auflösung und Projektion des Datensatzes. Damit wird es möglich jedes Pixel des GeoTIFF eindeutig einem Punkt auf der Erdoberfläche in den üblichen Koordinaten aus geographischer Länge und Breite zuzuordnen.
 
 Für die ersten Experimente und die Validierung des Verfahrens wird ein Höhendatensatz von Nordrheinwestfalen verwendet. Dieser ist verfügbar unter \href{http://data.opendataportal.at/dataset/dtm-germany/resource/08d8c183-a4cc-4a7b-84a0-d03f92076ed3}{DTM Germany\textunderscore Nordrhein-Westfalen, 20m}
 
@@ -119,11 +122,11 @@ Für die ersten Experimente und die Validierung des Verfahrens wird ein Höhenda
 	\subsection{Dateneinlesung}
 	Für das Einlesen der Daten kann auf bewährte OpenSource Tools zurückgegriffen werden. Diese müssen für den speziellen Einsatzzweck angepasst, aber nicht von Grund auf neu entwickelt werden.
 	
-	Die Einlesung der Rasterdaten kann mit einer angepassten Version von \href{https://www.imnc.in2p3.fr/pagesperso/deroulers/software/largetifftools/tifffastcrop.html} erfolgen\footnote{
+	Die Einlesung der Rasterdaten kann mit einer angepassten Version von \href{https://www.imnc.in2p3.fr/pagesperso/deroulers/software/largetifftools/tifffastcrop.html}{tifffastcrop} erfolgen\footnote{
 	Details dazu siehe: Deroulers et al., \href{https://www.imnc.in2p3.fr/pagesperso/deroulers/software/ndpitools/article_diagnostic_pathology.pdf}{Analyzing huge pathology images with open source software}, \href{http://www.diagnosticpathology.org/content/8/1/92}{Diagnostic Pathology 8:92 (2013)}}. 
 	Dies hat im Prototypen problemlos funktioniert.
 	
-	Bei der Einlesung ist darauf zu achten, dass ein effizientes Verfahren zur Einlesung von Kacheln notwendig ist, da bei höher aufgelösten Daten nicht mehr davon ausgegangen werden kann, dass alle Daten auf einmal im RAM gehalten werden können.
+	Beim Einlesen ist darauf zu achten, dass ein effizientes Verfahren zum Einlesen von Kacheln notwendig ist, da bei höher aufgelösten Daten nicht mehr davon ausgegangen werden kann, dass alle Daten auf einmal im RAM gehalten werden können.
 	
 	Zur Umrechnung der Pixelkoordinaten in geographische Koordinaten und zur Ermittlung der Metadaten des GeoTIFF Datensatzes kann auf \href{https://trac.osgeo.org/geotiff/}{libgeotiff} zurückgegriffen werden.
 	
@@ -164,7 +167,7 @@ Die Steigungsüberprüfung erfolgt immer vorwärts gerichtet und berechnet den Q
 	\fbox{\begin{minipage}{\textwidth}
 		{\bfseries\textsf{Brute Force:}}
 		\begin{itemize}
-			\item Berechne für einen Punkt die Steigungsmaße für die vorgegebenen Vorausschaulängen und speichere sie pro Punkt.
+			\item Berechne für jeden Punkt die Steigungsmaße für die vorgegebenen Vorausschaulängen und speichere sie pro Punkt.
 			\begin{itemize}
 				\item Gesamtsteigung
 				\item Holprigkeit
@@ -177,11 +180,11 @@ Die Steigungsüberprüfung erfolgt immer vorwärts gerichtet und berechnet den Q
 	
 		Alle Punkte, die sämtliche Steigungstests bestehen sind Kandidatenpunkte für den Beginn einer Landebahn.
 		\begin{itemize}
-			\item Fasse die Kandidatenpunkte entlang der durchmusterten Bahn in möglichst lange Teilstrecken zusammen.
+			\item Fasse die Kandidatenpunkte von einem potentiellen Startpunkt entlang der Durchmusterungsrichtung in möglichst lange Teilstrecken zusammen.
 			\item Streiche alle Teilstrecken kürzer als die Mindestbahnlänge
 		\end{itemize}
 	
-		Beachte: Ein Punkt kann durchaus innerhalb einer Landebahn liegen, auch wenn er nicht Startpunkt einer Bahn sein kann. Jedes Kriterium hat eine eigene Vorausschaulänge. Ein Punkt muss nur dann endgültig ausgeschlossen werden, wenn die Kriterien gerissen wurden, deren Vorausschaulänge vollständig innerhalb der potentiellen Landebahn liegt.
+		Beachte: Ein Punkt kann durchaus innerhalb einer Landebahn liegen, auch wenn er nicht Startpunkt einer Bahn sein kann. Jedes Kriterium hat eine eigene Vorausschaulänge. Ein Punkt muss nur dann endgültig ausgeschlossen werden, wenn die Kriterien gerissen wurden, deren Vorausschaulänge vollständig innerhalb der potentiellen Landebahn liegt.\footnote{Beispiel: Ein Punkt muss als Startpunkt ausgeschlossen werden, da von ihm aus betrachtet das Gesamtsteigungskriterium über ein komplette Bahn überschritten wird. Dieser Punkt kann aber trotzdem Bestandteil in der Mitte einer Landebahn sein solange seine Kriterien mit kürzerer Vorausschau (Holprigkeit) und seine lokalen Kriterien (Querneigung, Verwindung) dies nicht unmöglich machen.}
 	\end{minipage}
 }
 
@@ -199,9 +202,9 @@ Die Steigungsüberprüfung erfolgt immer vorwärts gerichtet und berechnet den Q
  		
 		\begin{minipage}[t]{\textwidth-4cm}
 			\vspace{0pt}
-			Bei rechteckigen Rastern stimmt die Rasterrichtung nur in Ausnahmefällen mit der Durchmusterungsrichtung überein. Um sicher zu sein, dass die Landebahn an jeder Stelle die benötigten Kriterien erfüllt muss jedes Rasterpixel untersucht werden, das vom Durchmusterungsstrahl berührt wird. Ausgehend von einem Pixel wird der Strahl in die gewünschte Richtung über das Rater geworfen und jedes Pixel, das berührt wird muss als Prüfpunkt benutzt werden.
+			Bei rechteckigen Rastern stimmt die Rasterrichtung nur in Ausnahmefällen mit der Durchmusterungsrichtung überein. Um sicher zu sein, dass die Landebahn an jeder Stelle die benötigten Kriterien erfüllt muss jedes Rasterpixel untersucht werden, das vom Durchmusterungsstrahl berührt wird. Ausgehend von einem Pixel wird der Strahl in die gewünschte Richtung über das Raster geworfen und jedes Pixel, das berührt wird muss als Prüfpunkt benutzt werden.
 			
-			Analog müssen die Pixel senkrecht zur gewählten Durchmusterungsrichtung ausgewählt werden.
+			Analog müssen die Pixel senkrecht zur gewählten Durchmusterungsrichtung ausgewählt werden um die Querneigung und Verwindung zu prüfen.
 			
 			In der nebenstehenden Grafik ist dies grafisch verdeutlicht.
 		\end{minipage}
@@ -231,11 +234,24 @@ Die Steigungsüberprüfung erfolgt immer vorwärts gerichtet und berechnet den Q
 		\end{minipage}
 			\begin{minipage}[t]{\textwidth-3cm}
 				\vspace{0pt}
-				Bei Pixelabständen, die kleiner oder gleich sind wie die aktuelle Vorausschaulänge wird die die Steigung aus der Höhendifferenz zweischen Start- und der Zielpixel berechnet. Eine Skalierung muss nicht stattfinden. Es ist aber zu beachten, dass entlang des Durchmusterungspfades jedes Pixel als Startpunkt betrachtet werden muss.			
+				Bei Pixelabständen, die kleiner oder gleich sind wie die aktuelle Vorausschaulänge wird die Steigung aus der Höhendifferenz zwischen Start- und der Zielpixel berechnet. Eine Skalierung muss nicht stattfinden. Es ist aber zu beachten, dass entlang des Durchmusterungspfades jedes Pixel als Startpunkt betrachtet werden muss.			
 		\end{minipage}\skippingparagraph
 	\end{minipage}
 
-	Bei Vorausschaulängen, die kürzer sind als die aktuelle Rasterweite kann das vorgestellte Verfahren dazu führen, dass Hindernisse übersehen werden. Eine Interpolation innerhalb der Kacheln würde jedoch auch nichts nützen, da die Eingangsdaten einfach "`nicht mehr hergeben"'. Somit scheint das vorgeschlagene Vorgehen der beste Kompromiss zur Vorauswahl geeigneter Landeflächen zu sein. Bei ernsthafter Anwendung werden besser aufgelöste Daten benötigt.
+	Bei Vorausschaulängen, die kürzer sind als die aktuelle Rasterweite kann das vorgestellte Verfahren dazu führen, dass Hindernisse übersehen werden die vollständig innerhalb einer Kachel liegen oder die wegen der Skalierung der Steigung als zulässig angesehen werden, obwohl sie in der Realität zu hoch sind. Eine Interpolation innerhalb der Kacheln würde jedoch auch nichts nützen, da die Eingangsdaten einfach "`nicht mehr hergeben"'. Somit scheint das vorgeschlagene Vorgehen der beste Kompromiss zur Vorauswahl geeigneter Landeflächen zu sein. Bei ernsthafter Anwendung werden besser aufgelöste Daten benötigt.
+	
+	\skippingparagraph
+	
+	Um die vollständige im Speicher befindliche Kachel zu durchmustern muss der Durchmusterungsstrahl viele Male über die Kachel geworfen werden. Die Kacheln im Speicher sind immer rechteckig. Die gesamte Fläche soll mit Durchmusterungsstrahlen überdeckt werden. Diese einzelnen Strahlen sollten untereinander einen Abstand von 1 Pixel haben. Bei nicht quadratischen Pixeln ist der Pixelabstand in der Hauptrichtung als relevanter Strahlabstand zu benutzen.
+	
+	Die Strahlen können dazu immer vom unteren bzw. linken Rand der im Speicher befindlichen Kachel ausgehen. Die tatsächliche Durchmusterung findet natürlich nur in dem Bereich statt, in dem der Strahl über Pixeln der Kachel verläuft.
+	
+	Im hier gezeigten Beispiel läuft die Durchmusterung in Richtung 19,8\degree nach Nord-Nord-Ost. Die Auflösung des Rasters betrage 2,5m. Dann sollen die parallelen Durchmusterungsstrahlen einen Abstand von 2,5m untereinander haben. Das ergibt einen auf die horizontale Grundlinie projizierten Abstand von $\frac{2.5m}{\cos 19.8\degree} = 2,657m$
+	
+	\includegraphics[width=\textwidth]{./drawings/Durchmusterungspfade_schraeg.png}
+	
+	Bei sehr feinen Rastern ist es sicherlich sinnvoll nach unten einen bestimmten Abstand nicht zu unterschreiten (z. B. 1m) um den Aufwand nicht ausufern zu lassen. Die Gefahr, dass dadurch eine potentielle Landebahn übersehen wird scheint intuitiv eher gering.
+
 	
 
 \subsection{Optimierung}
@@ -244,9 +260,11 @@ Das vorgestellte Verfahren geht stumpf über jeden Punkt der Daten und versucht 
 
 Idee zur Optimierung:
 
-Um die Menge der (genau) zu überprüfenden Daten möglichst schnell zu minimieren, ist es wichtig, dass bei einem frühen (grob gerasterten) Durchlauf schon möglichst viele Punkte als Kandidaten herausfallen.
+Um die Menge der (genau) zu überprüfenden Daten möglichst schnell zu minimieren, ist es wichtig, dass bei einem frühen Durchlauf schon möglichst viele Punkte als Kandidaten herausfallen.
 
-Wenn ein Punkt aus der KandidatenMenge herausfällt, dann wirft er einen „Schatten“ auf das zurückliegende Stück. Eine Bahn kann nicht geeignet sein, wenn sie innerhalb ihrer Mindestlänge diesen ungeeigneten Punkt zwangsläufig enthält.
+Wenn ein Punkt aus der Kandidaten Menge herausfällt, dann wirft er einen „Schatten“ auf das zurückliegende Stück. Eine Bahn kann nicht geeignet sein, wenn sie innerhalb ihrer Mindestlänge diesen ungeeigneten Punkt zwangsläufig enthält.
+
+\includegraphics[width=\textwidth]{./drawings/Schattenwurf_Optimierung.png}
 
 \begin{itemize}
 \item Wenn ein Punkt aufgrund eines Kriteriums herausfällt, dann kann die direkt vor ihm liegende Strecke auf keinen Fall Teil einer geeigneten Landebahn sein. 
@@ -262,13 +280,103 @@ Diese Optimierung bringt nur etwas, wenn die Vorausschaulänge kleiner als die m
 
 
 \subsection{Kachelränder}
+Es wird der Zeitpunkt kommen, dass die betrachtete Karte nicht mehr komplett in den Speicher passt. Sei es durch Ausdehnung des Gebiets oder durch Steigerung der Auflösung. Dann muss die Karte gekachelt werden. Es ist zu klären, wie mit den Randbereichen zwischen zwei Kacheln umgegangen wird und wie es möglich wird an den Rändern zweier Kacheln zwei zu kurze Bahnen zu einer ausreichend langen zusammenzufügen. Es muss ein "`Randprotokoll"' entwickelt werden. Ein solches könnte auch zum Übergang von shared memory Systemen auf lose gekoppelte Parallelrechner (MPI) benutzt werden.
+
+Im ersten Ansatz ist es allerdings ausreichend, wenn die auf einmal durchsuchten Kacheln ausreichend große Überlappungen aufweisen.
+
+Bei der Durchmusterung einer Kachel müssen sowohl Anfang, als auch Ende der betrachteten Kandidatenbahn vollständig innerhalb der Kachel liegen. Daher müssen die Kacheln an den Rändern überlappen. Eine Überlappung in Größe der minimalen Bahnlänge in X- und in Y-Richtung ist ausreichend. Bei "`schräger"' Durchmusterung würde ein etwas kleinerer Überlappungsbereich ausreichen. Da aber letztendlich alle Richtungen berücksichtig werden müssen muss eine Überlappung in Größe der minimalen Bahnlänge sowohl in X- als auch in Y-Richtung hergestellt werden.
+
+In der folgenden Grafik ist das Prinzip dargestellt: Die Länge der gezeigten Pfeile entspricht der minimalen Bahnlänge. Diese ist klein gegenüber der Gesamtausdehnung der Kacheln. Dargestellt ist die Durchmusterung der Kachel 1. Die Durchmusterung kann mit dem Fußpunkt immer auf dem Rand der aktuellen Kachel beginnen. Es muss nur so lange durchmustert werden, solange der Fußpunkt nicht im Überlappungsbereich der nächsten Kachel in Pfeilrichtung zu liegen kommt. Die rot dargestellten Pfeile sind potentielle Bahnen, die nicht bei der Durchmusterung der Kachel 1 gefunden werden können, sondern bei der Durchmusterung einer Nachbarkachel.
+
+\includegraphics[width=\textwidth]{./drawings/UeberlappungKacheln.png}
+
+Der große Vorteil eines solchen Verfahrens ist die sehr einfache Implementierung. Dem stehen zwei Nachteile entgegen:
+\begin{itemize}
+	\item Die Übberlappungsbereiche müssen zweimal in den Speicher geladen werden. Einige Tests werden im Überlappungsbereich doppelt ausgeführt. Das ist nicht schlimm, solange die Kacheln groß gegenüber dem Überlappungsbereich sind. Davon kann in der Praxis ausgegangen werden.
+	\item Eine lange Bahn (in der Grafik pink) wird nicht als eine einzelne lange Bahn, sondern als zwei einzelne (in der Grafik hellblau und ocker) überlappende Bahnen erkannt. Auch das ist nicht schlimm, da jede einzeln für sich genommen noch lang genug ist und daher als Notlandebahn in Frage kommt.
+\end{itemize}
+
 
 \subsection{Datenstrukturen während der Durchmusterung}
 
+@Björn: Magst du Dich hier vielleicht ein bisschen (knapp) austoben.
+
 \section{Datenhaltung gefundener Notlandeflächen}
+
+Gefundene Landebahnen sind Rechtecke. Entlang eines Durchmusterungsstrahls werden maximal lange Rechtecke mit der gewünschten Landebahnbreite gefunden. Die Wahrscheinlichkeit ist sehr hoch, dass auf nebeneinander laufenden parallelen Durchmusterungen auch nebeneinanderliegende parallele Landebahnen gefunden werden. Diese überlappen sich in der Regel. 
+
+Der einfachste und in ersten Prototypen zu beschreitende Weg wäre es jede dieser überlappenden Bahnen einzeln in die Datenbank einzutragen und einzeln zu behandeln. Dazu reicht der Start- und der Endpunkt der Bahn aus. Die Bahn liegt dann um diese Mittellinie herum mit der geforderten Breite.
+
+Dies führt aber zu sehr vielen Einträgen und macht die Ergebnisse unübersichtlich.
+
+\includegraphics[width=\textwidth]{./drawings/ueberlappendeBahnen.png}
+
+Besser wäre es, wenn sich überlappende Bahnen zu einer einzigen Landefläche mit einem Polygonumriss zusammengefasst werden. 
+
+\subsection{Auswahl der Datenbank}
+
+Es soll eine Datenbank ausgewählt werden, die Geodaten unterstützt. Offenbar hat sich als Format für Geo-Daten das Format \href{http://geojson.org/}{GeoJSON} etabliert. Eine Datenbank, die dieses Format und spezielle Abfragen darauf unterstützt ist z. B. \href{https://docs.mongodb.com/}{MongoDB}.
+
+In diese Datenbank sollen gefundene Landeflächen als Polygonumriss mit ihrer Richtung eingetragen werden.
+
+MongoDB unterstützt unter anderem auch direkte geographische Abfragen, so dass auch eine Abfrage nach allen Notlandeflächen in maximal 20km Entfernung recht leicht möglich sind. Siehe dazu \href{https://docs.mongodb.com/manual/reference/operator/query-geospatial/}{Geospatial Query Operators}.
+
+\subsection{Merge von überlappenden Notlandebahnen}
+
+MongoDB unterstützt auch eine Abfrage \href{https://docs.mongodb.com/manual/reference/operator/query/geoIntersects/#op._S_geoIntersects}{\texttt{\$geoIntersects}}. Damit ist es möglich beim Eintrag einer neuen Landefläche direkt abzufragen, ob diese neue Fläche mit bereits vorhandenen Objekten in der Datenbank überlappt. 
+
+Falls dies der Fall ist können alle überlappenden Landeflächen einer Richtung zu einem gemeinsamen Objekt zusammengefasst werden. Diese Zusammenfassung kann in einem eigenen Prozess durchgeführt werden. 
+
+Der genaue Algorithmus zum Merge mehrerer Polygone muss noch erarbeitet werden. Dabei kann man sich zunutze machen, dass die Rechtecke einer einzelnen Bahn immer entlang der Durchmusterungsrichtung verlaufen und nur dazu senkrechte und parallele Linien vorkommen können. 
 
 \section{Benutzung und Visualisierung}
 
+Da die Programmierung einer Visualisierung und einer GUI erfahrungsgemäß eine Qual ist soll möglichst auf vorhandene Standardtechnologien zurückgegriffen werden.
+
+Es bietet sich an, das System über einen Webbrowser zu steuern. Dazu sind im Wesentlichen zwei Funktionen notwendig:
+\begin{itemize}
+	\item Auswahl des zu untersuchenden Kartenausschnitts
+	\item Darstellung der gefundenen Landeflächen auf einer Karte
+\end{itemize}
+
+Es bietet sich an auf die frei verfügbaren Daten und die Visualisierung von OpenStreetmap (OSM) zurückzugreifen. 
+
+Zur Bereichsauswahl des zu durchmusternden Bereichs soll die Ausdehnung/Überdeckung eines Datensatzes als Overlay in OSM eingeblendet werden. (TODO: entscheide, ob lediglich die rechteckige Bounding Box der Koordinaten, oder aber die echte Kontur eingeblendet werden soll.)
+In OSM kann mittels \href{http://wiki.openstreetmap.org/wiki/Bounding_Box}{"`boundingBox"'} eine Auswahl erfolgen. Es wird ein Rechteck in Geo-Koordinaten zurückgegeben. Wenn diese Geo-Koordinaten in Pixel umgerechnet sind, dann kann der entsprechende Bereich –entweder am Stück, oder gekachelt– eingelesen und durchmustert werden. 
+
+\includegraphics[width=\textwidth]{./drawings/AuswahlKartenausschnitt.png}
+
+Für die Visualisierung bietet sich eine kleine JavaScript-Anwendung an, die die Darstellung im Browser übernimmt. Damit kann auf Standardtechnologien zurückgegriffen werden und es muss nicht zu viel Hirnschmalz in die Visualisierung und eine Benutzeroberfläche gesteckt werden. 
+Eine JavaScript-Webseite kann selbständig auf die Datenbank zugreifen und so die gefundenen Landeflächen in OSM als Polygone in die Karte einblenden. 
+
+Als Bibliothek zur Realisierung einer solchen Funktionalität scheint \href{http://leafletjs.com/examples.html }{Leaflet} geignet und ausreichend leicht in der Benutzung.
+
+
+
+
+
 \section{Parallelisierung}
+
+\subsection{Feinkörnige Parallelisierung der Durchmusterung mit pthreads}
+
+Bei relativ wenigen Threads und relativ viel Speicher kann jeder Thread eine Kachel in einer Richtung komplett durchmustern. Da auf die Eingabedaten nur lesend zugegriffen wird und die Durchmusterungen in unterschiedlichen Richtungen unabhängig sind braucht man sich keinerlei Gedanken über die Synchronisierung des Speicherzugriffs machen. Es muss lediglich eine Barrier eingerichtet werden, bevor die nächste Kachel in den Speicher geladen wird.
+
+Nachteilig bei diesem Verfahren ist leider der recht hohe Speicherbedarf, da bei x Threads auch x mal Speicher für die Zwischendaten reserviert werden muss.
+
+\skippingparagraph
+
+Bei genauerer Betrachtung fällt auf, dass nicht nur die einzelnen Richtungen bei der Durchmusterung vollständig unabhängig voneinander sind, sondern auch die Durchmusterung entlang jedes einzelnen Durchmusterungsstrahls. Das heißt, dass es leicht möglich ist, jedem Thread die Durchmusterung entlang eines einzelnen Durchmusterungsstrahls aufzugeben. Bei bekannter Anzahl der Threads kann im voraus statisch festgelegt werden, welcher Thread sich entlang welchen Strahls bewegen soll. Laufzeitmessungen in der Praxis können zeigen, ob ein dynamischer Workpoolansatz notwendig ist um die Last besser aufzuteilen. Intuitiv scheint das nicht notwendig, da nicht zu erwarten ist, dass die einzelnen Durchmusterungen sehr große Schwankungen bezüglich der Rechenzeiten aufweisen. Die Praxis wird zeigen, ob diese Annahme korrekt ist.
+
+	\includegraphics[width=0.5\textwidth]{./drawings/Durchmusterungspfade_schraeg.png}
+
+\subsection{Grobkörnige Parallelisierung verschiedener Programmteile mit mehreren Prozessen}
+Neben der angesprochenen feinkörnigen Paralleliserung sind noch weitere grobkörnigere Paralleisierungen im geplanten System implementiert:
+\begin{itemize}
+	\item Auswahl des zu durchmusternden Bereichs per Webinterface
+	\item Eintrag der gefundenen Landeflächen in die Datenbank 
+	\item Merge überlappender Notlandebahnen zu einer Polygonfläche
+	\item Visualisierung der gefundenen Ergebnisse per Webinterface
+	\item (Wenn noch Zeit zur Implementierung: Abgleich der gefundenen Landeflächen mit OpenStreetmap Daten zum weiteren Filtern von Verbostzonen wie z. B. Seen oder Autobahnen)
+\end{itemize}
 
 \end{document}
