@@ -43,7 +43,7 @@ bibtotocnumbered,
 
 	
 	{\let\thefootnote\relax\footnotetext{* \textit{Student im Bachelor of Science Informatik an der FernUniversität Hagen,\protect\\Matr.-\#: 8161569, \href{mailto:felix.eckstein@gmx.de}{felix.eckstein@gmx.de}}}}
-	{\let\thefootnote\relax\footnotetext{** \textit{Student im xxx xxxxx Informatik an der FernUniversität Hagen,\protect\\Matr.-\#: xxx xxxx, \href{mailto:BjoernWittich@gmx.de}{BjoernWittich@gmx.de}}}}
+	{\let\thefootnote\relax\footnotetext{** \textit{Student im Bachelor of Science Informatik an der FernUniversität Hagen,\protect\\Matr.-\#: 9265953, \href{mailto:BjoernWittich@gmx.de}{BjoernWittich@gmx.de}}}}
 	
 	\selectlanguage{ngerman}
 
@@ -79,7 +79,7 @@ bibtotocnumbered,
 	\fbox{\begin{minipage}{\textwidth}
 			{\bfseries\textsf{notwendige Eingabedaten:}}
 			
-			Um aus den Höhendaten geeignete Landebahnen zu ermitteln bekommt der zu beschreibende Algorithmus folgende Eingabedaten:
+			Um aus den Höhendaten geeignete Landebahnen zu ermitteln, bekommt der zu beschreibende Algorithmus folgende Eingabedaten:
 			\begin{itemize}
 				\item minimale Bahnlänge in Metern
 				\item Breite der Bahn in Metern
@@ -95,7 +95,7 @@ bibtotocnumbered,
 	\paragraph{Offene Punkte:} 
 	\begin{itemize}
 		\item Muss die Holprigkeit in Querrichtung vollständig geprüft werden, oder reicht es aus die maximale Querneigung über die (relativ kurze) Bahnbreite zu betrachten?
-		\item Sind verschiedenen Holprigkeitslimits in Längs und in Querrichtung notwendig?
+		\item Sind verschiedene Holprigkeitslimits in Längs- und in Querrichtung notwendig?
 		\item Ist es notwendig "`Zwischenlängen"' passend zu ergänzen? Z. B. indem eine kürzere Länge so lange verdoppelt wird, bis sich die nächst längere Länge ergibt. Dann müsste ein "`gewichteter"' Mittelwert der erlaubten maximalen Steigungen angegeben werden, damit eine Gesamtsteigung mit einem überlagerten "`Holpern"' noch OK ist. 
 	\end{itemize}
 	Diese offenen Punkte werden in der Erprobung sicherlich klar werden.
@@ -113,7 +113,7 @@ Für die ersten Experimente und die Validierung des Verfahrens wird ein Höhenda
 
 
 	\subsection{Auflösung}
-	Ob der zu entwickelnde Algorithmus zum Auffinden von möglichen Notlandefeldern in der Praxis tauglich ist hängt wesentlich von der Qualität und Auflösung der Eingabedaten ab. Der vorliegende Datensatz hat eine horizontale Auflösung von 20m und eine vertikale Auflösung von 0.1m. 
+	Ob der zu entwickelnde Algorithmus zum Auffinden von möglichen Notlandefeldern in der Praxis tauglich ist, hängt wesentlich von der Qualität und Auflösung der Eingabedaten ab. Der vorliegende Datensatz hat eine horizontale Auflösung von 20m und eine vertikale Auflösung von 0.1m. 
 	
 	Intuitiv wird eine 20m Auflösung für die Bestimmung der Holprigkeit einer Bahn zu grob sein. 
 	
@@ -234,11 +234,11 @@ Die Steigungsüberprüfung erfolgt immer vorwärts gerichtet und berechnet den Q
 		\end{minipage}
 			\begin{minipage}[t]{\textwidth-3cm}
 				\vspace{0pt}
-				Bei Pixelabständen, die kleiner oder gleich sind wie die aktuelle Vorausschaulänge wird die Steigung aus der Höhendifferenz zwischen Start- und der Zielpixel berechnet. Eine Skalierung muss nicht stattfinden. Es ist aber zu beachten, dass entlang des Durchmusterungspfades jedes Pixel als Startpunkt betrachtet werden muss.			
+				Bei Pixelabständen, die kleiner oder gleich der aktuellen Vorausschaulänge sind, wird die Steigung aus der Höhendifferenz zwischen Start- und der Zielpixel berechnet. Eine Skalierung muss nicht stattfinden. Es ist aber zu beachten, dass entlang des Durchmusterungspfades jedes Pixel als Startpunkt betrachtet werden muss.			
 		\end{minipage}\skippingparagraph
 	\end{minipage}
 
-	Bei Vorausschaulängen, die kürzer sind als die aktuelle Rasterweite kann das vorgestellte Verfahren dazu führen, dass Hindernisse übersehen werden die vollständig innerhalb einer Kachel liegen oder die wegen der Skalierung der Steigung als zulässig angesehen werden, obwohl sie in der Realität zu hoch sind. Eine Interpolation innerhalb der Kacheln würde jedoch auch nichts nützen, da die Eingangsdaten einfach "`nicht mehr hergeben"'. Somit scheint das vorgeschlagene Vorgehen der beste Kompromiss zur Vorauswahl geeigneter Landeflächen zu sein. Bei ernsthafter Anwendung werden besser aufgelöste Daten benötigt.
+	Bei Vorausschaulängen, die kürzer sind als die aktuelle Rasterweite, kann das vorgestellte Verfahren dazu führen, dass Hindernisse übersehen werden die vollständig innerhalb einer Kachel liegen oder die wegen der Skalierung der Steigung als zulässig angesehen werden, obwohl sie in der Realität zu hoch sind. Eine Interpolation innerhalb der Kacheln würde jedoch auch nichts nützen, da die Eingangsdaten einfach "`nicht mehr hergeben"'. Somit scheint das vorgeschlagene Vorgehen der beste Kompromiss zur Vorauswahl geeigneter Landeflächen zu sein. Bei ernsthafter Anwendung werden besser aufgelöste Daten benötigt.
 	
 	\skippingparagraph
 	
@@ -299,13 +299,15 @@ Der große Vorteil eines solchen Verfahrens ist die sehr einfache Implementierun
 
 \subsection{Datenstrukturen während der Durchmusterung}
 
-@Björn: Magst du Dich hier vielleicht ein bisschen (knapp) austoben.
+Wie bereits im Abschnitt x.x erwähnt, kann der Ausschluss eines Punktes auf Grund Verletzung eines Kriteriums beim Durchmustern in Richtung $a$ nicht dazu herangezogen werden, dass dieser Punkt auf nicht Teil einer Landbahn in Richtung $b$ sein. Das kann man sich gut an dem Extremfall einer steilen Geländekante verdeutlichen. In Querrichtung zur Geländekante reißen zwei benachbarte Punkte das Holprigskeitskriterkium, doch können beide Punkte jeweils noch Teil einer Landebahn entlang der Geländekarte sein.
+Aus diesen Überlegungen resultiert, dass auch wenn mehrere Threads ein und dieselbe Geländekachel bearbeiten, sie relativ wenige nützliche Befunde sinnvoll teilen / verwenden können. Da die Implementation auch das vorgegeben beliebiger Durchmusterungswinkel zulässt, sollte jeder Thread ein separates Objekt pflegen, in dem er lokale Informationen ablegen und Geländepunktinformationen ablegen kann. 
+Einen Sonderfall stellen sicher die Kartenpunkte selbst dar. Diese werden von allen Threads lediglich lesend benötigt. Da diese zudem die sicherlich größte persistente Datenmenge darstellen, ist darauf zu achten, diese nur möglichst kurz und nicht mehrfach im Speicher zu halten. Deswegen ist die Idee, eine Klasse zu implementieren, die sich ausschließlich mit der Verwaltung der Daten im Speicher (also einlesen und freigeben, Darstellung von NICHT-Kartenpunkten / NULL - Werte an Kartenrändern ) beschäftigt, während die Threads einen Zeiger/Referenz auf dieses Datenobjekt besitzen. Es muss sichergestellt werden, dass so lange ein Thread noch Zugriff auf eine Kachel benötigt, diese auch noch verfügbar sein muss. Zum jetzigen Zeitpunkt ist noch nicht völlig überschaubar, welche zusätzlichen Daten bei der Durchmusterung vorgehalten werden müssen. Dieses wird aber sicherlich in das Datenobjekt der Klasse einfließen.
 
 \section{Datenhaltung gefundener Notlandeflächen}
 
 Gefundene Landebahnen sind Rechtecke. Entlang eines Durchmusterungsstrahls werden maximal lange Rechtecke mit der gewünschten Landebahnbreite gefunden. Die Wahrscheinlichkeit ist sehr hoch, dass auf nebeneinander laufenden parallelen Durchmusterungen auch nebeneinanderliegende parallele Landebahnen gefunden werden. Diese überlappen sich in der Regel. 
 
-Der einfachste und in ersten Prototypen zu beschreitende Weg wäre es jede dieser überlappenden Bahnen einzeln in die Datenbank einzutragen und einzeln zu behandeln. Dazu reicht der Start- und der Endpunkt der Bahn aus. Die Bahn liegt dann um diese Mittellinie herum mit der geforderten Breite.
+Der einfachste und in ersten Prototypen zu beschreitende Weg wäre es, jede dieser überlappenden Bahnen einzeln in die Datenbank einzutragen und einzeln zu behandeln. Dazu reicht der Start- und der Endpunkt der Bahn aus. Die Bahn liegt dann um diese Mittellinie herum mit der geforderten Breite.
 
 Dies führt aber zu sehr vielen Einträgen und macht die Ergebnisse unübersichtlich.
 
@@ -331,7 +333,7 @@ Der genaue Algorithmus zum Merge mehrerer Polygone muss noch erarbeitet werden. 
 
 \section{Benutzung und Visualisierung}
 
-Da die Programmierung einer Visualisierung und einer GUI erfahrungsgemäß eine Qual ist soll möglichst auf vorhandene Standardtechnologien zurückgegriffen werden.
+Da die Programmierung einer Visualisierung und einer GUI erfahrungsgemäß eine Qual ist, soll möglichst auf vorhandene Standardtechnologien zurückgegriffen werden.
 
 Es bietet sich an, das System über einen Webbrowser zu steuern. Dazu sind im Wesentlichen zwei Funktionen notwendig:
 \begin{itemize}
@@ -366,6 +368,8 @@ Nachteilig bei diesem Verfahren ist leider der recht hohe Speicherbedarf, da bei
 \skippingparagraph
 
 Bei genauerer Betrachtung fällt auf, dass nicht nur die einzelnen Richtungen bei der Durchmusterung vollständig unabhängig voneinander sind, sondern auch die Durchmusterung entlang jedes einzelnen Durchmusterungsstrahls. Das heißt, dass es leicht möglich ist, jedem Thread die Durchmusterung entlang eines einzelnen Durchmusterungsstrahls aufzugeben. Bei bekannter Anzahl der Threads kann im voraus statisch festgelegt werden, welcher Thread sich entlang welchen Strahls bewegen soll. Laufzeitmessungen in der Praxis können zeigen, ob ein dynamischer Workpoolansatz notwendig ist um die Last besser aufzuteilen. Intuitiv scheint das nicht notwendig, da nicht zu erwarten ist, dass die einzelnen Durchmusterungen sehr große Schwankungen bezüglich der Rechenzeiten aufweisen. Die Praxis wird zeigen, ob diese Annahme korrekt ist.
+Zur Verbesserung des Speed-Ups ist angedacht, die Parallelisierung dahingehend zu verbessern, dass Threads, die in der aktuellen Kachel nichts mehr zu erledigen haben bereits mit dem Durchmustern der nächsten Kachel beginnen können. Dies könnte man leicht unter Zuhilfenahme eines Semaphores erreichen (entfernen der vorhin angedeuten Barrier). Hier ist allerdings zu evaluieren, wie sich die Hinzunahme weiterer Kacheln in den Speicher auf dessen Verbrauch auswirkt. Im Worst-Case könnten bei $n$-Threads $n$-Kacheln im Speicher gehalten werden müssen.
+
 
 	\includegraphics[width=0.5\textwidth]{./drawings/Durchmusterungspfade_schraeg.png}
 
