@@ -103,13 +103,13 @@ bibtotocnumbered,
 
 \section{Datenbasis}
 
-Die Höhedaten liegen in Form eines GeoTIFF vor. Dabei handelt es sich um ein Rasterformat, bei dem jedem Rasterpunkt bestimmte Geodaten zugeordnet werden. Diese Daten werden in dem Grafikformat anstelle der normalerweise enthaltenen Farbwerte gespeichert und müssen entsprechend ihrer Bedeutung interpretiert werden. Prinzipiell ist es möglich mehrere Werte pro Rasterpunkt zu speichern. In unserem Fall ist für jeden Rasterpunkt die Höhe über normal Null in Metern angegeben. Dieser Wert liegt als einfach genaue 32bit Gleitkommazahl vor.
+Die Höhedaten liegen in Form eines GeoTIFF Formats vor. Dabei handelt es sich um ein Rasterformat, bei dem jedem Rasterpunkt bestimmte Geodaten zugeordnet werden. Diese Daten werden in dem Grafikformat anstelle der normalerweise enthaltenen Farbwerte gespeichert und müssen entsprechend ihrer Bedeutung interpretiert werden. Prinzipiell ist es möglich mehrere Werte pro Rasterpunkt zu speichern. In unserem Fall ist für jeden Rasterpunkt die Höhe über normal Null in Metern angegeben. Dieser Wert liegt als einfach genaue 32bit Gleitkommazahl vor.
 
 Für die Kodierung und Komprimierung der Werte wird das bekannte TIFF Format eingesetzt, das insbesondere auch die verlustlose Speicherung unterstützt.
 
-Zusätzlich zu dem in eine TIFF-Datei eingebetteten Nutzdatensatz gehören zu einem GeoTIFF noch Angaben über Auflösung und Projektion des Datensatzes. Damit wird es möglich jedes Pixel des GeoTIFF eindeutig einem Punkt auf der Erdoberfläche in den üblichen Koordinaten aus geographischer Länge und Breite zuzuordnen.
+Zusätzlich zu dem in einer TIFF-Datei eingebetteten Nutzdatensatz gehören zu einem GeoTIFF noch Angaben über Auflösung und Projektion des Datensatzes. Damit wird es möglich, jedes Pixel des GeoTIFF eindeutig einem Punkt auf der Erdoberfläche in den üblichen Koordinaten aus geographischer Länge und Breite zuzuordnen.
 
-Für die ersten Experimente und die Validierung des Verfahrens wird ein Höhendatensatz von Nordrheinwestfalen verwendet. Dieser ist verfügbar unter \href{http://data.opendataportal.at/dataset/dtm-germany/resource/08d8c183-a4cc-4a7b-84a0-d03f92076ed3}{DTM Germany\textunderscore Nordrhein-Westfalen, 20m}
+Für die ersten Experimente und die Validierung des Verfahrens wird ein Höhendatensatz von Nordrhein-Westfalen verwendet. Dieser ist verfügbar unter \href{http://data.opendataportal.at/dataset/dtm-germany/resource/08d8c183-a4cc-4a7b-84a0-d03f92076ed3}{DTM Germany\textunderscore Nordrhein-Westfalen, 20m}
 
 
 	\subsection{Auflösung}
@@ -136,8 +136,8 @@ Für die ersten Experimente und die Validierung des Verfahrens wird ein Höhenda
 			
 			Als Anforderung an die Einlesung der Eingabedaten ergibt sich:
 			\begin{itemize}
-				\item Es müssen nacheinander Kacheln mit Rücksicht auf vorhandenen Speicherausbau eingelesen werden können
-				\item Die Metadaten (Auflösung des Datensatzes, Ausdehung der Daten) muss bereit gestellt werden
+				\item Es müssen nacheinander Kacheln mit Rücksicht auf vorhandene Speicherbelegung eingelesen werden können
+				\item Die Metadaten (Auflösung des Datensatzes, Ausdehung der Daten) müssen bereit gestellt werden
 				\item Routinen zur Umrechnung von/in Pixelkoordinaten von/in geographische Koordinaten müssen bereit gestellt werden.
 			\end{itemize}
 	\end{minipage}}
@@ -149,7 +149,7 @@ Für die ersten Experimente und die Validierung des Verfahrens wird ein Höhenda
 
 Die zentrale Funktion zum Auffinden von Notlandebahnen ist eine systematische Durchmusterung der eingelesenen Daten. Obwohl diese Funktion im Grundsatz sehr trivial scheint, so ergeben sich doch einige beachtenswerte Details, die nachfolgend angegeben werden sollen.
 
-\subsection{Einfache Durchmusterung}
+\subsection{Einfache Durchmusterung}\label{Einfache_Durchmusterung}
 Eine Landebahn kann auf jedem beliebigen Rasterpunkt der Höhendaten beginnen. Von einem Startpunkt ausgehend muss in einer geraden Richtung ein Bereich existieren, in dem keines der angegebenen Kriterien verletzt wird. 
 
 Eine geeignete Landebahn ist gefunden, wenn ein rechteckiger Bereich gefunden ist, bei dem für jeden Rasterpunkt innerhalb der minimalen geforderten Länge und Breite die gegebenen Steigungslimits nicht überschritten werden.
@@ -242,7 +242,7 @@ Die Steigungsüberprüfung erfolgt immer vorwärts gerichtet und berechnet den Q
 	
 	\skippingparagraph
 	
-	Um die vollständige im Speicher befindliche Kachel zu durchmustern muss der Durchmusterungsstrahl viele Male über die Kachel geworfen werden. Die Kacheln im Speicher sind immer rechteckig. Die gesamte Fläche soll mit Durchmusterungsstrahlen überdeckt werden. Diese einzelnen Strahlen sollten untereinander einen Abstand von 1 Pixel haben. Bei nicht quadratischen Pixeln ist der Pixelabstand in der Hauptrichtung als relevanter Strahlabstand zu benutzen.
+	Um die vollständige im Speicher befindliche Kachel zu durchmustern, muss der Durchmusterungsstrahl viele Male über die Kachel geworfen werden. Die Kacheln im Speicher sind immer rechteckig. Die gesamte Fläche soll mit Durchmusterungsstrahlen überdeckt werden. Diese einzelnen Strahlen sollten untereinander einen Abstand von 1 Pixel haben. Bei nicht quadratischen Pixeln ist der Pixelabstand in der Hauptrichtung als relevanter Strahlabstand zu benutzen.
 	
 	Die Strahlen können dazu immer vom unteren bzw. linken Rand der im Speicher befindlichen Kachel ausgehen. Die tatsächliche Durchmusterung findet natürlich nur in dem Bereich statt, in dem der Strahl über Pixeln der Kachel verläuft.
 	
@@ -299,9 +299,9 @@ Der große Vorteil eines solchen Verfahrens ist die sehr einfache Implementierun
 
 \subsection{Datenstrukturen während der Durchmusterung}
 
-Wie bereits im Abschnitt x.x erwähnt, kann der Ausschluss eines Punktes auf Grund Verletzung eines Kriteriums beim Durchmustern in Richtung $a$ nicht dazu herangezogen werden, dass dieser Punkt auf nicht Teil einer Landbahn in Richtung $b$ sein. Das kann man sich gut an dem Extremfall einer steilen Geländekante verdeutlichen. In Querrichtung zur Geländekante reißen zwei benachbarte Punkte das Holprigskeitskriterkium, doch können beide Punkte jeweils noch Teil einer Landebahn entlang der Geländekarte sein.
-Aus diesen Überlegungen resultiert, dass auch wenn mehrere Threads ein und dieselbe Geländekachel bearbeiten, sie relativ wenige nützliche Befunde sinnvoll teilen / verwenden können. Da die Implementation auch das vorgegeben beliebiger Durchmusterungswinkel zulässt, sollte jeder Thread ein separates Objekt pflegen, in dem er lokale Informationen ablegen und Geländepunktinformationen ablegen kann. 
-Einen Sonderfall stellen sicher die Kartenpunkte selbst dar. Diese werden von allen Threads lediglich lesend benötigt. Da diese zudem die sicherlich größte persistente Datenmenge darstellen, ist darauf zu achten, diese nur möglichst kurz und nicht mehrfach im Speicher zu halten. Deswegen ist die Idee, eine Klasse zu implementieren, die sich ausschließlich mit der Verwaltung der Daten im Speicher (also einlesen und freigeben, Darstellung von NICHT-Kartenpunkten / NULL - Werte an Kartenrändern ) beschäftigt, während die Threads einen Zeiger/Referenz auf dieses Datenobjekt besitzen. Es muss sichergestellt werden, dass so lange ein Thread noch Zugriff auf eine Kachel benötigt, diese auch noch verfügbar sein muss. Zum jetzigen Zeitpunkt ist noch nicht völlig überschaubar, welche zusätzlichen Daten bei der Durchmusterung vorgehalten werden müssen. Dieses wird aber sicherlich in das Datenobjekt der Klasse einfließen.
+Wie bereits im Abschnitt \ref{Einfache_Durchmusterung} erwähnt, kann der Ausschluss eines Punktes auf Grund Verletzung eines Kriteriums beim Durchmustern in Richtung $a$ nicht dazu herangezogen werden, dass dieser Punkt auf nicht Teil einer Landbahn in Richtung $b$ sein. Das kann man sich gut an dem Extremfall einer steilen Geländekante verdeutlichen: In Querrichtung zur Geländekante reißen zwei benachbarte Punkte das Holprigskeitskriterkium, doch können beide Punkte jeweils noch Teil einer Landebahn entlang der Geländekante sein.
+Aus diesen Überlegungen resultiert, dass auch wenn mehrere Threads ein und dieselbe Geländekachel bearbeiten, sie relativ wenige nützliche Befunde sinnvoll teilen / verwenden können. Da die Implementation auch das vorgegeben beliebiger Durchmusterungswinkel zulässt, sollte jeder Thread ein separates Objekt pflegen, in dem er lokale Informationen ablegen und Geländepunktinformationen speichern kann. 
+Einen Sonderfall stellen sicher die Kartengeopunkte selbst dar. Diese werden von allen Threads lediglich lesend benötigt. Da diese zudem die sicherlich größte persistente Datenmenge darstellen, ist darauf zu achten, diese nur möglichst kurz und nicht mehrfach im Speicher zu halten sind. Deswegen ist die Idee, eine Klasse zu implementieren, die sich ausschließlich mit der Verwaltung der Daten im Speicher (also einlesen und freigeben, Darstellung von NICHT-Kartenpunkten / NULL - Werte an Kartenrändern ) beschäftigt, während die Threads einen Zeiger/Referenz auf dieses Datenobjekt besitzen. Es muss sichergestellt werden, dass so lange ein Thread noch Zugriff auf eine Kachel benötigt, diese auch noch verfügbar sein muss. Zum jetzigen Zeitpunkt ist noch nicht völlig überschaubar, welche zusätzlichen Daten bei der Durchmusterung vorgehalten werden müssen. Dieses wird aber sicherlich in das Datenobjekt der Klasse einfließen.
 
 \section{Datenhaltung gefundener Notlandeflächen}
 
@@ -325,9 +325,9 @@ MongoDB unterstützt unter anderem auch direkte geographische Abfragen, so dass 
 
 \subsection{Merge von überlappenden Notlandebahnen}
 
-MongoDB unterstützt auch eine Abfrage \href{https://docs.mongodb.com/manual/reference/operator/query/geoIntersects/#op._S_geoIntersects}{\texttt{\$geoIntersects}}. Damit ist es möglich beim Eintrag einer neuen Landefläche direkt abzufragen, ob diese neue Fläche mit bereits vorhandenen Objekten in der Datenbank überlappt. 
+MongoDB unterstützt auch eine Abfrage \href{https://docs.mongodb.com/manual/reference/operator/query/geoIntersects/#op._S_geoIntersects}{\texttt{\$geoIntersects}}. Damit ist es möglich, beim Eintrag einer neuen Landefläche direkt abzufragen, ob diese neue Fläche mit bereits vorhandenen Objekten in der Datenbank überlappt. 
 
-Falls dies der Fall ist können alle überlappenden Landeflächen einer Richtung zu einem gemeinsamen Objekt zusammengefasst werden. Diese Zusammenfassung kann in einem eigenen Prozess durchgeführt werden. 
+Falls dies der Fall ist, können alle überlappenden Landeflächen einer Richtung zu einem gemeinsamen Objekt zusammengefasst werden. Diese Zusammenfassung kann in einem eigenen Prozess durchgeführt werden. 
 
 Der genaue Algorithmus zum Merge mehrerer Polygone muss noch erarbeitet werden. Dabei kann man sich zunutze machen, dass die Rechtecke einer einzelnen Bahn immer entlang der Durchmusterungsrichtung verlaufen und nur dazu senkrechte und parallele Linien vorkommen können. 
 
@@ -361,7 +361,7 @@ Als Bibliothek zur Realisierung einer solchen Funktionalität scheint \href{http
 
 \subsection{Feinkörnige Parallelisierung der Durchmusterung mit pthreads}
 
-Bei relativ wenigen Threads und relativ viel Speicher kann jeder Thread eine Kachel in einer Richtung komplett durchmustern. Da auf die Eingabedaten nur lesend zugegriffen wird und die Durchmusterungen in unterschiedlichen Richtungen unabhängig sind braucht man sich keinerlei Gedanken über die Synchronisierung des Speicherzugriffs machen. Es muss lediglich eine Barrier eingerichtet werden, bevor die nächste Kachel in den Speicher geladen wird.
+Bei relativ wenigen Threads und relativ viel Speicher kann jeder Thread eine Kachel in einer Richtung komplett durchmustern. Da auf die Eingabedaten nur lesend zugegriffen wird und die Durchmusterungen in unterschiedlichen Richtungen unabhängig sind, braucht man sich keinerlei Gedanken über die Synchronisierung des Speicherzugriffs machen. Es muss lediglich eine Barrier eingerichtet werden, bevor die nächste Kachel in den Speicher geladen wird.
 
 Nachteilig bei diesem Verfahren ist leider der recht hohe Speicherbedarf, da bei x Threads auch x mal Speicher für die Zwischendaten reserviert werden muss.
 
