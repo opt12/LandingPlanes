@@ -21,10 +21,17 @@ int main(int argc, char* argv[]) {
   }
 
   cout << "Input file: "<<tiff_in<<endl;
+
+
+  tile_worker worker1;
+
                         
 
   tile_manager central_manager(tiff_in);
-  central_manager.get_tile();
+  central_manager.get_tile(worker1,0,0,20000,20000);
+
+  worker1.print_out_map();
+  return 5;
 
   durchmustere_kachel();
 

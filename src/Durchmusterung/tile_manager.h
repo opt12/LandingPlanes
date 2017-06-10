@@ -5,6 +5,7 @@ extern "C" {
 #include <string>
 #include <iostream>
 #include <map>
+#include "tile_worker.h"
 
 using namespace std;
 
@@ -33,13 +34,13 @@ struct cmpByStruct {
 class tile_manager{
 
   private:
-    void get_tile_array(); 
+    void get_tile_array( tile_worker& worker_in, int xmin, int ymin, int width, int length); 
     string tiff_input_file; 
     map <extractionParameters, tileCharacteristics*,cmpByStruct > global_map_map;
     
   public:
     tile_manager();
     tile_manager(string source_file_in);
-    void get_tile();
+    void get_tile(tile_worker& worker_in, int xmin, int ymin, int width, int length);
 
 };
