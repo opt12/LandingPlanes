@@ -29,8 +29,8 @@ void tile_manager::get_tile_array()
   extractionParameters p;
   p.requestedxmin =0;
   p.requestedymin = 0;
-  p.requestedwidth = 20;
-  p.requestedlength=20;
+  p.requestedwidth = 2000;
+  p.requestedlength=2000;
   int retcode =  getImageInformation(&info, tiff_input_file.c_str() );
   cout << "Retcode ist "<<retcode<<endl;
   cout << info.spp<<endl;
@@ -39,5 +39,7 @@ void tile_manager::get_tile_array()
   cout << info.outwidth<<endl;
   retcode =  makeExtractFromTIFFFile(p, &info,tiff_input_file.c_str());
   cout << "Retcode ist "<<retcode<<endl;
+  for (int i=0; i < p.requestedwidth*p.requestedlength; i++)
+    cout << info.buf[i]<<endl;
   return;
 }
