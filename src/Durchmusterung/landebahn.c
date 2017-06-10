@@ -2,12 +2,28 @@
 #include <stdio.h>
 #include "landebahn.h"
 #include "tile_manager.h"
+#include <string>
+#include <iostream>
 
-
+using namespace std;
 
 int main(int argc, char* argv[]) {  	
 
-  tile_manager central_manager;
+  int arg = 1;
+  string tiff_in;
+  while (arg < argc && argv[arg][0] == '-') {     //so lange noch Argumente da sind, die mit '-' beginnen
+     if (argv[arg][1] == 'E')
+     {
+       tiff_in = argv[arg+1];
+     }
+
+    ++arg;
+  }
+
+  cout << "Input file: "<<tiff_in<<endl;
+                        
+
+  tile_manager central_manager(tiff_in);
   central_manager.get_tile();
 
   durchmustere_kachel();
