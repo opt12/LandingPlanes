@@ -25,21 +25,24 @@ void tile_manager::get_tile()
 void tile_manager::get_tile_array()
 {
   char* inputfilename = "unkownn";
-  tileCharacteristics info;
+  tileCharacteristics *info;
+  info = new tileCharacteristics();
+  
   extractionParameters p;
   p.requestedxmin =0;
   p.requestedymin = 0;
   p.requestedwidth = 2000;
   p.requestedlength=2000;
-  int retcode =  getImageInformation(&info, tiff_input_file.c_str() );
+  int retcode =  getImageInformation(info, tiff_input_file.c_str() );
   cout << "Retcode ist "<<retcode<<endl;
-  cout << info.spp<<endl;
-  cout << info.bitspersample<<endl;
-  cout << info.outlength<<endl;
-  cout << info.outwidth<<endl;
-  retcode =  makeExtractFromTIFFFile(p, &info,tiff_input_file.c_str());
+  cout << info->spp<<endl;
+  cout << info->bitspersample<<endl;
+  cout << info->outlength<<endl;
+  cout << info->outwidth<<endl;
+  retcode =  makeExtractFromTIFFFile(p, info,tiff_input_file.c_str());
   cout << "Retcode ist "<<retcode<<endl;
   for (int i=0; i < p.requestedwidth*p.requestedlength; i++)
-    cout << info.buf[i]<<endl;
+    cout << info->buf[i]<<endl;
+  global_map_map[p]=info;
   return;
 }
