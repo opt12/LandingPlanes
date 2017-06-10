@@ -23,7 +23,7 @@ typedef struct {
 	uint16 bitspersample;
 	uint32 outwidth;
 	uint32 outlength;
-	size_t memsize;
+	unsigned int memsize;
 	float* buf;
 } tileCharacteristics;
 

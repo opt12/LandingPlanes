@@ -1,11 +1,16 @@
 #include <stdlib.h> 
 #include <stdio.h>
 #include "landebahn.h"
+#include "tile_manager.h"
+
 
 
 int main(int argc, char* argv[]) {  	
 
-durchmustere_kachel();
+  tile_manager central_manager;
+  central_manager.get_tile();
+
+  durchmustere_kachel();
 
 	return 0;
 }
