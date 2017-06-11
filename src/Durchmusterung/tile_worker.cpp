@@ -1,10 +1,10 @@
 #include "tile_worker.h"
 
 
-/*! \brief constructor of tile_manager
+/*! \brief constructor of tile_worker
  *   
  *
- * 
+ *  This constructor is the default constructor which defines all class member variables to default
  */
 tile_worker::tile_worker()
 {
@@ -13,14 +13,23 @@ tile_worker::tile_worker()
 
 }
 
+/*! \brief set parameter and tile characteristics
+ *   
+ *
+ *  The pointer member variables are set to the instances created by the tile manager
+ */
 void tile_worker::set_param_and_tile(extractionParameters* param_in, tileCharacteristics* tile_in)
 {
-  eparam=param_in;
-  tile=tile_in;
+  eparam = param_in;
+  tile = tile_in;
 }
 
 
-//debug function
+/*! \brief DEBUG - print out the whole map in horizontal order
+ *   
+ *
+ *  For debug reasons this function can be used for printing out the z-coordinates. Only values larger than -32767 are printed.
+ */
 void tile_worker::print_out_map()
 {
   for (int i=0; i < eparam->requestedwidth*eparam->requestedlength; i++)
@@ -29,10 +38,15 @@ void tile_worker::print_out_map()
 }
 
 //debug function
+/*! \brief DEBUG - print out the whole map in horizontal way but with single element retrieval.
+ *   
+ *
+ *  For debug reasons this function can be used for printing out the z-coordinates. Only values larger than -32767 are printed via single element retrieval.
+ */
 void tile_worker::check_element_access()
 {
-  for (int y=0; y < eparam->requestedlength; y++)
-    for(int x=0; x < eparam->requestedwidth; x++)
+  for (int y = 0; y < eparam->requestedlength; y++)
+    for(int x = 0; x < eparam->requestedwidth; x++)
     {
       float temp = access_single_element(x,y);
      if (temp > -32767)
@@ -40,6 +54,12 @@ void tile_worker::check_element_access()
     }
 }
 
+
+/*! \brief single map element retrieval
+ *   
+ *
+ *   This function retrieves the element with the requested x and y coordinate. If requeted element is outside the map then <float>::min() is returned. 
+ */
 float tile_worker::access_single_element(int x, int y)
 {
   if (eparam->requestedwidth*y+x < eparam->requestedwidth*eparam->requestedlength)
@@ -50,22 +70,14 @@ float tile_worker::access_single_element(int x, int y)
 }
 
 
+
+/*! \brief DEBUG wrapper for all 8 orientations
+ *   
+ *
+ *   This function is a simple wrapper to check the check_steigungen function for all 8 possible dimensions
+ */
 void tile_worker::durchmustere_kachel()
 {
-  //initialization
-  //int** kachel;
-  //int width = 100;
-  //int height = 100;
-  //kachel = new int*[width];
-  //for (int i = 0;i<width;i++)
-  //  kachel[i] = new int[height];
-  //
-  // set random values
-  // for (int i = 0; i<width; i++)
-  //   for( int j = 0; j<height;j++)
-  //      kachel[i][j]= rand() % 100;
-  //
-  // check
                            check_steigungen(1);
                            check_steigungen(2);
                            check_steigungen(3);
@@ -76,6 +88,13 @@ void tile_worker::durchmustere_kachel()
                            check_steigungen(8);
   return;
 }
+
+
+/*! \brief central function for checking conditions
+ *   
+ *
+ *   This function is currently realized by a simple approach with 8 given orientations (45° stepwise). It has included some internal validations for debug reasons. This is still under construction.
+ */
 
 void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SSW, 3: O -> W, 4: SSO -> NNW, 5: S -> N, 6: SSW -> NNO, 7: W -> O, 8: NNW -> SSO */)
 {

@@ -19,5 +19,5 @@ tile_worker.o: tile_worker.cpp tile_worker.h
 
 documentation: html/index.html
 
-html/index.html: tile_manager.cpp 
+html/index.html: tile_manager.cpp tile_worker.cpp tile_worker.h tile_manager.h 
 	doxygen doxystyle
