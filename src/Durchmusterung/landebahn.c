@@ -28,13 +28,13 @@ int main(int argc, char* argv[]) {
                         
 
   tile_manager central_manager(tiff_in);
-  central_manager.get_tile(worker1,0,0,10000,10000);
-  worker1.check_element_access();
+  central_manager.get_tile(worker1,0,0,100,100);
+  //worker1.check_element_access();
   //return 6;
   //worker1.print_out_map();
-  return 5;
+  //return 5;
 
-  durchmustere_kachel();
+  worker1.durchmustere_kachel();
 
 	return 0;
 }
@@ -291,7 +291,7 @@ void check_steigungen(int** const kachel, const int width, const int height, con
 }
 
 
-void durchmustere_kachel()
+/*void durchmustere_kachel()
 {
   //initialization
   int** kachel;
@@ -316,4 +316,4 @@ void durchmustere_kachel()
   check_steigungen(kachel,width,height,7);
   check_steigungen(kachel,width,height,8); 
   return;
-}
+}*/
