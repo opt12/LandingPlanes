@@ -28,9 +28,10 @@ int main(int argc, char* argv[]) {
                         
 
   tile_manager central_manager(tiff_in);
-  central_manager.get_tile(worker1,0,0,20000,20000);
-
-  worker1.print_out_map();
+  central_manager.get_tile(worker1,0,0,10000,10000);
+  worker1.check_element_access();
+  //return 6;
+  //worker1.print_out_map();
   return 5;
 
   durchmustere_kachel();
