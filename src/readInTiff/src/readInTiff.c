@@ -22,6 +22,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h> // memcpy
 #include <tiff.h>
 #include <tiffio.h>
 #include <assert.h>
@@ -388,8 +389,6 @@ int makeExtractFromTIFFFile(const extractionParameters p,
 	tile->outwidth = p.requestedwidth;
 	tile->outlength = p.requestedlength;
 	uint16 planarconfig;
-	char * ouroutfilename = NULL;
-	unsigned char * outbuf = NULL;
 //	void * out; /* TIFF* or FILE* */
 	uint32 y_of_last_read_scanline = 0;
 	int return_code = 0; /* Success */
@@ -483,12 +482,12 @@ int makeExtractFromTIFFFile(const extractionParameters p,
 
 		if (((TIFFIsTiled(in)
 				&& !(error = cpTiles2Strip(in, p.requestedxmin, p.requestedymin,
-						tile->outwidth, tile->outlength, tile->buf,
+						tile->outwidth, tile->outlength, (unsigned char *)tile->buf,	//this typecast is necessary as we expect floats in our buffer
 						outscanlinesizeinbytes, bitsperpixel)))
 				|| (!TIFFIsTiled(in)
 						&& !(error = cpStrips2Strip(in, p.requestedxmin,
 								p.requestedymin, tile->outwidth,
-								tile->outlength, tile->buf,
+								tile->outlength, (unsigned char *)tile->buf,
 								outscanlinesizeinbytes, bitsperpixel,
 								&y_of_last_read_scanline, inimagelength))))) {
 			if (p.verbose)

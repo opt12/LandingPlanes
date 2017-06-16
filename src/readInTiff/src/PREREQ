@@ -13,3 +13,8 @@ https://www.imnc.in2p3.fr/pagesperso/deroulers/software/largetifftools/download/
 ./configure
 make
 make install
+
+
+LibGDAL (http://www.gdal.org/) is also needed for all the conversion stuff:
+On Ubuntu:
+sudo apt-get install libgdal-dev

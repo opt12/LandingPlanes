@@ -10,7 +10,9 @@
 #include <tiff.h>
 #include <tiffio.h>
 
+
 #include "readInTiff.h"
+#include "gdalWrapper.h"
 
 #include "config.h"	//TODO: Das ist unschön, wenn wir nicht auch autoconfig und autoheaders benutzen wollen.
 
@@ -151,6 +153,11 @@ int main(int argc, char * argv[])
 				"Samples per Pixel: %d; Bits per Sample: %d;\n"
 				"Buffer with %ld Bytes allocated in Memory\n"
 				,argv[arg], tile.outwidth, tile.outlength, tile.spp, tile.bitspersample, tile.memsize);
+
+		printf("\n******************************************\n");
+		printf("Geo-Information obtained using the GDAL helper functions;\n");
+		printGeoDataInfo(argv[arg]);
+
 
 	if (argc >= arg+2) {
 		printMatrixToFile(argv[arg+1], "Tile", tile.outwidth, tile.outlength, 1, 1, tile.buf);

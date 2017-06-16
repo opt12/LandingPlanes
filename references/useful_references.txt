@@ -17,3 +17,13 @@ https://www.loc.gov/preservation/digital/formats/fdd/fdd000279.shtml
 
 GeoTIFF Coordinate Transformation
 http://web.archive.org/web/20160327150030/http://www.remotesensing.org/geotiff/spec/geotiff2.6.html#2.6
+
+GDAL explains it a little bit here: http://www.gdal.org/osr_tutorial.html
+
+http://www.geos.ed.ac.uk/~smudd/TopoTutorials/html/tutorial_raster_conversion.html
+
+OpenStreetmap uses the WGS84 coordinate system: http://wiki.openstreetmap.org/wiki/Converting_to_WGS84
+To handle GeoObjects, the GeoJSON format is quite popular: http://wiki.openstreetmap.org/wiki/GeoJSON
+
+Interface Node.js with C++ code using buffers: https://community.risingstack.com/using-buffers-node-js-c-plus-plus/
+
