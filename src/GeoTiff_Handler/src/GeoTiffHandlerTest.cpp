@@ -8,6 +8,8 @@
 
 #include <iostream>
 
+#include <cassert>
+
 #include "GeoTiffHandler.h"
 #include "readInTiff.h"
 #include "config.h"	//TODO: Das ist unschön, wenn wir nicht auch autoconfig und autoheaders benutzen wollen.
@@ -45,6 +47,36 @@ static void stderrWarningHandler(const char* module, const char* fmt,
 	vfprintf(stderr, fmt, ap);
 	fprintf(stderr, ".\n");
 }
+
+int printMatrixToFile(const char* filename, const char* matrixName,
+		const int tileSizeX, const int tileSizeY, float *matrix) {
+    FILE* outputFile1 = fopen(filename,"w");
+    if(!outputFile1)
+    {
+            fprintf(stderr,"Could not open file %s for writing\n", filename);
+            return 1;
+    }
+
+    fprintf(outputFile1, "# Created by testReadInTiff.c\n"
+    		"# name: %s\n"
+    		"# type: matrix\n"
+    		"# rows: %d\n"
+    		"# columns: %d\n",
+			matrixName, tileSizeY, tileSizeX);
+
+	for(int y=0; y < tileSizeY; y++){
+		for(int x= 0; x< tileSizeX; x++){
+    		const int lin = y*tileSizeX+x;
+			fprintf(outputFile1, "%f ", matrix[lin]);
+		}
+		fprintf(outputFile1,"\n");
+	}
+	fprintf(outputFile1,"\n\n");
+
+    fclose(outputFile1);
+    return EXIT_SUCCESS;
+}
+
 
 static int processExtractPixelCoordOptions(char* cp,
 		extractionParameters* extP) {
@@ -132,6 +164,8 @@ int main(int argc, char * argv[]) {
 
 		cout<< info;
 
+		resultType result;
+
 		pixelCoord pix = {0,0};
 		geoCoord geoTopLeft = myGeoTiffHandler.pixel2Geo(pix);
 		cout << "Pixel "<<pix <<" in GeoCoordinates: " << geoTopLeft << endl;
@@ -153,12 +187,46 @@ int main(int argc, char * argv[]) {
 				<< endl;
 
 		tilingCharacteristics myTilingChar;
-		myGeoTiffHandler.getTilingInfo(geoTopLeft, geoBottomRight, 2000, MAX_SIZE, &myTilingChar);
-		cout << "The file will be tiled like this:\n" << myTilingChar;
+//		myGeoTiffHandler.getTilingInfo(geoTopLeft, geoBottomRight, 2000, MAX_SIZE, &myTilingChar);
+//		cout << "The file for " << geoTopLeft << " to " << geoBottomRight
+//				<< " will be tiled like this:\n" << myTilingChar;
+//
+//		myGeoTiffHandler.getTilingInfo(geoTopLeft, geoBottomRight, 2000, 10e6, &myTilingChar);
+//		cout << "The file for " << geoTopLeft << " to " << geoBottomRight
+//				<< " will be tiled like this:\n" << myTilingChar;
 
-		myGeoTiffHandler.getTilingInfo(geoTopLeft, geoBottomRight, 2000, 50e6, &myTilingChar);
-		cout << "The file will be tiled like this:\n" << myTilingChar;
+		geoCoord geoTL={geoTopLeft.latitude+1, geoTopLeft.longitude-1}, geoBR = {geoBottomRight.latitude-1, geoBottomRight.longitude-1};
+
+//		result = myGeoTiffHandler.getTilingInfo(geoTL, geoBottomRight, 2000, 10e6, &myTilingChar);
+//		if(result == SUCCESS_NOT_ENTIRELY_COVERED) {cout << "Tiling data available, but requested area not entirely covered\n";}
+//		cout << "The file for " << geoTL << " to " << geoBottomRight
+//				<< " will be tiled like this:\n" << myTilingChar;
+//
+//		result = myGeoTiffHandler.getTilingInfo(geoTopLeft,
+//				geoBR, 2000, 10e6, &myTilingChar);
+//		if(result == SUCCESS_NOT_ENTIRELY_COVERED) {cout << "Tiling data available, but requested area not entirely covered\n";}
+//		cout << "The file for " << geoTopLeft << " to " << geoBR
+//				<< " will be tiled like this:\n" << myTilingChar;
 
 
+		geoBR = {geoBottomRight.latitude-1, geoBottomRight.longitude+1};
+		result = myGeoTiffHandler.getTilingInfo(geoTopLeft,
+				geoBR, 2000, 25e6, &myTilingChar);
+		if(result == SUCCESS_NOT_ENTIRELY_COVERED) {cout << "Tiling data available, but requested area not entirely covered\n";}
+		cout << "The file for " << geoTopLeft << " to " << geoBR
+				<< " will be tiled like this:\n" << myTilingChar;
+
+		for(int idxX=0; idxX< myTilingChar.tilesInX; idxX++){
+			for(int idxY=0; idxY< myTilingChar.tilesInY; idxY++){
+				tileData tile;
+				myGeoTiffHandler.getTile(idxX, idxY, &tile);
+				cout << tile;
+				string matrixName= "tile_"+to_string(idxX)+"_"+to_string(idxY);
+				string fileNameOut = matrixName+string(".m");
+				printMatrixToFile(fileNameOut.c_str(), matrixName.c_str(),
+						tile.width.x, tile.width.y, tile.buf);
+				myGeoTiffHandler.releaseTile(idxX, idxY);
+			}
+		}
 	}
 }

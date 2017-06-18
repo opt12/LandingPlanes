@@ -8,6 +8,10 @@
 #ifndef READINTIFF_H_
 #define READINTIFF_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <tiff.h>
 #include "errorCodes.h"
 
@@ -24,12 +28,15 @@ typedef struct {
 	uint16 bitspersample;
 	uint32 outwidth;
 	uint32 outlength;
-	unsigned long memsize; 	//TODO: Ist das sichergestellt, dass das eine 64bit Zahl wird?
+	size_t memsize;
 	float* buf;
 } tileCharacteristics;
 
 int getImageInformation(tileCharacteristics* info, const char * infilename);
-int makeExtractFromTIFFFile(const extractionParameters p, tileCharacteristics* tile, const char * infilename);
+int makeExtractFromTIFFFile(const extractionParameters p,
+		tileCharacteristics* tile, const char * infilename);
 
-
+#ifdef __cplusplus
+}
+#endif
 #endif /* READINTIFF_H_ */

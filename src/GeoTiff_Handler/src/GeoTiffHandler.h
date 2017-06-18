@@ -43,7 +43,9 @@ struct datasetInfo {
 std::ostream& operator<<(std::ostream& o, const datasetInfo& inf);
 
 struct tilingCharacteristics {
-	unsigned int overallXSize = 0, overallYSize = 0;	//the extent of the current dataset
+	int overallXSize = 0, overallYSize = 0;	//the extent of the current dataset
+	int maxTileSizeXPix = 0, maxTileSizeYPix = 0;
+	int overlapXPix =0, overlapYPix =0;
 	int tilesInX = 0, tilesInY = 0;	//the amount of tiles in X- and Y-direction
 	float overlap = 0;	//the overlap of the tiles in [meter]
 	size_t maxTileMemsize = 0;	//the maximum amount of bytes a tile needs in memory
@@ -51,12 +53,15 @@ struct tilingCharacteristics {
 
 std::ostream& operator<<(std::ostream& o, const tilingCharacteristics& tc);
 
-typedef struct {
+struct tileData {
 	int xTile, yTile;
-	unsigned xWidth, yHeight;
+	pixelPair offset;
+	pixelPair width;
 	size_t memsize;
 	float* buf;
-} tileData;
+};
+
+std::ostream& operator<<(std::ostream& o, const tileData& td);
 
 
 struct geoCoord {
@@ -75,7 +80,8 @@ struct pixelCoord {
 std::ostream& operator<<(std::ostream& o, const pixelCoord& pc);
 
 
-typedef enum {SUCCESS, ///< success
+enum resultType {SUCCESS, ///< success
+	SUCCESS_NOT_ENTIRELY_COVERED,	///< tiling info is correctly returned, but not the entire requested area is covered by Dataset
 	ERROR, ///< unspecified error, should be avoided
 	OBJECT_NOT_MUTABLE, /**< error when the called function tries to
 		alter the underlying object when it should be immutable.
@@ -88,7 +94,9 @@ typedef enum {SUCCESS, ///< success
 	INVALID_AREA_REQUESTED,
 	NO_TILING_INFO_AVAILABLE,
 	INVALID_TILE_REQUESTED,
-} resultType;
+	ERROR_MEMORY_ALLOCATION,
+	ERROR_DATASET_STILL_IN_USE,
+};
 
 
 class GeoTiffHandler {
@@ -123,8 +131,8 @@ public:
 	resultType getPixelExtent(rectSize *pixelSize);
 	resultType getTilingInfo(const geoCoord topLeft, const geoCoord bottomRight,
 			const float overlap, const size_t maxSize, tilingCharacteristics *tilingResult);
-	resultType getTileSizePix(int idxX, int idxY, pixelPair *tileSize);
 	resultType getTile(const int xTile, const int yTile, tileData *tile);
+	resultType releaseTile(const int xTile, const int yTile);
 
 	geoCoord pixel2Geo(const pixelCoord source);
 	geoCoord pixel2Geo(const int xTile, const int yTile, const pixelCoord source);
@@ -134,6 +142,19 @@ public:
 	virtual ~GeoTiffHandler();
 
 private:
+
+	struct currentTile {
+		bool tileLoaded = false;
+		int outstandingReferences = 0;	//this is a reference counter
+		int xTile=0, yTile=0;
+		pixelPair offset={0,0};
+		pixelPair width ={0,0};
+		size_t memsize=0;
+		float* tileBuf = NULL;
+	};
+
+	currentTile curTile;
+
 	string filename;
 
 	string sourceSpatialSystemWkt;

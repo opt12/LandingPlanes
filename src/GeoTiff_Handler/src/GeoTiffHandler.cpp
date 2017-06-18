@@ -8,6 +8,7 @@
 #define DEBUG
 
 #include "GeoTiffHandler.h"
+#include "readInTiff.h"
 #include <cassert>
 #include <cmath>
 #include <iostream>
@@ -35,8 +36,18 @@ std::ostream& operator<<(std::ostream& o, const pixelCoord& pc) {
 std::ostream& operator<<(std::ostream& o, const tilingCharacteristics& tc) {
 	o << "Requested overall Size: ("<<tc.overallXSize<<", "<<tc.overallYSize<<") [pixel]\n";
 	o << "Will be tiled in (" <<tc.tilesInX <<", "<<tc.tilesInY <<") [tiles]\n";
-	o << "Overlap is "<< tc.overlap <<" [meter]\n";
+	o << "max tile size: ("<<tc.maxTileSizeXPix<<", "<<tc.maxTileSizeYPix<<") [pixel]\n";
+	o << "Overlap is "<< tc.overlap <<" [meter]; This is " <<
+			tc.overlapXPix <<" [pixel] in X, and "<< tc.overlapYPix <<" [pixel] in Y.\n";
 	o << "max Memsize = " << tc.maxTileMemsize <<" [bytes]\n";
+	return o;
+}
+
+std::ostream& operator<<(std::ostream& o, const tileData& td){
+	o << "Tile ("<< td.xTile<<", "<<td.yTile<<") characteristics:\n";
+	o << "Tile size: ("<<td.width.x<<", "<<td.width.y<<") [pixel]\n";
+	o << "Offset of top left corner: ("<<td.offset.x<<", "<<td.offset.y<<") [pixel]\n";
+	o << "Memsize = " << td.memsize<<" [bytes]\n";
 	return o;
 }
 
@@ -138,10 +149,18 @@ resultType GeoTiffHandler::openGeoTiff(const char* pszFilename) {
 	printf("Pixel Size = (%.6f,%.6f)\n", adfGeoTransfPixelToGeo[1],
 			adfGeoTransfPixelToGeo[5]);
 #endif
+
+	filename = string(pszFilename);
 	return SUCCESS;
 }
 
 resultType GeoTiffHandler::closeGeoTiff() {
+
+	if (curTile.outstandingReferences) {
+		//there are still threads holding a handle on the data, so I cannot close
+		return ERROR_DATASET_STILL_IN_USE;
+	}
+
 	poDataset->Release();
 	poDataset = NULL;
 	fill(adfGeoTransfPixelToGeo, adfGeoTransfPixelToGeo + 6, 0.0);
@@ -150,6 +169,10 @@ resultType GeoTiffHandler::closeGeoTiff() {
 	poGeo2PixelTransform = NULL;
 	myDatatsetInfo = {};
 	myTilingCharatcteristics = {};
+
+	if (curTile.tileBuf != NULL)
+		free(curTile.tileBuf);
+	curTile = {};
 
 	return SUCCESS;
 }
@@ -176,96 +199,193 @@ resultType GeoTiffHandler::getPixelExtent(rectSize* pixelSize) {
 resultType GeoTiffHandler::getTilingInfo(const geoCoord topLeft,
 		const geoCoord bottomRight, const float overlap, const size_t maxSize,
 		tilingCharacteristics* tilingResult) {
+	resultType result = SUCCESS;	//we change the return type if needed
 	//convert the requested geo coordinates to pixel coordinates
-	const pixelCoord topLeftPix = geo2Pixel(topLeft), bottomRightPix =
+	pixelCoord topLeftPix = geo2Pixel(topLeft), bottomRightPix =
 			geo2Pixel(bottomRight);
-	if (topLeftPix.x >= bottomRightPix.x || topLeftPix.y >= bottomRightPix.y) {
-		return INVALID_AREA_REQUESTED;
+	if (topLeftPix.x >= bottomRightPix.x || topLeftPix.x  >=myDatatsetInfo.extent.x ||
+			topLeftPix.y >= bottomRightPix.y || topLeftPix.y >= myDatatsetInfo.extent.y) {
+		result = INVALID_AREA_REQUESTED;
+		return result;
 	}
-	//TODO Überprüfe ob das angefragte Gebiet überhaupt im Datensatz liegt
-	//Dabei unbedingt auch beachten, dass das 4-Eck in alle Richtungen schief sein kann
-	//Dann Fehler zurück, oder einfach auf maximale Abdeckung reduzieren
 
-	const rectSize areaExtentPix = { bottomRightPix.x - topLeftPix.x,
+	//crop requested area to max covered area of image file
+	if (topLeftPix.x < 0) {
+		topLeftPix.x = 0;
+		result = SUCCESS_NOT_ENTIRELY_COVERED;
+	}
+	if (topLeftPix.y < 0) {
+		topLeftPix.y = 0;
+		result = SUCCESS_NOT_ENTIRELY_COVERED;
+	}
+	if (bottomRightPix.x > myDatatsetInfo.extent.x) {
+		bottomRightPix.x = myDatatsetInfo.extent.x;	//this is all done with the top left corner of the pixel
+		result = SUCCESS_NOT_ENTIRELY_COVERED;
+	}
+	if (bottomRightPix.y > myDatatsetInfo.extent.y) {
+		bottomRightPix.y = myDatatsetInfo.extent.y; //this is all done with the top left corner of the pixel
+		result = SUCCESS_NOT_ENTIRELY_COVERED;
+	}
+
+	const pixelPair areaExtentPix = { bottomRightPix.x - topLeftPix.x,
 			bottomRightPix.y - topLeftPix.y};
 	myTilingCharatcteristics.overallXSize = areaExtentPix.x;
 	myTilingCharatcteristics.overallYSize = areaExtentPix.y;
 
-	if (maxSize == MAX_SIZE) {//no size limit is requested, so no tiling is needed
-		myTilingCharatcteristics.tilesInX = myTilingCharatcteristics.tilesInY =
-				1;
-		myTilingCharatcteristics.overlap = 0;
-		myTilingCharatcteristics.maxTileMemsize = areaExtentPix.x
-				* areaExtentPix.y * sizeof(float);
-		*tilingResult = myTilingCharatcteristics;
-		return SUCCESS;
-	}
+	//check the amount of available RAM
+	size_t maxUsableRAM =sysconf(_SC_AVPHYS_PAGES) * sysconf(_SC_PAGESIZE);
+
+#ifdef DEBUG
+	cout <<"Currently, there are "<< maxUsableRAM << " Bytes of memory available on the heap.\n";
+#endif
+
+	//TODO Wie viel Prozent des maximalen Speihcers wollen wir benutzen?
+	maxUsableRAM = min(maxUsableRAM/2, maxSize);	//we only want to use half of the maximum Memory
+#ifdef DEBUG
+	cout <<"Will use maximum  "<< maxUsableRAM << " Bytes of memory.\n";
+#endif
+
 
 	//we have to check the tiling
-	const int overlapXPix = ceil(overlap / fabs(myDatatsetInfo.pixelSize.x));
-	const int overlapYPix = ceil(overlap / fabs(myDatatsetInfo.pixelSize.y));
-	const float r = sqrt((maxSize/sizeof(float)) / (fabs(myDatatsetInfo.pixelSize.x) * fabs(myDatatsetInfo.pixelSize.y)));//determines how big the tile may be
-	//TODO Das hier ist noch völlig falsch
-	const int maxTileSizeXPix = r * fabs(myDatatsetInfo.pixelSize.y);//rounded down to the nearest pixel value
-	const int maxTileSizeYPix = r * fabs(myDatatsetInfo.pixelSize.x);//aspect ratio of the pixel sizes is maintained
+	myTilingCharatcteristics.overlapXPix = ceil(overlap / fabs(myDatatsetInfo.pixelSize.x));
+	myTilingCharatcteristics.overlapYPix = ceil(overlap / fabs(myDatatsetInfo.pixelSize.y));
+
+	myTilingCharatcteristics.maxTileSizeYPix = //determines how big the tile may be
+			sqrt((maxUsableRAM/sizeof(float)) *
+					((float)areaExtentPix.y / (float)areaExtentPix.x));
+
+	myTilingCharatcteristics.maxTileSizeXPix =
+			myTilingCharatcteristics.maxTileSizeYPix
+					* ((float)areaExtentPix.x / (float)areaExtentPix.y);
+
 	myTilingCharatcteristics.tilesInX = ceil(
-			areaExtentPix.x / (maxTileSizeXPix - overlapXPix));
+			(float)areaExtentPix.x
+					/ (myTilingCharatcteristics.maxTileSizeXPix
+							- myTilingCharatcteristics.overlapXPix));
 	myTilingCharatcteristics.tilesInY = ceil(
-			areaExtentPix.y / (maxTileSizeYPix - overlapYPix));
+			(float)areaExtentPix.y
+					/ (myTilingCharatcteristics.maxTileSizeYPix
+							- myTilingCharatcteristics.overlapYPix));
 	myTilingCharatcteristics.overlap = overlap;	//will be returned in [meter] even if there may be rounding differences
 
-	pixelPair maxTileSize;
-	getTileSizePix(0, 0, &maxTileSize);
 	myTilingCharatcteristics.maxTileMemsize =
-			maxTileSize.x*maxTileSize.y*sizeof(float);
+			myTilingCharatcteristics.maxTileSizeXPix
+					* myTilingCharatcteristics.maxTileSizeYPix * sizeof(float);
 
-	*tilingResult = myTilingCharatcteristics;
-	return SUCCESS;
-}
+	assert(myTilingCharatcteristics.maxTileMemsize <= maxUsableRAM);
 
-resultType GeoTiffHandler::getTileSizePix(int tileIdxX, int tileIdxY,
-		pixelPair *tileSize) {
-	if (myTilingCharatcteristics.overallXSize == 0 &&
-			myTilingCharatcteristics.overallYSize == 0) {
-		return NO_TILING_INFO_AVAILABLE;
+	curTile.tileBuf = (float*) malloc(myTilingCharatcteristics.maxTileMemsize);
+
+	//already allocate the maximum RAM needed for the maximum tile size
+	if (curTile.tileBuf == NULL) {
+		cerr << "Unable to allocate enough memory to prepare extract (" << curTile.tileBuf<< " bytes needed).\n";
+		return ERROR_MEMORY_ALLOCATION;
 	}
 
-	if (tileIdxX < myTilingCharatcteristics.tilesInX - 1)
-		tileSize->x = ceil(
-				(float)myTilingCharatcteristics.overallXSize
-						/ myTilingCharatcteristics.tilesInX);
-	else if (tileIdxX == myTilingCharatcteristics.tilesInX - 1)
-		tileSize->x = myTilingCharatcteristics.overallXSize
-				- (myTilingCharatcteristics.tilesInX - 1)
-						* ceil(
-								(float)myTilingCharatcteristics.overallXSize
-										/ myTilingCharatcteristics.tilesInX);
-	else
-		return INVALID_TILE_REQUESTED;
-
-	if (tileIdxY < myTilingCharatcteristics.tilesInY - 1)
-		tileSize->y = ceil(
-				(float)myTilingCharatcteristics.overallYSize
-						/ myTilingCharatcteristics.tilesInY);
-	else if (tileIdxY == myTilingCharatcteristics.tilesInY - 1)
-		tileSize->y = myTilingCharatcteristics.overallYSize
-				- (myTilingCharatcteristics.tilesInY - 1)
-						* ceil(
-								(float)myTilingCharatcteristics.overallYSize
-										/ myTilingCharatcteristics.tilesInY);
-	else
-		return INVALID_TILE_REQUESTED;
-
-	return SUCCESS;
+	*tilingResult = myTilingCharatcteristics;
+	return result;
 }
 
 resultType GeoTiffHandler::getTile(const int xTile, const int yTile,
 		tileData* tile) {
+	//first check the requested tile data:
+	if (xTile < 0 || yTile < 0 || xTile >= myTilingCharatcteristics.tilesInX
+			|| yTile >= myTilingCharatcteristics.tilesInY) {
+		//the requested tile is invalid
+		*tile= {0,0, {0,0}, {0,0}, 0,NULL};
+		return INVALID_TILE_REQUESTED;
+	}
+
+	tile->xTile = xTile;
+	tile->yTile = yTile;
+
+	//now let's calculate the top left pixel of the requested tile:
+	tile->offset.x = xTile*(myTilingCharatcteristics.maxTileSizeXPix- myTilingCharatcteristics.overlapXPix);
+	tile->offset.y = yTile*(myTilingCharatcteristics.maxTileSizeYPix- myTilingCharatcteristics.overlapYPix);
+
+	tile->width.x = (tile->offset.x + myTilingCharatcteristics.maxTileSizeXPix) < myDatatsetInfo.extent.x?
+			(myTilingCharatcteristics.maxTileSizeXPix) :
+			myDatatsetInfo.extent.x - tile->offset.x;
+
+	tile->width.y = (tile->offset.y + myTilingCharatcteristics.maxTileSizeYPix) < myDatatsetInfo.extent.y?
+			(myTilingCharatcteristics.maxTileSizeYPix) :
+			myDatatsetInfo.extent.y - tile->offset.y;
+
+	tile->memsize = tile->width.x*tile->width.y*sizeof(float);
+
+
+	//get the real tile data
+	//check if the tile data is already loaded into memory
+	if(curTile.tileLoaded){
+		if(curTile.xTile == xTile || curTile.yTile == yTile){
+			//the requested tile is already loaded to the buffer at curTile.tileBuf
+			tile->buf = curTile.tileBuf;
+			curTile.outstandingReferences++;	//increment the reference counter
+			return SUCCESS;
+		} else if(curTile.outstandingReferences){
+			//another tile is requested, but the current tile is still in use
+			return INVALID_TILE_REQUESTED;
+		}
+	}
+
+	/* Either the
+	 * - file is not loaded yet, or
+	 * - we need a new tile and the outstandingReferences == 0;
+	 * So, we have to load the tile from file.
+	 */
+
+	extractionParameters extP;
+	extP.requestedwidth  = tile->width.x;
+	extP.requestedlength = tile->width.y;
+	extP.requestedxmin   = tile->offset.x;
+	extP.requestedymin   = tile->offset.y;
+#ifdef DEBUG
+	extP.verbose = true;
+#else
+	extP.verbose = true;
+#endif
+
+	tileCharacteristics tileC;
+	tileC.buf = curTile.tileBuf;	//this is the preallocated buffer for the data
+
+	getImageInformation(&tileC, filename.c_str());
+
+	//TODO the sanity checks need some sanity check :-)
+	//there we go and should have some sanity checks;
+//	if((unsigned) tile->width.x != tileC.outwidth || (unsigned) tile->width.y != tileC.outlength){
+//		return INVALID_AREA_REQUESTED;
+//	}
+//	if(tileC.memsize != tile->memsize){
+//		//we are in deep shit. something with the memory management went terribly wrong
+//		return ERROR_MEMORY_ALLOCATION;
+//	}
+
+	makeExtractFromTIFFFile(extP, &tileC, filename.c_str());
+	curTile.width.x  = tile->width.x;
+	curTile.width.y  = tile->width.y;
+	curTile.offset.x = tile->offset.x;
+	curTile.offset.y = tile->offset.y;
+	curTile.memsize  = tile->memsize;
+	tile->buf = curTile.tileBuf;
+
+	return SUCCESS;
+}
+
+resultType GeoTiffHandler::releaseTile(const int xTile, const int yTile) {
+
+	if(curTile.xTile != xTile || curTile.yTile != yTile){
+		//this is the incorrect Tile index
+		return INVALID_TILE_REQUESTED;
+	}
+
+	curTile.outstandingReferences--;	//decrement the reference counter
+
+	return SUCCESS;
 }
 
 pixelCoord GeoTiffHandler::geo2Pixel(const geoCoord geoCoord) {
 	double backX = 0.0, backY = 0.0;
-	double dfGeoX = geoCoord.latitude, dfGeoY = geoCoord.longitude, dfZ = 0.0;
+	double dfGeoX = geoCoord.longitude, dfGeoY = geoCoord.latitude, dfZ = 0.0;
 	//First apply the transformation from geo to planar coordinates
 	poGeo2PixelTransform->Transform(1, &dfGeoX, &dfGeoY, &dfZ);
 	// then apply the affine Transformation on the projection
@@ -276,13 +396,13 @@ pixelCoord GeoTiffHandler::geo2Pixel(const geoCoord geoCoord) {
 }
 
 geoCoord GeoTiffHandler::pixel2Geo(const pixelCoord pixCoord) {
-	double dfGeoX /**< latitude*/, dfGeoY /**< longitude*/, dfZ = 0.0;
+	double dfGeoX /**< longitude*/, dfGeoY /**< latitude*/, dfZ = 0.0;
 	// First apply the affine Transformation on the projection
 	GDALApplyGeoTransform(adfGeoTransfPixelToGeo, pixCoord.x, pixCoord.y,
 			&dfGeoX, &dfGeoY);	//TODO check whether we need to add +0.5 somewhere to get the middle of a pixel
 	//then apply the transformation from planar to geo coordinates
 	poPixel2GeoTransform->Transform(1, &dfGeoX, &dfGeoY, &dfZ);
-	return {dfGeoX, dfGeoY};
+	return {dfGeoY, dfGeoX};
 }
 
 geoCoord GeoTiffHandler::pixel2Geo(const int xTile, const int yTile,
