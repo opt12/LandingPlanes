@@ -27,6 +27,13 @@ struct pixelPair {
 	int y;
 };
 
+struct pixelCoord {
+	int x;
+	int y;
+};
+
+std::ostream& operator<<(std::ostream& o, const pixelCoord& pc);
+
 struct rectSize {
 	float x;
 	float y;
@@ -43,7 +50,9 @@ struct datasetInfo {
 std::ostream& operator<<(std::ostream& o, const datasetInfo& inf);
 
 struct tilingCharacteristics {
-	int overallXSize = 0, overallYSize = 0;	//the extent of the current dataset
+	int overallXSize = 0, overallYSize = 0;	//the extent of the currently requested cutout of the dataset
+	pixelCoord topLeftPix = {0,0};	//top left pixel coordinate of the requested area
+	pixelCoord bottomRightPix = {0,0};	//bottom right pixel coordinate of the requested area
 	int maxTileSizeXPix = 0, maxTileSizeYPix = 0;
 	int overlapXPix =0, overlapYPix =0;
 	int tilesInX = 0, tilesInY = 0;	//the amount of tiles in X- and Y-direction
@@ -70,14 +79,6 @@ struct geoCoord {
 };
 
 std::ostream& operator<<(std::ostream& o, const geoCoord& gc);
-
-
-struct pixelCoord {
-	int x;
-	int y;
-};
-
-std::ostream& operator<<(std::ostream& o, const pixelCoord& pc);
 
 
 enum resultType {SUCCESS, ///< success
@@ -166,7 +167,7 @@ private:
 
 	OGRCoordinateTransformation *poPixel2GeoTransform = NULL, *poGeo2PixelTransform = NULL;
 
-	datasetInfo myDatatsetInfo;
+	datasetInfo myDatasetInfo;
 	tilingCharacteristics myTilingCharatcteristics;
 };
 

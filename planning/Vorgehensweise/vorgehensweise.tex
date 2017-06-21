@@ -75,6 +75,8 @@ bibtotocnumbered,
 
 	Das globale Limit der Steigung ist sicherlich geringer als das lokale Limit für die Holprigkeit. (Extremfall: Landen auf Kopfsteinpflaster kann lokal ziemlich große Steigungen verursachen, wenn das Raster klein genug ist, stellt aber eigentlich kein Problem dar, da die Strecken zwischen den Rasterpunkten kurz genug sind.)
 	
+	\paragraph{Definition Vorausschaulänge} Im Weiteren soll mit dem Begriff "`Vorausschaulänge"' die Strecke bezeichnet werden, über die ein bestimmtes Kriterium angewendet wird. Über diese Strecke wird vom aktuell untersuchten Punkt aus voraus geschaut, um die Verletzung eines Steigungskriteriums zu entdecken. Die Vorausschaulänge ist im Falle des globalen Steigungskriteriums die minimale Bahnänge und beträgt für das lokale Holprigkeitskriterium lediglich wenige Meter. Für das Verwindungskriterium ist die Vorausschaulänge sogar Null.
+	
 	\skippingparagraph
 	\fbox{\begin{minipage}{\textwidth}
 			{\bfseries\textsf{notwendige Eingabedaten:}}
@@ -128,7 +130,7 @@ Für die ersten Experimente und die Validierung des Verfahrens wird ein Höhenda
 	
 	Beim Einlesen ist darauf zu achten, dass ein effizientes Verfahren zum Einlesen von Kacheln notwendig ist, da bei höher aufgelösten Daten nicht mehr davon ausgegangen werden kann, dass alle Daten auf einmal im RAM gehalten werden können.
 	
-	Zur Umrechnung der Pixelkoordinaten in geographische Koordinaten und zur Ermittlung der Metadaten des GeoTIFF Datensatzes kann auf \href{https://trac.osgeo.org/geotiff/}{libgeotiff} zurückgegriffen werden.
+	Zur Umrechnung der Pixelkoordinaten in geographische Koordinaten und zur Ermittlung der Metadaten des GeoTIFF Datensatzes kann auf die  \href{http://www.gdal.org//}{GDAL - Geospatial Data Abstraction Library} zurückgegriffen werden. Diese ist sehr umfangreich und umfassend, benötigt dafür jedoch eine relativ große Einarbeitung. Die für die vorliegende Aufgabenstellung benötigten Funktionen lassen sich jedoch recht gut kapseln und so über ein einfaches Interface zur Verfügung stellen.
 	
 	\skippingparagraph
 	\fbox{\begin{minipage}{\textwidth}
@@ -256,29 +258,58 @@ Die Steigungsüberprüfung erfolgt immer vorwärts gerichtet und berechnet den Q
 
 \subsection{Optimierung}
 
-Das vorgestellte Verfahren geht stumpf über jeden Punkt der Daten und versucht dann zusammenhängende geeignete Punkte zu erkennen. Bei den zu erwartenden großen (weil hochaufgelösten) Datensätzen sollten so viele Punkte wie möglich so früh wie möglich ausgeschlossen werden um den Rechenaufwand so gering wie möglich zu halten.
+Eine naive Implementierung würde einfach Streifen für Streifen  in der geforderten Durchmusterungsrichtung überprüfen und dabei für jedes Pixel überprüfen, ob die geforderten Bedingungen hinsichtlich globaler Steigung, lokaler Holprigkeit und lokaler Querneigung eingehalten werden. Sobald eine hinreichend lange, zusammenhängende Strecke in Durchmusterungsrichtung gefunden ist, auf der für jedes Pixel die notwendigen Kriterien eingehalten werden, kann diese Strecke als potentielle Landebahn markiert werden.
 
-\skippingparagraph
+Diese Vorgehensweise ist jedoch sehr aufwändig, da tatsächlich für jedes Pixel alle Kriterien überprüft werden müssen. Das geschieht auch, wenn das einzelne Pixel aufgrund von Bedingungen in der Nachbarschaft schon ausgeschlossen werden könnte. Z. B. wäre es nicht notwendig die Pixel am Boden einer Schlucht quer zur Durchmusterungsrichtung zu überprüfen, wenn man Kenntnis davon hätte, dass kurz vorher und kurz nachher der Höhensprung zum Boden der Schlucht existiert. Ein optimiertes Verfahren sollte solche Gegebenheiten erkennen und Punkte nach bestimmten Kriterien ausschließen können, ohne explizit die Bedingungen für jedes einzelne Pixel zu überprüfen.
 
-Idee zur Optimierung:
 
+
+
+\paragraph{Idee zur Optimierung}
 Um die Menge der (genau) zu überprüfenden Daten möglichst schnell zu minimieren, ist es wichtig, dass bei einem frühen Durchlauf schon möglichst viele Punkte als Kandidaten herausfallen.
 
-Wenn ein Punkt aus der Kandidaten Menge herausfällt, dann wirft er einen „Schatten“ auf das zurückliegende Stück. Eine Bahn kann nicht geeignet sein, wenn sie innerhalb ihrer Mindestlänge diesen ungeeigneten Punkt zwangsläufig enthält.
+Dazu lohnt es sich die drei genannten Kriterien noch einmal genauer zu analysieren: Es fällt auf, dass es gar nicht notwendig ist, dass jedes Kriterium für jedes Pixel der Bahn eingehalten wird. Jedes Kriterium hat eine gewisse "`Vorausschaulänge"', und es muss nur eingehalten werden, wenn diese Vorausschaulänge innerhalb der notwendigen Mindestlänge der Bahn liegt.
 
-\includegraphics[width=\textwidth]{./drawings/Schattenwurf_Optimierung.png}
+\paragraph{Vorausschaulänge} Das globale Kriterium für die Gesamtbahnsteigung bezieht sich auf den Anstieg vom Beginn der Bahn, bis zum Ende der Mindestlänge. Die Vorausschaulänge ist in diesem Fall die Mindestbahnlänge. Ein lokales Holprigkeitskriterium dagegen bezieht sich nur auf den aktuellen Punkt und die Punkte wenige Meter direkt davor. Die Vorausschaulänge diese Kriteriums beträgt daher nur diese wenigen Meter. Beim Querneigungskriterium dagegen werden nur Punkte entlang einer Strecke senkrecht zur Durchmusterungsrichtung betrachtet. Es wird also gar nicht nach vorne gesehen und entsprechend ist die Vorausschaulänge für diese Kriterium Null.
 
-\begin{itemize}
-\item Wenn ein Punkt aufgrund eines Kriteriums herausfällt, dann kann die direkt vor ihm liegende Strecke auf keinen Fall Teil einer geeigneten Landebahn sein. 
-Es können also alle Punkte vom Ende der zugehörigen Vorausschaulänge bis zur minimalen Bahnlänge vor diesem Ende der Vorausschaulänge für weitere Berechnungen ausgeschlossen werden. Die Strecke zwischen Punkt und Vorausschauende darf dabei \emph{nicht} ausgeschlossen werden. Dort könnte ja gerade eine neue Ebene beginnen!
-\item Wenn also ein ungeeigneter Punkt gefunden wird, dann brauchen die Punkte, die innerhalb der Strecke vom aktuellen Punkt bis zur Mindestbahnlänge vor dem Vorausschauende liegen nicht mehr überprüft werden.
-\item Bei einer kurzen Vorausschau können also besonders viele Punkte aufgrund einer einzelnen Steigungsverletzung ausgeschlossen werden. (Fange mit den kurzen Vorausschaulängen an zu durchmustern)
-\item Die Schrittweite bei jedem Durchlauf sollte also der Mindestbahnlänge entsprechen. Wenn ein Punkt herausfällt, dann werden die davor liegenden Punkte aus der weiteren Durchmusterung ausgeschlossen.
-\item In einem nächsten Durchlauf wird der nächste noch zu besuchende Punkt gewählt, aber die Schrittweite bleibt bei der minimalen Bahnlänge. Wenn auf einen Punkt getroffen wird, der in einem vorherigen Durchlauf ausgeschlossen wurde, fahre mit dem Punkt fort, der eine minimale Bahnlänge Abstand vom auszulassenden Bereich hat.
-\item Wiederhole so lange, bis alle Punkte entlang einer Richtung entweder ausgeschlossen wurden, oder für das überprüfte Steigungskriterium als geeignet erscheinen.
+Ein Punkt muss ein bestimmtes Kriterium nur dann erfüllen, wenn die Vorausschaulänge dieses Kriteriums noch vollständig innerhalb der betrachteten potentiellen Landebahn liegt. 
 
-\end{itemize}
-Diese Optimierung bringt nur etwas, wenn die Vorausschaulänge kleiner als die minimale Landebahnlänge ist. Bei einem wirklich „globalen“ Kriterium (Maximalanstieg auf der gesamten Bahnlänge) muss also trotzdem jeder Punkt durchmustert werden.
+\includegraphics[width=\textwidth]{./drawings/Vorausschau.png}
+
+In dieser Beispielskizze kann man erkennen, dass das Kriterium der Gesamtsteigung in einem großen Bereich der potentiellen Landebahn nicht mehr eingehalten wird. Dies ist jedoch irrelevant, da das Ende der Vorausschau nicht mehr in der potentiellen Landebahn liegt und für das landende Flugzeug keine Rolle mehr spielt, da es vorher zum Stehen kommen kann. 
+
+Bei genauerer Betrachtung erkennt man, dass ein Kriterium nur dann berücksichtigt werden muss, wenn die Vorausschaulänge diese Kriteriums innerhalb der minimalen Bahnlänge einer potentiellen Landebahn liegt. Das bedeutet, dass eine potentielle Bahn nicht in dem Bereich vor einer Kriterienverletzung \emph{beginnen} darf, der zusammen mit der Vorausschaulänge die Mindestbahnlänge ergibt. Sei die Mindestbahnlänge $n$ Meter (z. B. 2000m) und die Vorausschaulänge des Holprigkeitskriteriums $m$ Meter (z. B. 20m). Dann darf im Bereich $k=n-m$ Meter (z. B. 2000m-20m = 1980m) vor Verletzung des Holprigkeitskriteriums keine Bahn \emph{beginnen}, da der verletzende Punkt dann zwangsläufig mitsamt seiner Vorausschaulänge innerhalb dieser Bahn liegen würde.
+
+\skippingparagraph
+Wenn nun ein Kriterium mit kleiner Vorausschaulänge verletzt wird, so müssen im Bereich vor diesem verletztenden Kriterien nicht mehr für jeden Punkt alle Kriterien überprüft werden. Wenn schon bekannt ist, dass ein Kriterium mit längerer Vorausschaulänge innerhalb dieser Länge eine Verletzung beinhaltet, dann muss diese Kriterium gar nicht mehr überprüft werden.
+
+Im Beispiel mit zwei Kriterien (dem globalen mit Vorausschaulänge "`minimale Bahnlänge"' und dem lokalen mit Vorausschaulänge "`wenige Meter"') muss bei Verletzung des lokalen Holprigkeitskriteriums im Bereich vor der verletzten Holprigkeit das globale Steigungskriterium gar nicht mehr überprüft werden. In diesem Bereich darf sowieso keine Bahn beginnen.
+
+Aus dieser Beobachtung lässt sich ableiten, dass es sinnvoll ist, entlang einer Durchmusterungsrichtung in mehreren Durchgängen zu arbeiten und die Kriterien in der Reihenfolge aufsteigender Vorausschaulängen zu überprüfen. Wenn in einem Durchgang für ein lokales Kriterium mit kurzer Vorausschau eine Verletzung festgestellt wurde, so wirft diese Kriterium einen "`Schatten"' auf die Pixel hinter sich in dem Kriterien mit längerer Vorausschau nicht mehr überprüft werden müssen, weil dort beginnende Bahnen diese auf jeden Fall die gerade entdeckte Fehlstelle enthalten würden. Die Länge dieses "`Schattens"' ist genau die Vorausschaulänge des längeren, auszulassenden Kriteriums weniger der Vorausschau des verletzenden Kriteriums.
+
+Im Bild ist dies für ein lokales und das globale Kriterium dargestellt. Wenn in einem ersten Durchgang die Einhaltung des Holprigkeitskriteriums überprüft wird, so fallen die beiden rot eingezeichneten Bereiche heraus. Im Zweiten Durchgang zur Überprüfung des globalen Kriteriums müssen die gelb markierten Bereiche, die im Schatten der Holprigkeitsverletzung liegen gar nicht mehr untersucht werden. Eine in diesem Bereich startende Bahn würde sonst die verletzte Holprigkeit auf jeden Fall beinhalten und sicher herausfallen.
+
+\includegraphics[width=\textwidth]{./drawings/Ausschluss_global.png}
+
+
+Bei lediglich zwei oder drei Kriterien mag das Optimierungspotential bescheiden ausfallen. Wenn sich jedoch herausstellt, dass zur Erkennung guter Landebahnen tatsächlich noch mehr Kriterien mit einer breiter aufgefächerten Vorausschau benötigt werden, dann kann sich eine solche Optimierung eventuell lohnen.
+
+%
+%Wenn ein Punkt aus der Kandidaten Menge herausfällt, dann wirft er einen „Schatten“ auf das zurückliegende Stück. Eine Bahn kann nicht geeignet sein, wenn sie innerhalb ihrer Mindestlänge diesen ungeeigneten Punkt zwangsläufig enthält.
+%
+%\includegraphics[width=\textwidth]{./drawings/Schattenwurf_Optimierung.png}
+%
+%\begin{itemize}
+%\item Wenn ein Punkt aufgrund eines Kriteriums herausfällt, dann kann die direkt vor ihm liegende Strecke auf keinen Fall Teil einer geeigneten Landebahn sein. 
+%Es können also alle Punkte vom Ende der zugehörigen Vorausschaulänge bis zur minimalen Bahnlänge vor diesem Ende der Vorausschaulänge für weitere Berechnungen ausgeschlossen werden. Die Strecke zwischen Punkt und Vorausschauende darf dabei \emph{nicht} ausgeschlossen werden. Dort könnte ja gerade eine neue Ebene beginnen!
+%\item Wenn also ein ungeeigneter Punkt gefunden wird, dann brauchen die Punkte, die innerhalb der Strecke vom aktuellen Punkt bis zur Mindestbahnlänge vor dem Vorausschauende liegen nicht mehr überprüft werden.
+%\item Bei einer kurzen Vorausschau können also besonders viele Punkte aufgrund einer einzelnen Steigungsverletzung ausgeschlossen werden. (Fange mit den kurzen Vorausschaulängen an zu durchmustern)
+%\item Die Schrittweite bei jedem Durchlauf sollte also der Mindestbahnlänge entsprechen. Wenn ein Punkt herausfällt, dann werden die davor liegenden Punkte aus der weiteren Durchmusterung ausgeschlossen.
+%\item In einem nächsten Durchlauf wird der nächste noch zu besuchende Punkt gewählt, aber die Schrittweite bleibt bei der minimalen Bahnlänge. Wenn auf einen Punkt getroffen wird, der in einem vorherigen Durchlauf ausgeschlossen wurde, fahre mit dem Punkt fort, der eine minimale Bahnlänge Abstand vom auszulassenden Bereich hat.
+%\item Wiederhole so lange, bis alle Punkte entlang einer Richtung entweder ausgeschlossen wurden, oder für das überprüfte Steigungskriterium als geeignet erscheinen.
+%
+%\end{itemize}
+%Diese Optimierung bringt nur etwas, wenn die Vorausschaulänge kleiner als die minimale Landebahnlänge ist. Bei einem wirklich „globalen“ Kriterium (Maximalanstieg auf der gesamten Bahnlänge) muss also trotzdem jeder Punkt durchmustert werden.
 
 
 \subsection{Kachelränder}
@@ -335,7 +366,7 @@ Der genaue Algorithmus zum Merge mehrerer Polygone muss noch erarbeitet werden. 
 
 \section{Benutzung und Visualisierung}
 
-Da die Programmierung einer Visualisierung und einer GUI erfahrungsgemäß eine Qual ist, soll möglichst auf vorhandene Standardtechnologien zurückgegriffen werden.
+Um die Programmierung zur Visualisierung und Bedienung (Graphical User Interface) zu vereinfachen, soll möglichst auf vorhandene Standardtechnologien zurückgegriffen werden.
 
 Es bietet sich an, das System über einen Webbrowser zu steuern. Dazu sind im Wesentlichen zwei Funktionen notwendig:
 \begin{itemize}
@@ -350,7 +381,8 @@ In OSM kann mittels \href{http://wiki.openstreetmap.org/wiki/Bounding_Box}{bound
 
 \includegraphics[width=\textwidth]{./drawings/AuswahlKartenausschnitt.png}
 
-Für die Visualisierung bietet sich eine kleine JavaScript-Anwendung an, die die Darstellung im Browser übernimmt. Damit kann auf Standardtechnologien zurückgegriffen werden und es muss nicht zu viel Hirnschmalz in die Visualisierung und eine Benutzeroberfläche gesteckt werden. 
+Für die Visualisierung bietet sich eine kleine JavaScript-Anwendung an, die die Darstellung im Browser übernimmt. Damit kann auf Standardtechnologien zurückgegriffen werden und es muss keine eigene GUI entwickelt werden. Vielmehr kann man sich aus bekannten Komponenten bedienen und daraus ein Interface zusammenstellen.
+ 
 Eine JavaScript-Webseite kann selbständig auf die Datenbank zugreifen und so die gefundenen Landeflächen in OSM als Polygone in die Karte einblenden. 
 
 Als Bibliothek zur Realisierung einer solchen Funktionalität scheint \href{http://leafletjs.com/examples.html }{Leaflet} geeignet und ausreichend einfach in der Benutzung zu sein.

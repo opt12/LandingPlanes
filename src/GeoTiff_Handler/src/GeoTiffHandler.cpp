@@ -84,8 +84,8 @@ resultType GeoTiffHandler::openGeoTiff(const char* pszFilename) {
 	assert(poDataset != NULL);	//TODO throw a proper exception
 
 	//get basic dataset information
-	myDatatsetInfo.extent.x = poDataset->GetRasterXSize();
-	myDatatsetInfo.extent.y = poDataset->GetRasterYSize();
+	myDatasetInfo.extent.x = poDataset->GetRasterXSize();
+	myDatasetInfo.extent.y = poDataset->GetRasterYSize();
 	assert(poDataset->GetRasterCount() == 1);//we assume, that there is exactly one Raster Band in the data
 
 	//let's get some internals of the dataset:
@@ -94,7 +94,7 @@ resultType GeoTiffHandler::openGeoTiff(const char* pszFilename) {
 	if (GDALGetRasterDataType(hBand) != GDT_Float32) {
 		throw("Incorrect Data format (expected Float32 for altitude values)");
 	}
-	myDatatsetInfo.noDataValue = (float) GDALGetRasterNoDataValue(hBand,
+	myDatasetInfo.noDataValue = (float) GDALGetRasterNoDataValue(hBand,
 			&bGotNodata);//we assume to have only Float32, not doubles in the dataset
 
 	if ((sourceSpatialSystemWkt = poDataset->GetProjectionRef()).empty()) {
@@ -109,7 +109,7 @@ resultType GeoTiffHandler::openGeoTiff(const char* pszFilename) {
 	if (poDataset->GetGeoTransform(adfGeoTransfPixelToGeo) != CE_None) {
 		return IMPROPER_AFFINE_TRANSFORM;
 	}
-	myDatatsetInfo.pixelSize = {(float)adfGeoTransfPixelToGeo[1], (float) adfGeoTransfPixelToGeo[5]};
+	myDatasetInfo.pixelSize = {(float)adfGeoTransfPixelToGeo[1], (float) adfGeoTransfPixelToGeo[5]};
 	//calculate the inverse geotransform from Geo to Pixel
 	if (!GDALInvGeoTransform(adfGeoTransfPixelToGeo,
 			adfInvGeoTransfGeoToPixel)) {
@@ -167,7 +167,7 @@ resultType GeoTiffHandler::closeGeoTiff() {
 	fill(adfInvGeoTransfGeoToPixel, adfInvGeoTransfGeoToPixel + 6, 0.0);
 	poPixel2GeoTransform = NULL;
 	poGeo2PixelTransform = NULL;
-	myDatatsetInfo = {};
+	myDatasetInfo = {};
 	myTilingCharatcteristics = {};
 
 	if (curTile.tileBuf != NULL)
@@ -182,7 +182,7 @@ resultType GeoTiffHandler::getDatasetInfo(datasetInfo* info) {
 		return NO_OPEN_DATASET;
 	}
 
-	*info = this->myDatatsetInfo;
+	*info = this->myDatasetInfo;
 	return SUCCESS;
 }
 
@@ -191,7 +191,7 @@ resultType GeoTiffHandler::getPixelExtent(rectSize* pixelSize) {
 		return NO_OPEN_DATASET;
 	}
 
-	*pixelSize = this->myDatatsetInfo.pixelSize;
+	*pixelSize = this->myDatasetInfo.pixelSize;
 	return SUCCESS;
 
 }
@@ -199,12 +199,26 @@ resultType GeoTiffHandler::getPixelExtent(rectSize* pixelSize) {
 resultType GeoTiffHandler::getTilingInfo(const geoCoord topLeft,
 		const geoCoord bottomRight, const float overlap, const size_t maxSize,
 		tilingCharacteristics* tilingResult) {
+
+	//first, check if a new tiling info may be requested, or the old tilibng is till in use
+	if (curTile.outstandingReferences) {
+		//there are still threads holding a handle on the data, so I cannot close
+		return ERROR_DATASET_STILL_IN_USE;
+	}
+
+	myTilingCharatcteristics = {};
+
+	if (curTile.tileBuf != NULL)
+		free(curTile.tileBuf);
+	curTile = {};
+
+
 	resultType result = SUCCESS;	//we change the return type if needed
 	//convert the requested geo coordinates to pixel coordinates
-	pixelCoord topLeftPix = geo2Pixel(topLeft), bottomRightPix =
-			geo2Pixel(bottomRight);
-	if (topLeftPix.x >= bottomRightPix.x || topLeftPix.x  >=myDatatsetInfo.extent.x ||
-			topLeftPix.y >= bottomRightPix.y || topLeftPix.y >= myDatatsetInfo.extent.y) {
+	pixelCoord topLeftPix =  geo2Pixel(topLeft),
+			bottomRightPix = geo2Pixel(bottomRight);
+	if (topLeftPix.x >= bottomRightPix.x || topLeftPix.x  >=myDatasetInfo.extent.x ||
+			topLeftPix.y >= bottomRightPix.y || topLeftPix.y >= myDatasetInfo.extent.y) {
 		result = INVALID_AREA_REQUESTED;
 		return result;
 	}
@@ -218,12 +232,12 @@ resultType GeoTiffHandler::getTilingInfo(const geoCoord topLeft,
 		topLeftPix.y = 0;
 		result = SUCCESS_NOT_ENTIRELY_COVERED;
 	}
-	if (bottomRightPix.x > myDatatsetInfo.extent.x) {
-		bottomRightPix.x = myDatatsetInfo.extent.x;	//this is all done with the top left corner of the pixel
+	if (bottomRightPix.x > myDatasetInfo.extent.x) {
+		bottomRightPix.x = myDatasetInfo.extent.x;	//this is all done with the top left corner of the pixel
 		result = SUCCESS_NOT_ENTIRELY_COVERED;
 	}
-	if (bottomRightPix.y > myDatatsetInfo.extent.y) {
-		bottomRightPix.y = myDatatsetInfo.extent.y; //this is all done with the top left corner of the pixel
+	if (bottomRightPix.y > myDatasetInfo.extent.y) {
+		bottomRightPix.y = myDatasetInfo.extent.y; //this is all done with the top left corner of the pixel
 		result = SUCCESS_NOT_ENTIRELY_COVERED;
 	}
 
@@ -231,6 +245,8 @@ resultType GeoTiffHandler::getTilingInfo(const geoCoord topLeft,
 			bottomRightPix.y - topLeftPix.y};
 	myTilingCharatcteristics.overallXSize = areaExtentPix.x;
 	myTilingCharatcteristics.overallYSize = areaExtentPix.y;
+	myTilingCharatcteristics.topLeftPix = topLeftPix;
+	myTilingCharatcteristics.bottomRightPix = bottomRightPix;
 
 	//check the amount of available RAM
 	size_t maxUsableRAM =sysconf(_SC_AVPHYS_PAGES) * sysconf(_SC_PAGESIZE);
@@ -240,15 +256,17 @@ resultType GeoTiffHandler::getTilingInfo(const geoCoord topLeft,
 #endif
 
 	//TODO Wie viel Prozent des maximalen Speihcers wollen wir benutzen?
-	maxUsableRAM = min(maxUsableRAM/2, maxSize);	//we only want to use half of the maximum Memory
+	if(maxSize == MAX_SIZE) maxUsableRAM = maxUsableRAM/2;	//we really want to use the max size...
+	else
+		maxUsableRAM = min(maxUsableRAM/2, maxSize);	//we only want to use half of the maximum Memory
 #ifdef DEBUG
 	cout <<"Will use maximum  "<< maxUsableRAM << " Bytes of memory.\n";
 #endif
 
 
 	//we have to check the tiling
-	myTilingCharatcteristics.overlapXPix = ceil(overlap / fabs(myDatatsetInfo.pixelSize.x));
-	myTilingCharatcteristics.overlapYPix = ceil(overlap / fabs(myDatatsetInfo.pixelSize.y));
+	myTilingCharatcteristics.overlapXPix = ceil(overlap / fabs(myDatasetInfo.pixelSize.x));
+	myTilingCharatcteristics.overlapYPix = ceil(overlap / fabs(myDatasetInfo.pixelSize.y));
 
 	myTilingCharatcteristics.maxTileSizeYPix = //determines how big the tile may be
 			sqrt((maxUsableRAM/sizeof(float)) *
@@ -258,14 +276,27 @@ resultType GeoTiffHandler::getTilingInfo(const geoCoord topLeft,
 			myTilingCharatcteristics.maxTileSizeYPix
 					* ((float)areaExtentPix.x / (float)areaExtentPix.y);
 
-	myTilingCharatcteristics.tilesInX = ceil(
-			(float)areaExtentPix.x
-					/ (myTilingCharatcteristics.maxTileSizeXPix
-							- myTilingCharatcteristics.overlapXPix));
-	myTilingCharatcteristics.tilesInY = ceil(
-			(float)areaExtentPix.y
-					/ (myTilingCharatcteristics.maxTileSizeYPix
-							- myTilingCharatcteristics.overlapYPix));
+	//limit the maximum size (RAM-wise) to the maximum size requested
+	if(areaExtentPix.y<=myTilingCharatcteristics.maxTileSizeYPix){
+		//we need only one tile in y direction
+		myTilingCharatcteristics.maxTileSizeYPix = areaExtentPix.y;
+		myTilingCharatcteristics.overlapYPix = 0;
+	}
+		myTilingCharatcteristics.tilesInY = ceil(
+				(float)areaExtentPix.y
+						/ (myTilingCharatcteristics.maxTileSizeYPix
+								- myTilingCharatcteristics.overlapYPix));
+
+	if(areaExtentPix.x<=myTilingCharatcteristics.maxTileSizeXPix){
+		//we need only one tile in x direction
+		myTilingCharatcteristics.maxTileSizeXPix = areaExtentPix.x;
+		myTilingCharatcteristics.overlapXPix = 0;
+	}
+		myTilingCharatcteristics.tilesInX = ceil(
+				(float)areaExtentPix.x
+						/ (myTilingCharatcteristics.maxTileSizeXPix
+								- myTilingCharatcteristics.overlapXPix));
+
 	myTilingCharatcteristics.overlap = overlap;	//will be returned in [meter] even if there may be rounding differences
 
 	myTilingCharatcteristics.maxTileMemsize =
@@ -300,16 +331,24 @@ resultType GeoTiffHandler::getTile(const int xTile, const int yTile,
 	tile->yTile = yTile;
 
 	//now let's calculate the top left pixel of the requested tile:
-	tile->offset.x = xTile*(myTilingCharatcteristics.maxTileSizeXPix- myTilingCharatcteristics.overlapXPix);
-	tile->offset.y = yTile*(myTilingCharatcteristics.maxTileSizeYPix- myTilingCharatcteristics.overlapYPix);
+	tile->offset.x = myTilingCharatcteristics.topLeftPix.x +
+			xTile*(myTilingCharatcteristics.maxTileSizeXPix- myTilingCharatcteristics.overlapXPix);
+	tile->offset.y = myTilingCharatcteristics.topLeftPix.y +
+			yTile*(myTilingCharatcteristics.maxTileSizeYPix- myTilingCharatcteristics.overlapYPix);
 
-	tile->width.x = (tile->offset.x + myTilingCharatcteristics.maxTileSizeXPix) < myDatatsetInfo.extent.x?
-			(myTilingCharatcteristics.maxTileSizeXPix) :
-			myDatatsetInfo.extent.x - tile->offset.x;
+	if((tile->offset.x + myTilingCharatcteristics.maxTileSizeXPix) <
+			myTilingCharatcteristics.topLeftPix.x + myTilingCharatcteristics.overallXSize) {
+		tile->width.x = (myTilingCharatcteristics.maxTileSizeXPix);
+	} else {
+		tile->width.x = myTilingCharatcteristics.overallXSize - tile->offset.x;//the last tile in x direction might be samller
+	}
 
-	tile->width.y = (tile->offset.y + myTilingCharatcteristics.maxTileSizeYPix) < myDatatsetInfo.extent.y?
-			(myTilingCharatcteristics.maxTileSizeYPix) :
-			myDatatsetInfo.extent.y - tile->offset.y;
+	if((tile->offset.y + myTilingCharatcteristics.maxTileSizeYPix) <
+			myTilingCharatcteristics.topLeftPix.y + myTilingCharatcteristics.overallYSize) {
+		tile->width.y = (myTilingCharatcteristics.maxTileSizeYPix);
+	} else {
+		tile->width.y = myTilingCharatcteristics.overallYSize - tile->offset.y;//the last tile in x direction might be samller
+	}
 
 	tile->memsize = tile->width.x*tile->width.y*sizeof(float);
 
@@ -361,6 +400,10 @@ resultType GeoTiffHandler::getTile(const int xTile, const int yTile,
 //	}
 
 	makeExtractFromTIFFFile(extP, &tileC, filename.c_str());
+	curTile.tileLoaded = true;
+	curTile.outstandingReferences++;
+	curTile.xTile = xTile;
+	curTile.yTile = yTile;
 	curTile.width.x  = tile->width.x;
 	curTile.width.y  = tile->width.y;
 	curTile.offset.x = tile->offset.x;
@@ -378,7 +421,7 @@ resultType GeoTiffHandler::releaseTile(const int xTile, const int yTile) {
 		return INVALID_TILE_REQUESTED;
 	}
 
-	curTile.outstandingReferences--;	//decrement the reference counter
+	if(curTile.outstandingReferences>0) curTile.outstandingReferences--;	//decrement the reference counter
 
 	return SUCCESS;
 }

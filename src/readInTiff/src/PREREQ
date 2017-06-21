@@ -18,3 +18,18 @@ make install
 LibGDAL (http://www.gdal.org/) is also needed for all the conversion stuff:
 On Ubuntu:
 sudo apt-get install libgdal-dev
+
+compile with C++11
+-std=c++0x
+
+add the correct path to libgdal and to libtiff includes in the include search path. On Ubuntu:
+-I/usr/include/gdal
+
+add the libraries libtiff and libgdal to the project
+-lgdal -ltiff
+
+Compiler Call:
+g++ -std=c++0x -I/usr/include/gdal -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/GeoTiffHandler.d" -MT"src/GeoTiffHandler.o" -o "src/GeoTiffHandler.o" "../src/GeoTiffHandler.cpp"
+Linker Call:
+g++  -o "GeoTiff_Handler"  ./src/GeoTiffHandler.o ./src/GeoTiffHandlerTest.o ./src/readInTiff.o   -lgdal -ltiff
+
