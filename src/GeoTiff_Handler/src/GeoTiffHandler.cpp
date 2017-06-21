@@ -336,14 +336,14 @@ resultType GeoTiffHandler::getTile(const int xTile, const int yTile,
 	tile->offset.y = myTilingCharatcteristics.topLeftPix.y +
 			yTile*(myTilingCharatcteristics.maxTileSizeYPix- myTilingCharatcteristics.overlapYPix);
 
-	if((tile->offset.x + myTilingCharatcteristics.maxTileSizeXPix) <
+	if((tile->offset.x + myTilingCharatcteristics.maxTileSizeXPix) <=
 			myTilingCharatcteristics.topLeftPix.x + myTilingCharatcteristics.overallXSize) {
 		tile->width.x = (myTilingCharatcteristics.maxTileSizeXPix);
 	} else {
 		tile->width.x = myTilingCharatcteristics.overallXSize - tile->offset.x;//the last tile in x direction might be samller
 	}
 
-	if((tile->offset.y + myTilingCharatcteristics.maxTileSizeYPix) <
+	if((tile->offset.y + myTilingCharatcteristics.maxTileSizeYPix) <=
 			myTilingCharatcteristics.topLeftPix.y + myTilingCharatcteristics.overallYSize) {
 		tile->width.y = (myTilingCharatcteristics.maxTileSizeYPix);
 	} else {
@@ -356,7 +356,7 @@ resultType GeoTiffHandler::getTile(const int xTile, const int yTile,
 	//get the real tile data
 	//check if the tile data is already loaded into memory
 	if(curTile.tileLoaded){
-		if(curTile.xTile == xTile || curTile.yTile == yTile){
+		if(curTile.xTile == xTile && curTile.yTile == yTile){
 			//the requested tile is already loaded to the buffer at curTile.tileBuf
 			tile->buf = curTile.tileBuf;
 			curTile.outstandingReferences++;	//increment the reference counter
@@ -421,7 +421,8 @@ resultType GeoTiffHandler::releaseTile(const int xTile, const int yTile) {
 		return INVALID_TILE_REQUESTED;
 	}
 
-	if(curTile.outstandingReferences>0) curTile.outstandingReferences--;	//decrement the reference counter
+	curTile.outstandingReferences--;	//decrement the reference counter
+	assert(curTile.outstandingReferences >= 0);
 
 	return SUCCESS;
 }

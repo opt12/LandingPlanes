@@ -211,7 +211,7 @@ int main(int argc, char * argv[]) {
 
 		geoBR = {geoBottomRight.latitude-1, geoBottomRight.longitude+1};
 		result = myGeoTiffHandler.getTilingInfo(geoTopLeft,
-				geoBR, 2000, 25e6, &myTilingChar);
+				geoBR, 2000, 100e6, &myTilingChar);
 		if(result == SUCCESS_NOT_ENTIRELY_COVERED) {cout << "Tiling data available, but requested area not entirely covered\n";}
 		cout << "The file for " << geoTopLeft << " to " << geoBR
 				<< " will be tiled like this:\n" << myTilingChar;
