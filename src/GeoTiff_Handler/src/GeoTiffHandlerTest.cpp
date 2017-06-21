@@ -229,68 +229,68 @@ int main(int argc, char * argv[]) {
 			}
 		}
 
-//		//Flughafen Düsseldorf
-//		geoTL={51.3088, 6.7035}; geoBR = {51.2540, 6.8491};
-//		result = myGeoTiffHandler.getTilingInfo(geoTL,
-//				geoBR, 2000, 500e6, &myTilingChar);
-//		if(result == SUCCESS_NOT_ENTIRELY_COVERED) {cout << "Tiling data available, but requested area not entirely covered\n";}
-//		cout << "The file for " << geoTL << " to " << geoBR
-//				<< " will be tiled like this:\n" << myTilingChar;
-//
-//		for(int idxX=0; idxX< myTilingChar.tilesInX; idxX++){
-//			for(int idxY=0; idxY< myTilingChar.tilesInY; idxY++){
-//				tileData tile;
-//				myGeoTiffHandler.getTile(idxX, idxY, &tile);
-//				cout << tile;
-//				string matrixName= "Duesseldorf_tile_"+to_string(idxX)+"_"+to_string(idxY);
-//				string fileNameOut = matrixName+string(".m");
-//				printMatrixToFile(fileNameOut.c_str(), matrixName.c_str(),
-//						tile.width.x, tile.width.y, tile.buf);
-//				myGeoTiffHandler.releaseTile(idxX, idxY);
-//			}
-//		}
-//		//Tagebau Hambach und Inden
-//		geoTL={50.9537, 6.3116}; geoBR = {50.8085, 6.6962};
-//		result = myGeoTiffHandler.getTilingInfo(geoTL,
-//				geoBR, 2000, 500e6, &myTilingChar);
-//		if(result == SUCCESS_NOT_ENTIRELY_COVERED) {cout << "Tiling data available, but requested area not entirely covered\n";}
-//		cout << "The file for " << geoTL << " to " << geoBR
-//				<< " will be tiled like this:\n" << myTilingChar;
-//
-//		for(int idxX=0; idxX< myTilingChar.tilesInX; idxX++){
-//			for(int idxY=0; idxY< myTilingChar.tilesInY; idxY++){
-//				tileData tile;
-//				myGeoTiffHandler.getTile(idxX, idxY, &tile);
-//				cout << tile;
-//				string matrixName= "Hambach_Inden_tile_"+to_string(idxX)+"_"+to_string(idxY);
-//				string fileNameOut = matrixName+string(".m");
-//				printMatrixToFile(fileNameOut.c_str(), matrixName.c_str(),
-//						tile.width.x, tile.width.y, tile.buf);
-//				myGeoTiffHandler.releaseTile(idxX, idxY);
-//			}
-//		}
-//
-//		//Flughafen Köln Bonn
-//		geoTL={50.8894, 7.1027}; geoBR = {50.8478, 7.1799};
-//		result = myGeoTiffHandler.getTilingInfo(geoTL,
-//				geoBR, 2000, 500e6, &myTilingChar);
-//		if(result == SUCCESS_NOT_ENTIRELY_COVERED) {cout << "Tiling data available, but requested area not entirely covered\n";}
-//		cout << "The file for " << geoTL << " to " << geoBR
-//				<< " will be tiled like this:\n" << myTilingChar;
-//
-//		for(int idxX=0; idxX< myTilingChar.tilesInX; idxX++){
-//			for(int idxY=0; idxY< myTilingChar.tilesInY; idxY++){
-//				tileData tile;
-//				myGeoTiffHandler.getTile(idxX, idxY, &tile);
-//				cout << tile;
-//				string matrixName= "Koeln_Bonn_tile_"+to_string(idxX)+"_"+to_string(idxY);
-//				string fileNameOut = matrixName+string(".m");
-//				printMatrixToFile(fileNameOut.c_str(), matrixName.c_str(),
-//						tile.width.x, tile.width.y, tile.buf);
-//				myGeoTiffHandler.releaseTile(idxX, idxY);
-//			}
-//		}
+		//Flughafen Düsseldorf
+		geoTL={51.3088, 6.7035}; geoBR = {51.2540, 6.8491};
+		result = myGeoTiffHandler.getTilingInfo(geoTL,
+				geoBR, 2000, 500e6, &myTilingChar);
+		if(result == SUCCESS_NOT_ENTIRELY_COVERED) {cout << "Tiling data available, but requested area not entirely covered\n";}
+		cout << "The file for " << geoTL << " to " << geoBR
+				<< " will be tiled like this:\n" << myTilingChar;
 
+		for(int idxX=0; idxX< myTilingChar.tilesInX; idxX++){
+			for(int idxY=0; idxY< myTilingChar.tilesInY; idxY++){
+				tileData tile;
+				myGeoTiffHandler.getTile(idxX, idxY, &tile);
+				cout << tile;
+				string matrixName= "Duesseldorf_tile_"+to_string(idxX)+"_"+to_string(idxY);
+				string fileNameOut = matrixName+string(".m");
+				printMatrixToFile(fileNameOut.c_str(), matrixName.c_str(),
+						tile.width.x, tile.width.y, tile.buf);
+				myGeoTiffHandler.releaseTile(idxX, idxY);
+			}
+		}
+		//Tagebau Hambach und Inden
+		geoTL={50.9537, 6.3116}; geoBR = {50.8085, 6.6962};
+		result = myGeoTiffHandler.getTilingInfo(geoTL,
+				geoBR, 2000, 500e6, &myTilingChar);
+		if(result == SUCCESS_NOT_ENTIRELY_COVERED) {cout << "Tiling data available, but requested area not entirely covered\n";}
+		cout << "The file for " << geoTL << " to " << geoBR
+				<< " will be tiled like this:\n" << myTilingChar;
 
+		for(int idxX=0; idxX< myTilingChar.tilesInX; idxX++){
+			for(int idxY=0; idxY< myTilingChar.tilesInY; idxY++){
+				tileData tile;
+				myGeoTiffHandler.getTile(idxX, idxY, &tile);
+				cout << tile;
+				string matrixName= "Hambach_Inden_tile_"+to_string(idxX)+"_"+to_string(idxY);
+				string fileNameOut = matrixName+string(".m");
+				printMatrixToFile(fileNameOut.c_str(), matrixName.c_str(),
+						tile.width.x, tile.width.y, tile.buf);
+				myGeoTiffHandler.releaseTile(idxX, idxY);
+			}
+		}
+
+		//Flughafen Köln Bonn
+		geoTL={50.8894, 7.1027}; geoBR = {50.8478, 7.1799};
+		result = myGeoTiffHandler.getTilingInfo(geoTL,
+				geoBR, 2000, 500e6, &myTilingChar);
+		if(result == SUCCESS_NOT_ENTIRELY_COVERED) {cout << "Tiling data available, but requested area not entirely covered\n";}
+		cout << "The file for " << geoTL << " to " << geoBR
+				<< " will be tiled like this:\n" << myTilingChar;
+
+		for(int idxX=0; idxX< myTilingChar.tilesInX; idxX++){
+			for(int idxY=0; idxY< myTilingChar.tilesInY; idxY++){
+				tileData tile;
+				myGeoTiffHandler.getTile(idxX, idxY, &tile);
+				cout << tile;
+				string matrixName= "Koeln_Bonn_tile_"+to_string(idxX)+"_"+to_string(idxY);
+				string fileNameOut = matrixName+string(".m");
+				printMatrixToFile(fileNameOut.c_str(), matrixName.c_str(),
+						tile.width.x, tile.width.y, tile.buf);
+				myGeoTiffHandler.releaseTile(idxX, idxY);
+			}
+		}
+
+		myGeoTiffHandler.closeGeoTiff();
 	}
 }
