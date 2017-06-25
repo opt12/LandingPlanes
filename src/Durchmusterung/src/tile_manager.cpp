@@ -1,6 +1,5 @@
 #include "tile_manager.h"
 
-
 /*! \brief constructor of tile_manager
  *   
  *

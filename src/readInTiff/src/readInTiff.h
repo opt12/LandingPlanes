@@ -12,6 +12,7 @@
 extern "C" {
 #endif
 
+#include <stddef.h>
 #include <tiff.h>
 #include "errorCodes.h"
 
