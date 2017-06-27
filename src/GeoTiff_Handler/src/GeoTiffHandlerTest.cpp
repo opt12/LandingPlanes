@@ -223,8 +223,8 @@ int main(int argc, char * argv[]) {
 				cout << tile;
 				string matrixName= "tile_"+to_string(idxX)+"_"+to_string(idxY);
 				string fileNameOut = matrixName+string(".m");
-				printMatrixToFile(fileNameOut.c_str(), matrixName.c_str(),
-						tile.width.x, tile.width.y, tile.buf);
+//				printMatrixToFile(fileNameOut.c_str(), matrixName.c_str(),
+//						tile.width.x, tile.width.y, tile.buf);
 				myGeoTiffHandler.releaseTile(idxX, idxY);
 			}
 		}
@@ -290,6 +290,92 @@ int main(int argc, char * argv[]) {
 				myGeoTiffHandler.releaseTile(idxX, idxY);
 			}
 		}
+
+		//Tagebau Inden klein
+		geoTL={50.8903, 6.3156}; geoBR = {50.8308, 6.4232};
+		result = myGeoTiffHandler.getTilingInfo(geoTL,
+				geoBR, 2000, 500e6, &myTilingChar);
+		if(result == SUCCESS_NOT_ENTIRELY_COVERED) {cout << "Tiling data available, but requested area not entirely covered\n";}
+		cout << "The file for " << geoTL << " to " << geoBR
+				<< " will be tiled like this:\n" << myTilingChar;
+
+		for(int idxX=0; idxX< myTilingChar.tilesInX; idxX++){
+			for(int idxY=0; idxY< myTilingChar.tilesInY; idxY++){
+				tileData tile;
+				myGeoTiffHandler.getTile(idxX, idxY, &tile);
+				cout << tile;
+				string matrixName= "Inden_tile_"+to_string(idxX)+"_"+to_string(idxY);
+				string fileNameOut = matrixName+string(".m");
+				printMatrixToFile(fileNameOut.c_str(), matrixName.c_str(),
+						tile.width.x, tile.width.y, tile.buf);
+				myGeoTiffHandler.releaseTile(idxX, idxY);
+			}
+		}
+
+		//Flughafen Düsseldorf_Landebahn
+		geoTL={51.2894, 6.7448}; geoBR = {51.2842, 6.7737};
+		result = myGeoTiffHandler.getTilingInfo(geoTL,
+				geoBR, 2000, 500e6, &myTilingChar);
+		if(result == SUCCESS_NOT_ENTIRELY_COVERED) {cout << "Tiling data available, but requested area not entirely covered\n";}
+		cout << "The file for " << geoTL << " to " << geoBR
+				<< " will be tiled like this:\n" << myTilingChar;
+
+		for(int idxX=0; idxX< myTilingChar.tilesInX; idxX++){
+			for(int idxY=0; idxY< myTilingChar.tilesInY; idxY++){
+				tileData tile;
+				myGeoTiffHandler.getTile(idxX, idxY, &tile);
+				cout << tile;
+				string matrixName= "DUS_tile_"+to_string(idxX)+"_"+to_string(idxY);
+				string fileNameOut = matrixName+string(".m");
+				printMatrixToFile(fileNameOut.c_str(), matrixName.c_str(),
+						tile.width.x, tile.width.y, tile.buf);
+				myGeoTiffHandler.releaseTile(idxX, idxY);
+			}
+		}
+
+		//Elbe
+		geoTL={53.5517, 9.7758}; geoBR = {53.5303, 9.8266};
+		result = myGeoTiffHandler.getTilingInfo(geoTL,
+				geoBR, 2000, 500e6, &myTilingChar);
+		if(result == SUCCESS_NOT_ENTIRELY_COVERED) {cout << "Tiling data available, but requested area not entirely covered\n";}
+		cout << "The file for " << geoTL << " to " << geoBR
+				<< " will be tiled like this:\n" << myTilingChar;
+
+		for(int idxX=0; idxX< myTilingChar.tilesInX; idxX++){
+			for(int idxY=0; idxY< myTilingChar.tilesInY; idxY++){
+				tileData tile;
+				myGeoTiffHandler.getTile(idxX, idxY, &tile);
+				cout << tile;
+				string matrixName= "Elbe_tile_"+to_string(idxX)+"_"+to_string(idxY);
+				string fileNameOut = matrixName+string(".m");
+				printMatrixToFile(fileNameOut.c_str(), matrixName.c_str(),
+						tile.width.x, tile.width.y, tile.buf);
+				myGeoTiffHandler.releaseTile(idxX, idxY);
+			}
+		}
+
+		//Airbus_Finki
+		geoTL={53.5523, 9.7777}; geoBR = {53.5225, 9.8586};
+		result = myGeoTiffHandler.getTilingInfo(geoTL,
+				geoBR, 2000, 500e6, &myTilingChar);
+		if(result == SUCCESS_NOT_ENTIRELY_COVERED) {cout << "Tiling data available, but requested area not entirely covered\n";}
+		cout << "The file for " << geoTL << " to " << geoBR
+				<< " will be tiled like this:\n" << myTilingChar;
+
+		for(int idxX=0; idxX< myTilingChar.tilesInX; idxX++){
+			for(int idxY=0; idxY< myTilingChar.tilesInY; idxY++){
+				tileData tile;
+				myGeoTiffHandler.getTile(idxX, idxY, &tile);
+				cout << tile;
+				string matrixName= "Airbus_Finki_tile_"+to_string(idxX)+"_"+to_string(idxY);
+				string fileNameOut = matrixName+string(".m");
+				printMatrixToFile(fileNameOut.c_str(), matrixName.c_str(),
+						tile.width.x, tile.width.y, tile.buf);
+				myGeoTiffHandler.releaseTile(idxX, idxY);
+			}
+		}
+
+
 
 		myGeoTiffHandler.closeGeoTiff();
 	}
