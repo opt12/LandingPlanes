@@ -147,7 +147,7 @@ private:
 	struct currentTile {
 		bool tileLoaded = false;
 		int outstandingReferences = 0;	//this is a reference counter
-		int xTile=0, yTile=0;
+		int xTile=-1, yTile=-1;
 		pixelPair offset={0,0};
 		pixelPair width ={0,0};
 		size_t memsize=0;
