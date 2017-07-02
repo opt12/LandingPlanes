@@ -64,5 +64,7 @@ void tile_manager::get_tile_array(tile_worker &worker_in, int xmin, int ymin, in
 #endif
   global_map_map[*p] = info;
   worker_in.set_param_and_tile(p, info);
+  worker_in.set_x_resolution(20);
+  worker_in.set_y_resolution(20); // ask Felix how to retrieve this information from tiff
   return;
 }

@@ -8,6 +8,13 @@
 
 using namespace std;
 
+
+/*! \brief check whether a given file is accessible for reading
+ *   
+ *
+ * This function checks whether the given input file is readable
+ */
+
 int file_readable(string infile) 
 {
   ifstream my_file(infile.c_str());
@@ -25,6 +32,8 @@ int main(int argc, char* argv[]) {
   int arg = 1;
   string tiff_in;
   double landing_plane_length=0.0;
+  double short_range_slope=100;
+  double long_range_slope=100;
   while (arg < argc && argv[arg][0] == '-') {     //so lange noch Argumente da sind, die mit '-' beginnen
      if (argv[arg][1] == 'E')
      {
@@ -34,6 +43,18 @@ int main(int argc, char* argv[]) {
      else if (argv[arg][1] == 'L') // length of landing plane
      {
        landing_plane_length=atof(argv[arg+1]);
+       ++arg;
+     }
+     else if (argv[arg][1] == 'S') //short range slope in percent
+     {
+       short_range_slope=atof(argv[arg+1]);
+       ++arg;
+     }
+     else if (argv[arg][1] == 'T') // long range slope in percent
+     {
+       long_range_slope=atof(argv[arg+1]);
+       ++arg;
+
      }
 
     ++arg;
@@ -52,8 +73,8 @@ int main(int argc, char* argv[]) {
   }
   cout << "Minimum landing plane length is "<<landing_plane_length<<" m"<<endl;
   cout << "Input file: "<<tiff_in<<endl;
-
-
+  cout <<  "short range slope: "<<short_range_slope<<" %"<<endl;
+  cout << "long range slope: "<<long_range_slope<<" %"<<endl;
   tile_worker worker1;
 
                         

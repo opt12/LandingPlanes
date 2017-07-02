@@ -25,6 +25,33 @@ void tile_worker::set_param_and_tile(extractionParameters* param_in, tileCharact
 }
 
 
+/*! \brief set parameter x resolution of map
+ *   
+ *
+ *  The resolution of the geo tiff has to be given to the worker so that it can make appropriate adaptions to slope parameters
+ */
+
+void tile_worker::set_x_resolution(double resoultion_x)
+{
+  this->resolution_x=resolution_x;
+}
+
+
+/*! \brief set parameter x resolution of map
+ *   
+ *
+ * The resolution of the geo tiff has to be given to the worker so that it can make appropriate adaptions to slope parameters
+ */
+
+void tile_worker::set_y_resolution(double resoultion_y)
+{
+  this->resolution_y=resolution_y;
+}
+
+
+
+
+
 /*! \brief DEBUG - print out the whole map in horizontal order
  *   
  *
