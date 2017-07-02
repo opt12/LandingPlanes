@@ -272,25 +272,17 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
   while (! completed)
   {
     ++checksum;
-    printf("aktuell %d und %d mit %lf\n",i,j,access_single_element(i,j));
+//    printf("aktuell %d und %d mit %lf\n",i,j,access_single_element(i,j));
    
-    if (not_defined != NULL)
-    {
-      cout << "not defined gesetzt"<<*not_defined<<endl;
-    }
-    else
-    {
-      cout << "not defined null"<<endl;
-    }   
 
     if (not_defined == NULL || *not_defined != access_single_element(i,j)) 
     {
     if (previous_valid)
     {
-      printf("compare point %d,%d with %d,%d\n",i,j,previous_x,previous_y);
+ //     printf("compare point %d,%d with %d,%d\n",i,j,previous_x,previous_y);
       if (abs(access_single_element(i,j) - access_single_element(i,j)) < short_range_slope)
       {
-        printf("accept  sh.sl. %lf und %lf\n",access_single_element(i,j),access_single_element(previous_x,previous_y));
+   //     printf("accept  sh.sl. %lf und %lf\n",access_single_element(i,j),access_single_element(previous_x,previous_y));
         int new_x=i+orth_x;
         int new_y=j+orth_y;
         int ok=1;
@@ -309,7 +301,7 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
         if (ok)
         {
           ++current_in_a_row;
-          printf("Ein fertiger Punkt ist %d, %d\n",i,j);  
+     //     printf("Ein fertiger Punkt ist %d, %d\n",i,j);  
         }
         if(!ok)
         {
@@ -319,7 +311,7 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
       else
       {
         check_current_landebahn(current_in_a_row, needed_points_in_a_row);
-        printf("not accept sh.sl. %lf und %lf\n",access_single_element(i,j),access_single_element(previous_x,previous_y)); 
+    //    printf("not accept sh.sl. %lf und %lf\n",access_single_element(i,j),access_single_element(previous_x,previous_y)); 
       }
     }
       previous_valid=1;
@@ -328,6 +320,7 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
     {
      //current point not def
      previous_valid=0;
+     current_in_a_row=0;
     }
     previous_x=i;
     previous_y=j;
