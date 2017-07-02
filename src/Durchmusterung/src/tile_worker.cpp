@@ -143,6 +143,10 @@ void tile_worker::set_long_range_slope(double long_range_slope)
  this->long_range_slope=long_range_slope;
 }
 
+void tile_worker::set_not_defined(double* not_defined)
+{
+  this->not_defined=not_defined;
+}
 
 
 
@@ -269,7 +273,18 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
   {
     ++checksum;
     printf("aktuell %d und %d mit %lf\n",i,j,access_single_element(i,j));
+   
+    if (not_defined != NULL)
+    {
+      cout << "not defined gesetzt"<<*not_defined<<endl;
+    }
+    else
+    {
+      cout << "not defined null"<<endl;
+    }   
 
+    if (not_defined == NULL || *not_defined != access_single_element(i,j)) 
+    {
     if (previous_valid)
     {
       printf("compare point %d,%d with %d,%d\n",i,j,previous_x,previous_y);
@@ -307,13 +322,19 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
         printf("not accept sh.sl. %lf und %lf\n",access_single_element(i,j),access_single_element(previous_x,previous_y)); 
       }
     }
+      previous_valid=1;
+    }
+    else
+    {
+     //current point not def
+     previous_valid=0;
+    }
     previous_x=i;
     previous_y=j;
     i +=incx;
     j +=incy;
 
    
-   previous_valid=1;
    if (direction == 1)
    {
      if (j >= tile->outlength)

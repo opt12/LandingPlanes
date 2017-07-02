@@ -40,10 +40,11 @@ class tile_manager{
     double short_range_slope;
     double long_range_slope; 
     map <extractionParameters, tileCharacteristics*,cmpByStruct > global_map_map;
-    
+    double* not_defined;
+ 
   public:
     tile_manager();
-    tile_manager(string source_file_in, double landing_plane_length, double short_range_slope, double long_range_slope);
+    tile_manager(string source_file_in, double landing_plane_length, double short_range_slope, double long_range_slope,double* not_definied);
     void get_tile(tile_worker& worker_in, int xmin, int ymin, int width, int length);
 
 };

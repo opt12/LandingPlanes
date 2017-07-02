@@ -22,6 +22,7 @@ class tile_worker{
    double landing_plane_length;
    double short_range_slope;
    double long_range_slope;
+   double* not_defined;
    int check_current_landebahn(int &current_in_a_row, const int &needed_points_in_a_row);   
  
   public:
@@ -35,4 +36,5 @@ class tile_worker{
     void set_landing_plane_length(double landing_plane_length);
     void set_short_range_slope(double short_range_slope);
     void set_long_range_slope(double long_range_slope);
+    void set_not_defined(double* not_defined);
 };

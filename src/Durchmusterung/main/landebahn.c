@@ -34,6 +34,7 @@ int main(int argc, char* argv[]) {
   double landing_plane_length=0.0;
   double short_range_slope=100;
   double long_range_slope=100;
+  double *not_defined = NULL;
   while (arg < argc && argv[arg][0] == '-') {     //so lange noch Argumente da sind, die mit '-' beginnen
      if (argv[arg][1] == 'E')
      {
@@ -56,6 +57,12 @@ int main(int argc, char* argv[]) {
        ++arg;
 
      }
+     else if (argv[arg][1] == 'N') // not defined
+     {
+       not_defined = new double();
+       *not_defined = atof(argv[arg+1]);
+       ++arg;
+     }
 
     ++arg;
   }
@@ -75,11 +82,13 @@ int main(int argc, char* argv[]) {
   cout << "Input file: "<<tiff_in<<endl;
   cout <<  "short range slope: "<<short_range_slope<<" %"<<endl;
   cout << "long range slope: "<<long_range_slope<<" %"<<endl;
+  if (not_defined != NULL)
+    cout << "not defined ist "<<*not_defined<<endl;
   tile_worker worker1;
 
                         
 
-  tile_manager central_manager(tiff_in,landing_plane_length,short_range_slope,long_range_slope);
+  tile_manager central_manager(tiff_in,landing_plane_length,short_range_slope,long_range_slope,not_defined);
   central_manager.get_tile(worker1,0,0,100,100);
   //worker1.check_element_access();
   //return 6;
