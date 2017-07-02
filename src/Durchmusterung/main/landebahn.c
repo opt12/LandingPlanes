@@ -79,7 +79,7 @@ int main(int argc, char* argv[]) {
 
                         
 
-  tile_manager central_manager(tiff_in);
+  tile_manager central_manager(tiff_in,landing_plane_length,short_range_slope,long_range_slope);
   central_manager.get_tile(worker1,0,0,100,100);
   //worker1.check_element_access();
   //return 6;

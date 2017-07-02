@@ -35,12 +35,15 @@ class tile_manager{
 
   private:
     void get_tile_array( tile_worker& worker_in, int xmin, int ymin, int width, int length); 
-    string tiff_input_file; 
+    string tiff_input_file;
+    double landing_plane_length;
+    double short_range_slope;
+    double long_range_slope; 
     map <extractionParameters, tileCharacteristics*,cmpByStruct > global_map_map;
     
   public:
     tile_manager();
-    tile_manager(string source_file_in);
+    tile_manager(string source_file_in, double landing_plane_length, double short_range_slope, double long_range_slope);
     void get_tile(tile_worker& worker_in, int xmin, int ymin, int width, int length);
 
 };

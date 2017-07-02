@@ -32,7 +32,7 @@ void tile_worker::set_param_and_tile(extractionParameters* param_in, tileCharact
  *  The resolution of the geo tiff has to be given to the worker so that it can make appropriate adaptions to slope parameters
  */
 
-void tile_worker::set_x_resolution(double resoultion_x)
+void tile_worker::set_x_resolution(double resolution_x)
 {
   this->resolution_x=resolution_x;
 }
@@ -44,7 +44,7 @@ void tile_worker::set_x_resolution(double resoultion_x)
  * The resolution of the geo tiff has to be given to the worker so that it can make appropriate adaptions to slope parameters
  */
 
-void tile_worker::set_y_resolution(double resoultion_y)
+void tile_worker::set_y_resolution(double resolution_y)
 {
   this->resolution_y=resolution_y;
 }
@@ -117,6 +117,23 @@ void tile_worker::durchmustere_kachel()
   return;
 }
 
+void tile_worker::set_landing_plane_length(double landing_plane_length)
+{
+ this->landing_plane_length=landing_plane_length;
+}
+
+void tile_worker::set_short_range_slope(double short_range_slope)
+{
+ this->short_range_slope=short_range_slope;
+}
+
+void tile_worker::set_long_range_slope(double long_range_slope)
+{
+ this->long_range_slope=long_range_slope;
+}
+
+
+
 
 /*! \brief central function for checking conditions
  *   
@@ -133,6 +150,11 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
 
   int orth_x=0;
   int orth_y=0;
+  
+  int allowed_diff=0;
+
+  cout << "slope "<<short_range_slope<<" and reso " << resolution_y<<endl;
+
   switch (direction){
     case 1:
         startx=0;
@@ -141,6 +163,7 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
         incy=1;
         orth_x=1;
         orth_y=0;
+        allowed_diff=short_range_slope*resolution_y/100.0;
         break;
     case 2:
         startx=0;
@@ -149,6 +172,7 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
         incy=1;
         orth_x=1;
         orth_y=-1;
+        allowed_diff=short_range_slope*sqrt(pow(resolution_y,2)*pow(resolution_x,2))/100.0;
         break;
     case 3:
         startx=tile->outwidth-1;
@@ -157,6 +181,7 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
         incy=0;
         orth_x=0;
         orth_y=1;
+        allowed_diff=short_range_slope*resolution_x/100.0;
         break;
     case 4:
         startx=tile->outwidth-1;
@@ -165,6 +190,8 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
         incy=-1;
         orth_x=1;
         orth_y=-1;
+        allowed_diff=short_range_slope*sqrt(pow(resolution_y,2)*pow(resolution_x,2))/100.0; 
+
         break;
     case 5:
         startx=0;
@@ -173,6 +200,7 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
         incy=-1;
         orth_x=1;
         orth_y=0;
+        allowed_diff=short_range_slope*resolution_y/100.0;
          break;
     case 6:
         startx=0;
@@ -181,6 +209,8 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
         incy=-1; 
         orth_x=1;
         orth_y=1;
+        allowed_diff=short_range_slope*sqrt(pow(resolution_y,2)*pow(resolution_x,2))/100.0; 
+
         break;
     case 7:
         startx=0;
@@ -189,6 +219,7 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
         incy=0;
         orth_x=0;
         orth_y=1;
+        allowed_diff=short_range_slope*resolution_x/100.0;
         break;
     case 8:
         startx=0;
@@ -197,10 +228,14 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
         incy=1;
         orth_x=1;
         orth_y=-1;
+        allowed_diff=short_range_slope*sqrt(pow(resolution_y,2)*pow(resolution_x,2))/100.0; 
+
         break;
     default:
         return ; 
   }
+
+  cout << "allowed short range diff "<< allowed_diff<<endl;
 
   int completed=0;
 

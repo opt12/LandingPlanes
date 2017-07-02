@@ -16,9 +16,12 @@ tile_manager::tile_manager()
  *
  * This constructors sets all class members to default and already predefines the input tiff file
  */
-tile_manager::tile_manager(string input_file)
+tile_manager::tile_manager(string tiff_input_file, double landing_plane_length, double short_range_slope, double long_range_slope)
 {
-  tiff_input_file=input_file;
+  this->tiff_input_file=tiff_input_file;
+  this->landing_plane_length=landing_plane_length;
+  this->short_range_slope=short_range_slope;
+  this->long_range_slope=long_range_slope;
 }
 
 /*! \brief read from tiff to tile_worker
@@ -64,7 +67,12 @@ void tile_manager::get_tile_array(tile_worker &worker_in, int xmin, int ymin, in
 #endif
   global_map_map[*p] = info;
   worker_in.set_param_and_tile(p, info);
-  worker_in.set_x_resolution(20);
-  worker_in.set_y_resolution(20); // ask Felix how to retrieve this information from tiff
+  cout << "before call to worker"<<endl;
+  worker_in.set_x_resolution(20.0);
+  worker_in.set_y_resolution(20.0); // ask Felix how to retrieve this information from tiff
+  worker_in.set_landing_plane_length(landing_plane_length);
+  cout << "hier ist slope "<<short_range_slope<<endl;
+  worker_in.set_short_range_slope(short_range_slope);
+  worker_in.set_long_range_slope(long_range_slope);
   return;
 }
