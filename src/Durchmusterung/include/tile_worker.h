@@ -22,7 +22,8 @@ class tile_worker{
    double landing_plane_length;
    double short_range_slope;
    double long_range_slope;
-    
+   int check_current_landebahn(int &current_in_a_row, const int &needed_points_in_a_row);   
+ 
   public:
     tile_worker();
     void set_param_and_tile(extractionParameters* param_in, tileCharacteristics* tile_in);
