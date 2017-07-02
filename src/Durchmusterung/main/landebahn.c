@@ -4,22 +4,53 @@
 #include "tile_manager.h"
 #include <string>
 #include <iostream>
+#include <fstream>
 
 using namespace std;
+
+int file_readable(string infile) 
+{
+  ifstream my_file(infile.c_str());
+  if (my_file.good())
+  {
+    my_file.close();
+    return 1;
+  }
+  else
+    return 0;
+}
 
 int main(int argc, char* argv[]) {  	
 
   int arg = 1;
   string tiff_in;
+  double landing_plane_length=0.0;
   while (arg < argc && argv[arg][0] == '-') {     //so lange noch Argumente da sind, die mit '-' beginnen
      if (argv[arg][1] == 'E')
      {
        tiff_in = argv[arg+1];
+       ++arg;
+     }
+     else if (argv[arg][1] == 'L') // length of landing plane
+     {
+       landing_plane_length=atof(argv[arg+1]);
      }
 
     ++arg;
   }
 
+  if (landing_plane_length == 0.0)
+  {
+    cout << "Fatal Error: landing plane length not given or set to zero"<<endl;
+    exit(1);
+  }
+
+  if (!file_readable(tiff_in))
+  {
+    cout << "Fatal Error: Input geo tiff file does not exist or is not readable"<<endl;
+    exit(2);
+  }
+  cout << "Minimum landing plane length is "<<landing_plane_length<<" m"<<endl;
   cout << "Input file: "<<tiff_in<<endl;
 
 
