@@ -10,7 +10,8 @@ tile_worker::tile_worker()
 {
    eparam = NULL;
    tile = NULL;
-
+   resolution_y=0;
+   resolution_x=0;
 }
 
 /*! \brief set parameter and tile characteristics
