@@ -451,6 +451,23 @@ geoCoord GeoTiffHandler::pixel2Geo(const pixelCoord pixCoord) {
 
 geoCoord GeoTiffHandler::pixel2Geo(const int xTile, const int yTile,
 		const pixelCoord pixCoord) {
+	//first check the requested tile data:
+	if (xTile < 0 || yTile < 0 || xTile >= myTilingCharatcteristics.tilesInX
+			|| yTile >= myTilingCharatcteristics.tilesInY) {
+		//the requested tile is invalid
+		return {999,999};	//TODO Das ist ein echt blöder Fehlerwert
+	}
+
+	pixelPair offset;
+
+	//now let's calculate the top left pixel of the requested tile:
+	offset.x = myTilingCharatcteristics.topLeftPix.x +
+			xTile*(myTilingCharatcteristics.maxTileSizeXPix- myTilingCharatcteristics.overlapXPix);
+	offset.y = myTilingCharatcteristics.topLeftPix.y +
+			yTile*(myTilingCharatcteristics.maxTileSizeYPix- myTilingCharatcteristics.overlapYPix);
+
+	return pixel2Geo({offset.x+pixCoord.x, offset.y+pixCoord.y});
+
 }
 
 pixelCoord GeoTiffHandler::geo2Pixel(const int xTile, const int yTile,
@@ -458,6 +475,12 @@ pixelCoord GeoTiffHandler::geo2Pixel(const int xTile, const int yTile,
 }
 
 GeoTiffHandler::~GeoTiffHandler() {
-	// TODO Auto-generated destructor stub
+	//we need to release the memory, we allocated to our curTile.tileBuf
+	//however, be careful to destroy an object that has still outstandingReferences
+
+	if(curTile.tileBuf)
+		free(curTile.tileBuf);
+	//TODO: müssen wir noch eine Abfrage auf outstandingReferences einbauen und im Zweifel eine Exception werfen?
+	//In dem Fall zeigen ja noch Alias-Referenzen in den jetzt freigegebenen Speicher.
 }
 
