@@ -91,7 +91,6 @@ static int processExtractPixelCoordOptions(char* cp,
 }
 
 int main(int argc, char * argv[]) {
-
 	GDALAllRegister();
 
 	GeoTiffHandler myGeoTiffHandler;
@@ -143,7 +142,6 @@ int main(int argc, char * argv[]) {
 //		fprintf(stderr, "The extract's position and size must be specified on the command line as argument to the '-E'  or the '-G' option. Aborting.\n");
 //		return -1;
 //	}
-
 	datasetInfo info;
 
 	if (myGeoTiffHandler.getDatasetInfo(&info) == SUCCESS) {
@@ -151,7 +149,7 @@ int main(int argc, char * argv[]) {
 				<< endl;
 		return -1;
 	}
-
+ cout << "zwei"<<endl;
 	if (argc >= arg + 1) {
 
 		if (myGeoTiffHandler.openGeoTiff(argv[arg]) != SUCCESS)

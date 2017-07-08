@@ -14,6 +14,7 @@
 /* Unsigned 64-bit type formatter */
 #define UINT64_FORMAT "%lu"
 
+#define PACKAGE_VERSION "unknown"
 
 
 #endif /* CONFIG_H_ */
