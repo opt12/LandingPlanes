@@ -16,9 +16,15 @@ tile_manager::tile_manager()
  *
  * This constructors sets all class members to default and already predefines the input tiff file
  */
-tile_manager::tile_manager(string input_file)
+tile_manager::tile_manager(string tiff_input_file, double landing_plane_length, double short_range_slope, double long_range_slope, double* not_defined)
 {
-  tiff_input_file=input_file;
+  this->tiff_input_file=tiff_input_file;
+  this->landing_plane_length=landing_plane_length;
+  this->short_range_slope=short_range_slope;
+  this->long_range_slope=long_range_slope;
+  this->not_defined=not_defined;
+  if (not_defined!= NULL)
+    cout << "not defined in constructor "<<*this->not_defined<<endl;
 }
 
 /*! \brief read from tiff to tile_worker
@@ -70,5 +76,13 @@ cout << "Check2: "<<p->requestedxmin << " und " <<p->requestedymin<<" und " <<p-
 #endif
   global_map_map[*p] = info;
   worker_in.set_param_and_tile(p, info);
+  cout << "before call to worker"<<endl;
+  worker_in.set_x_resolution(20.0);
+  worker_in.set_y_resolution(20.0); // ask Felix how to retrieve this information from tiff
+  worker_in.set_landing_plane_length(landing_plane_length);
+  cout << "hier ist slope "<<short_range_slope<<endl;
+  worker_in.set_short_range_slope(short_range_slope);
+  worker_in.set_long_range_slope(long_range_slope);
+  worker_in.set_not_defined(not_defined);
   return;
 }

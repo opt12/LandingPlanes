@@ -34,3 +34,4 @@ checkdir:
 
 html/index.html: ./src/tile_manager.cpp ./src/tile_worker.cpp ./include/tile_worker.h ./include/tile_manager.h 
 	doxygen doxystyle
+
