@@ -38,6 +38,7 @@ void tile_manager::get_tile(tile_worker &worker_in, int xmin, int ymin, int widt
  */
 void tile_manager::get_tile_array(tile_worker &worker_in, int xmin, int ymin, int width, int length)
 {
+  cout << "aha"<<endl;
   tileCharacteristics *info;
   info = new tileCharacteristics();
   
@@ -48,6 +49,9 @@ void tile_manager::get_tile_array(tile_worker &worker_in, int xmin, int ymin, in
   p->requestedymin = ymin;
   p->requestedwidth = width;
   p->requestedlength = length;
+
+  cout << "Check1: "<<p->requestedxmin << " und " <<p->requestedymin<<" und " <<p->requestedwidth<<" und " <<p->requestedlength<<endl;
+
   int retcode =  getImageInformation(info, tiff_input_file.c_str() );
 #ifdef DEBUG
   cout << "Retcode ist "<<retcode<<endl;
@@ -57,6 +61,8 @@ void tile_manager::get_tile_array(tile_worker &worker_in, int xmin, int ymin, in
   cout << info->outwidth<<endl;
 #endif
   retcode = makeExtractFromTIFFFile(*p, info,tiff_input_file.c_str());
+
+cout << "Check2: "<<p->requestedxmin << " und " <<p->requestedymin<<" und " <<p->requestedwidth<<" und " <<p->requestedlength<<endl;
 #ifdef DEBUG
   cout << "Retcode ist "<<retcode<<endl;
   for (int i=0; i < p->requestedwidth*p->requestedlength; i++)
