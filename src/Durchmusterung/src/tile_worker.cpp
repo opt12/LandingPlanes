@@ -280,21 +280,21 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
     if (previous_valid)
     {
  //     printf("compare point %d,%d with %d,%d\n",i,j,previous_x,previous_y);
-      if (abs(access_single_element(i,j) - access_single_element(i,j)) < short_range_slope)
+      if (fabs(access_single_element(i,j) - access_single_element(i,j)) < short_range_slope)
       {
    //     printf("accept  sh.sl. %lf und %lf\n",access_single_element(i,j),access_single_element(previous_x,previous_y));
         int new_x=i+orth_x;
         int new_y=j+orth_y;
         int ok=1;
         if (((new_x>=0) && (new_x<tile->outwidth)) && ((new_y>=0) && (new_y < tile->outlength)))
-          if (abs(access_single_element(i,j)-access_single_element(new_x,new_y)) > accept_orthogonal_slope)
+          if (fabs(access_single_element(i,j)-access_single_element(new_x,new_y)) > accept_orthogonal_slope)
             ok=0;
         if (ok)
         {
           new_x=i-orth_x;
           new_y=j-orth_y;
           if (((new_x>=0) && (new_x<tile->outwidth)) && ((new_y>=0) && (new_y < tile->outlength)))
-            if (abs(access_single_element(i,j)-access_single_element(new_x,new_y)) > accept_orthogonal_slope)
+            if (fabs(access_single_element(i,j)-access_single_element(new_x,new_y)) > accept_orthogonal_slope)
               ok=0;
 
         }
