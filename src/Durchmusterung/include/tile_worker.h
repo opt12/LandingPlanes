@@ -7,14 +7,14 @@ extern "C" {
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h> 
+#include "GeoTiffHandler.h"
 
 using namespace std;
 
 class tile_worker{
 
   private:
-   extractionParameters* eparam;
-   tileCharacteristics* tile;
+   tileData* tile;
    float access_single_element(int x, int y);
    void check_steigungen(const int direction /*1: N -> S, 2: NNO -> SSW, 3: O -> W, 4: SSO -> NNW, 5: S -> N, 6: SSW -> NNO, 7: W -> O, 8: NNW -> SSO */);
    double resolution_x;
@@ -27,7 +27,7 @@ class tile_worker{
  
   public:
     tile_worker();
-    void set_param_and_tile(extractionParameters* param_in, tileCharacteristics* tile_in);
+    void set_param_and_tile( tileData* tile_in);
     void print_out_map();
     void check_element_access();
     void durchmustere_kachel();

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "landebahn.h"
 #include "tile_manager.h"
+#include "error.h"
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -89,7 +90,19 @@ int main(int argc, char* argv[]) {
                         
 
   tile_manager central_manager(tiff_in,landing_plane_length,short_range_slope,long_range_slope,not_defined);
-  central_manager.get_tile(worker1,0,0,10000,10000);
+  if (central_manager.init_geo_handler() != SUCCESS)
+  {
+    cout << "Error init geo handler"<<endl;
+    return LP_ERR_INIT_GEO ;
+  }
+ 
+  central_manager.select_area(0, 1000, 0, 1000);
+
+ 
+ 
+  for (int i=0; i < central_manager.get_tiles_X();i++)
+    for(int j=0; j < central_manager.get_tiles_Y();j++)
+      central_manager.get_tile(worker1,i,j);
   //worker1.check_element_access();
   //return 6;
   //worker1.print_out_map();

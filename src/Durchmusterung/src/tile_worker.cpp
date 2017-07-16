@@ -19,7 +19,6 @@ int tile_worker::check_current_landebahn(int &current_in_a_row, const int &neede
  */
 tile_worker::tile_worker()
 {
-   eparam = NULL;
    tile = NULL;
    resolution_y=0;
    resolution_x=0;
@@ -30,9 +29,8 @@ tile_worker::tile_worker()
  *
  *  The pointer member variables are set to the instances created by the tile manager
  */
-void tile_worker::set_param_and_tile(extractionParameters* param_in, tileCharacteristics* tile_in)
+void tile_worker::set_param_and_tile(tileData* tile_in)
 {
-  eparam = param_in;
   tile = tile_in;
 }
 
@@ -71,9 +69,9 @@ void tile_worker::set_y_resolution(double resolution_y)
  */
 void tile_worker::print_out_map()
 {
-  for (int i=0; i < eparam->requestedwidth*eparam->requestedlength; i++)
+  /*for (int i=0; i < eparam->requestedwidth*eparam->requestedlength; i++)
   if (tile->buf[i] > -32767)
-    cout << tile->buf[i]<<endl;
+    cout << tile->buf[i]<<endl;*/
 }
 
 //debug function
@@ -84,8 +82,8 @@ void tile_worker::print_out_map()
  */
 void tile_worker::check_element_access()
 {
-  for (int y = 0; y < eparam->requestedlength; y++)
-    for(int x = 0; x < eparam->requestedwidth; x++)
+  for (int y = 0; y < tile->width.y; y++)
+    for(int x = 0; x < tile->width.x; x++)
     {
       float temp = access_single_element(x,y);
      if (temp > -32767)
@@ -101,8 +99,8 @@ void tile_worker::check_element_access()
  */
 float tile_worker::access_single_element(int x, int y)
 {
-  if (eparam->requestedwidth*y+x < eparam->requestedwidth*eparam->requestedlength)
-    return(tile->buf[eparam->requestedwidth*y+x]);
+  if (tile->width.x*y+x < tile->width.x*tile->width.y)
+    return(tile->buf[tile->width.x*y+x]);
   else
    return numeric_limits<float>::min();
 
@@ -193,7 +191,7 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
         needed_points_in_a_row=ceil((double) landing_plane_length/ (double) sqrt(pow(resolution_y,2)+pow(resolution_x,2)));
         break;
     case 3:
-        startx=tile->outwidth-1;
+        startx=tile->width.x-1;
         starty=0;
         incx=-1;
         incy=0;
@@ -203,7 +201,7 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
         needed_points_in_a_row=ceil((double) landing_plane_length/(double) resolution_x);
         break;
     case 4:
-        startx=tile->outwidth-1;
+        startx=tile->width.x-1;
         starty=0;
         incx=-1;
         incy=-1;
@@ -214,7 +212,7 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
         break;
     case 5:
         startx=0;
-        starty=tile->outlength-1;
+        starty=tile->width.y-1;
         incx=0;
         incy=-1;
         orth_x=1;
@@ -244,7 +242,7 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
         break;
     case 8:
         startx=0;
-        starty=tile->outlength-1;
+        starty=tile->width.y-1;
         incx=1;
         incy=1;
         orth_x=1;
@@ -286,14 +284,14 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
         int new_x=i+orth_x;
         int new_y=j+orth_y;
         int ok=1;
-        if (((new_x>=0) && (new_x<tile->outwidth)) && ((new_y>=0) && (new_y < tile->outlength)))
+        if (((new_x>=0) && (new_x<tile->width.x)) && ((new_y>=0) && (new_y < tile->width.y)))
           if (fabs(access_single_element(i,j)-access_single_element(new_x,new_y)) > accept_orthogonal_slope)
             ok=0;
         if (ok)
         {
           new_x=i-orth_x;
           new_y=j-orth_y;
-          if (((new_x>=0) && (new_x<tile->outwidth)) && ((new_y>=0) && (new_y < tile->outlength)))
+          if (((new_x>=0) && (new_x<tile->width.x)) && ((new_y>=0) && (new_y < tile->width.y)))
             if (fabs(access_single_element(i,j)-access_single_element(new_x,new_y)) > accept_orthogonal_slope)
               ok=0;
 
@@ -330,7 +328,7 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
    
    if (direction == 1)
    {
-     if (j >= tile->outlength)
+     if (j >= tile->width.y)
      {
        check_current_landebahn(current_in_a_row, needed_points_in_a_row);
        i++;
@@ -341,9 +339,9 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
    
    if (direction == 2)
    {
-     if ((i<0) || (j>=tile->outlength))
+     if ((i<0) || (j>=tile->width.y))
      {
-       if (startx < tile->outwidth -1)
+       if (startx < tile->width.x -1)
          startx++;
        else
          starty++;
@@ -371,7 +369,7 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
    {
      if ((i<0) || (j < 0))
      {
-       if (starty < tile->outlength  -1)
+       if (starty < tile->width.y  -1)
          ++starty;
        else
          --startx;
@@ -387,7 +385,7 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
    {
      if (j < 0)
      {
-       j=tile->outlength-1;
+       j=tile->width.y-1;
        ++i;
        previous_valid=0;
        check_current_landebahn(current_in_a_row, needed_points_in_a_row);
@@ -396,9 +394,9 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
 
    if (direction == 6)
    {
-     if ((i>tile->outwidth -1) || (j < 0))
+     if ((i>tile->width.x -1) || (j < 0))
      {
-       if (starty < tile->outlength  -1)
+       if (starty < tile->width.y  -1)
          ++starty;
        else
          ++startx;
@@ -413,7 +411,7 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
    
    if (direction == 7)
    {
-     if (i > tile->outwidth -1)
+     if (i > tile->width.x -1)
      {
        i=0;
       check_current_landebahn(current_in_a_row, needed_points_in_a_row);
@@ -423,7 +421,7 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
 
    if (direction == 8)
    {
-     if ((i> tile->outwidth -1) || (j > tile->outlength -1))
+     if ((i> tile->width.x -1) || (j > tile->width.y -1))
      {
        if (starty > 0)
          --starty;
@@ -443,16 +441,16 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
      if( i < 0)
        completed =1;
   
-      if (i >= tile->outwidth)
+      if (i >= tile->width.x)
         completed = 1;
 
-      if (j >= tile->outlength)
+      if (j >= tile->width.y)
         completed=1;
   }
 
   printf("Checksum is %d\n",checksum);
  
-  if (checksum == tile->outwidth*tile->outlength) 
+  if (checksum == tile->width.x*tile->width.y) 
    printf("OK\n");
   else
     printf("FATAL\n");
