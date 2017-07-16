@@ -76,6 +76,11 @@ int tile_manager::init_geo_handler()
 }
 
 
+tile_manager::~tile_manager()
+{
+  delete(tileChar);
+}
+
 int tile_manager::select_area(int xmin, int xmax, int ymin, int ymax)
 {
   cout << "aha"<<endl;
@@ -96,7 +101,7 @@ int tile_manager::select_area(int xmin, int xmax, int ymin, int ymax)
  *
  * This method reads in a tile from a tiff file to the internal strcutre of the tile_worker
  */
-void tile_manager::get_tile(tile_worker &worker_in, int x, int y)
+void tile_manager::get_tile(tile_worker *worker_in, int x, int y)
 {
   get_tile_array(worker_in, x,y);
 }
@@ -131,7 +136,7 @@ int tile_manager::get_tiles_Y()
  *
  * This method reads in a tile defined by min x and miny and the dimensions width (x dimension) and length (y dimension). Pointer to extraction parameters and tile characteristics are given to the requesting tile_worker instance and in addition stored to the tile_manager global_map, so that additional workers can reuse the occupied memory (read only).
  */
-void tile_manager::get_tile_array(tile_worker &worker_in, int idxX, int idxY)
+void tile_manager::get_tile_array(tile_worker *worker_in, int idxX, int idxY)
 {
 /*  cout << "aha"<<endl;
   tileChar = new tilingCharacteristics();
@@ -178,14 +183,14 @@ cout << "Check2: "<<p->requestedxmin << " und " <<p->requestedymin<<" und " <<p-
 #endif
   global_map_map[*p] = info;
 */
-  worker_in.set_param_and_tile(tile);
+  worker_in->set_param_and_tile(tile);
   cout << "before call to worker"<<endl;
-  worker_in.set_x_resolution(20.0);
-  worker_in.set_y_resolution(20.0); // ask Felix how to retrieve this information from tiff
-  worker_in.set_landing_plane_length(landing_plane_length);
+  worker_in->set_x_resolution(20.0);
+  worker_in->set_y_resolution(20.0); // ask Felix how to retrieve this information from tiff
+  worker_in->set_landing_plane_length(landing_plane_length);
   cout << "hier ist slope "<<short_range_slope<<endl;
-  worker_in.set_short_range_slope(short_range_slope);
-  worker_in.set_long_range_slope(long_range_slope);
-  worker_in.set_not_defined(not_defined);
+  worker_in->set_short_range_slope(short_range_slope);
+  worker_in->set_long_range_slope(long_range_slope);
+  worker_in->set_not_defined(not_defined);
   return;
 }

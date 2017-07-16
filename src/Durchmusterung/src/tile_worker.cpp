@@ -24,6 +24,14 @@ tile_worker::tile_worker()
    resolution_x=0;
 }
 
+
+tile_worker::~tile_worker()
+{
+  delete(tile);
+}
+
+
+
 /*! \brief set parameter and tile characteristics
  *   
  *

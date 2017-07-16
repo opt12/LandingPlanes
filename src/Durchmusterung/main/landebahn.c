@@ -85,30 +85,38 @@ int main(int argc, char* argv[]) {
   cout << "long range slope: "<<long_range_slope<<" %"<<endl;
   if (not_defined != NULL)
     cout << "not defined ist "<<*not_defined<<endl;
-  tile_worker worker1;
+  tile_worker* worker1;
 
-                        
+worker1 = new tile_worker();
 
-  tile_manager central_manager(tiff_in,landing_plane_length,short_range_slope,long_range_slope,not_defined);
-  if (central_manager.init_geo_handler() != SUCCESS)
+     
+  tile_manager *central_manager;
+                   
+
+  central_manager= new tile_manager(tiff_in,landing_plane_length,short_range_slope,long_range_slope,not_defined);
+  if (central_manager->init_geo_handler() != SUCCESS)
   {
     cout << "Error init geo handler"<<endl;
     return LP_ERR_INIT_GEO ;
   }
  
-  central_manager.select_area(0, 1000, 0, 1000);
+  central_manager->select_area(0, 1000, 0, 1000);
 
  
  
-  for (int i=0; i < central_manager.get_tiles_X();i++)
-    for(int j=0; j < central_manager.get_tiles_Y();j++)
-      central_manager.get_tile(worker1,i,j);
+  for (int i=0; i < central_manager->get_tiles_X();i++)
+    for(int j=0; j < central_manager->get_tiles_Y();j++)
+      central_manager->get_tile(worker1,i,j);
   //worker1.check_element_access();
   //return 6;
   //worker1.print_out_map();
   //return 5;
 
-  worker1.durchmustere_kachel();
+  worker1->durchmustere_kachel();
 
+
+delete(worker1);
+delete not_defined;
+delete(central_manager);
 	return 0;
 }

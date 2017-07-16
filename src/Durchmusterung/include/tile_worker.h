@@ -27,6 +27,7 @@ class tile_worker{
  
   public:
     tile_worker();
+    ~tile_worker();
     void set_param_and_tile( tileData* tile_in);
     void print_out_map();
     void check_element_access();
