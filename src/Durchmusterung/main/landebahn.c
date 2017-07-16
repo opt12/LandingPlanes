@@ -58,12 +58,12 @@ int main(int argc, char* argv[]) {
        ++arg;
 
      }
-     else if (argv[arg][1] == 'N') // not defined
+/*     else if (argv[arg][1] == 'N') // not defined
      {
        not_defined = new double();
        *not_defined = atof(argv[arg+1]);
        ++arg;
-     }
+     }*/
 
     ++arg;
   }

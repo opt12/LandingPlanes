@@ -71,6 +71,9 @@ int tile_manager::init_geo_handler()
   if(myGeoTiffHandler.getDatasetInfo(&info) != SUCCESS) {
                         return LP_ERR_DAT_SET_INFO;
                 }
+
+  not_defined = new double();
+  *not_defined=info.noDataValue;
   return 0;
 
 }
@@ -79,6 +82,7 @@ int tile_manager::init_geo_handler()
 tile_manager::~tile_manager()
 {
   delete(tileChar);
+  delete(not_defined);
 }
 
 int tile_manager::select_area(int xmin, int xmax, int ymin, int ymax)
