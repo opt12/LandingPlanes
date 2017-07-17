@@ -1,0 +1,21 @@
+Um den 1597_LandingClient zu benutzen braucht es
+- eine aktuelle Installation von Node.js (>Version 8)
+- eine aktuelle Installation von NPM
+- eine aktuelle installation von bower ("npm install -g bower")
+
+Das gesamte Verzeichnis herunterladen und dann auf einem Terminal ausführen:
+"npm install"
+
+Dann sollte das Verzeichnis node_modules erstellt werden.
+
+Dann noch die Bootstrap-Komponenten installieren mit:
+"bower install"
+
+Jetzt einmal das bundle im /static folder bauen:
+"npm run local-build"
+
+Jetzt entweder die Webseite mit
+"npm run webpack-server"
+ausliefern lassen auf http://localhost:3001
+
+oder aber den 1597_DatabaseManager die Seite auf http://localhost:3000/ mit ausliefern lassen. sollte beides funktionieren.

@@ -1,0 +1,21 @@
+Um den 1597_DatabaseManager zu benutzenbraucht es
+- eine aktuelle Installation von Node.js (>Version 8)
+- eine aktuelle Installation von NPM
+
+Das gesamte Verzeichnis herunterladen und dann auf einem Terminal ausführen:
+"npm install"
+
+Dann sollte das Verzeichnis node_modules erstellt werden.
+
+In der "package.json" dann noch die Parameter für das start skript richtig setzen.
+Bei mir geht:
+    "start": "node ./bin/www --tiffpath=/home/eckstein/dev/LandingPlanes/terrain --wrapper=/home/eckstein/git/1597_searchEngineWrapper/Debug/1597_searchEngineWrapper --clientpath='../1597_LandingClient'"
+
+tiffpath: Ist der Pfad zu den GeoTIFF Dateien. (Der muss gesetzt werden, da aktuell nur der Dateiname übergeben wird, nicht der Pfad)
+wrapper: Ist der Pfad zur kompilierten Wrapper-Applikation. Diese wird automatisch gestartet und über einen Unix-Socket mit Daten gefüttert. In den Wrapper müssen wir dann die Durchmusterung einhängen
+clientpath: Der Pfad zum Verzeichnis für die React-Applikation um den ganzen Mechanismus zu steuern.
+
+terminal: Ist ein Parameter um festzulegen, welche Terminal-emulation benutzt werden soll. "xterm" sollte funktionieren, falls der Default "gnome-terminal" nicht verfügbar ist.
+
+
+Wenn das eingetragen ist, dann einfach per "npm start" den DatabaseManager starten und im Browser http://localhost:3000 ansurfen. Dann sollte die Magie ihren Lauf nehmen. (NBatürlich nur, wenn der Client vorher entsprechend vorbereitet wurde. --> Readme im Client)

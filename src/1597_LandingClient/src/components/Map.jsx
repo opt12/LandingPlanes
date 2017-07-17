@@ -22,7 +22,7 @@ class MapOverview extends Component {
         this.getExtentPolygon = this.getExtentPolygon.bind(this);
 
         this.state = {
-            topleftLat: this.boundingBox[1][0],
+            topLeftLat: this.boundingBox[1][0],
             topLeftLng: this.boundingBox[0][1],
             botRightLat: this.boundingBox[0][0],
             botRightLng: this.boundingBox[1][1],
@@ -52,7 +52,7 @@ class MapOverview extends Component {
         console.log("Zoom: " + zoomText);
         const mapBounds = e.target.getBounds();
         const area = {
-            topleftLat: mapBounds.getNorth(),
+            topLeftLat: mapBounds.getNorth(),
             topLeftLng: mapBounds.getWest(),
             botRightLat: mapBounds.getSouth(),
             botRightLng: mapBounds.getEast(),
@@ -63,7 +63,7 @@ class MapOverview extends Component {
     startScan = (e, scanParameter, scanHeadings) => {
         e.preventDefault();
         let mapExtent = {
-            topleftLat: this.state.topleftLat,
+            topLeftLat: this.state.topLeftLat,
             topLeftLng: this.state.topLeftLng,
             botRightLat: this.state.botRightLat,
             botRightLng: this.state.botRightLng,
@@ -78,7 +78,7 @@ class MapOverview extends Component {
     saveToMFile = (e, mFileName) => {
         e.preventDefault();
         let mapExtent = {
-            topleftLat: this.state.topleftLat,
+            topLeftLat: this.state.topLeftLat,
             topLeftLng: this.state.topLeftLng,
             botRightLat: this.state.botRightLat,
             botRightLng: this.state.botRightLng,
@@ -110,7 +110,7 @@ class MapOverview extends Component {
                     </Marker>
                     <Polygon color="lime" positions={this.extentPolygon}/>
                 </Map>
-                Map shows: NorthWest: Lat: {this.state.topleftLat.toFixed(6)},
+                Map shows: NorthWest: Lat: {this.state.topLeftLat.toFixed(6)},
                 Lng: {this.state.topLeftLng.toFixed(6)};
                 SouthEast: Lat: {this.state.botRightLat.toFixed(6)}, Lng: {this.state.botRightLng.toFixed(6)};
                 <Form horizontal>
