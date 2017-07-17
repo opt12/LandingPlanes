@@ -1,0 +1,20 @@
+{
+  "name": "LandingClient",
+ "description": "Web-Client für LandingPlanes auf Basis von React",
+  "authors": [
+    "Felix Eckstein"
+  ],
+  "license": "",
+  "homepage": "",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.7"
+  }
+}
