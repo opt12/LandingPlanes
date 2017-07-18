@@ -49,7 +49,7 @@ tile_manager::tile_manager()
  *
  * This constructors sets all class members to default and already predefines the input tiff file
  */
-tile_manager::tile_manager(string tiff_input_file, double landing_plane_length, double short_range_slope, double long_range_slope, double* not_defined)
+tile_manager::tile_manager(string tiff_input_file, double landing_plane_length, double short_range_slope, double long_range_slope, double* not_defined, double start_angle_of_plane, double angle_increment)
 {
    GDALAllRegister();
   this->tiff_input_file=tiff_input_file;
@@ -59,8 +59,9 @@ tile_manager::tile_manager(string tiff_input_file, double landing_plane_length, 
   this->not_defined=not_defined;
   if (not_defined!= NULL)
     cout << "not defined in constructor "<<*this->not_defined<<endl;
-
-
+  this->start_angle_of_plane = start_angle_of_plane;
+  this->angle_increment=angle_increment;
+  this->current_angle=start_angle_of_plane;
 }
 
 int tile_manager::init_geo_handler()
@@ -196,5 +197,6 @@ cout << "Check2: "<<p->requestedxmin << " und " <<p->requestedymin<<" und " <<p-
   worker_in->set_short_range_slope(short_range_slope);
   worker_in->set_long_range_slope(long_range_slope);
   worker_in->set_not_defined(not_defined);
+  worker_in->set_angle(current_angle);
   return;
 }

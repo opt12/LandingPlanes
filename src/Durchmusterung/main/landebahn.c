@@ -36,6 +36,8 @@ int main(int argc, char* argv[]) {
   double short_range_slope=100;
   double long_range_slope=100;
   double *not_defined = NULL;
+  double start_angle_of_plane=0;
+  double angle_increment=45.0;
   while (arg < argc && argv[arg][0] == '-') {     //so lange noch Argumente da sind, die mit '-' beginnen
      if (argv[arg][1] == 'E')
      {
@@ -58,6 +60,17 @@ int main(int argc, char* argv[]) {
        ++arg;
 
      }
+     else if (argv[arg][1] == 'A') // angle of searching 
+     {
+       start_angle_of_plane=atof(argv[arg+1]);
+       ++arg;
+
+     }
+     else if (argv[arg][1] == 'I') // angle increment of searching
+     {
+       angle_increment=atof(argv[arg+1]);
+       ++arg;
+     }
 /*     else if (argv[arg][1] == 'N') // not defined
      {
        not_defined = new double();
@@ -67,6 +80,8 @@ int main(int argc, char* argv[]) {
 
     ++arg;
   }
+
+  
 
   if (landing_plane_length == 0.0)
   {
@@ -81,8 +96,10 @@ int main(int argc, char* argv[]) {
   }
   cout << "Minimum landing plane length is "<<landing_plane_length<<" m"<<endl;
   cout << "Input file: "<<tiff_in<<endl;
-  cout <<  "short range slope: "<<short_range_slope<<" %"<<endl;
+  cout << "short range slope: "<<short_range_slope<<" %"<<endl;
   cout << "long range slope: "<<long_range_slope<<" %"<<endl;
+  cout << "start angle (relative to S->N: "<<start_angle_of_plane<<endl;
+  cout << "angle increment: "<<angle_increment<<endl;
   if (not_defined != NULL)
     cout << "not defined ist "<<*not_defined<<endl;
   tile_worker* worker1;
@@ -93,7 +110,7 @@ worker1 = new tile_worker();
   tile_manager *central_manager;
                    
 
-  central_manager= new tile_manager(tiff_in,landing_plane_length,short_range_slope,long_range_slope,not_defined);
+  central_manager= new tile_manager(tiff_in,landing_plane_length,short_range_slope,long_range_slope,not_defined,start_angle_of_plane,angle_increment);
   if (central_manager->init_geo_handler() != SUCCESS)
   {
     cout << "Error init geo handler"<<endl;

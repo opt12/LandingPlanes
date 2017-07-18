@@ -2,6 +2,27 @@
 
 
 
+void tile_worker::set_angle(double angle)
+{
+  current_angle=angle;
+}
+
+void tile_worker::calc_optimal_vector()
+{
+  cout << "Current angle is "<<current_angle<<endl;
+
+  inc_x=sin(current_angle*PI/180);
+  inc_y=cos(current_angle*PI/180);
+  cout << "inc x is "<<inc_x<<endl;
+  cout << "inc y is "<<inc_y<<endl;  
+}
+
+void tile_worker::calc_start_coordinates()
+{
+  
+}
+
+
 int tile_worker::check_current_landebahn(int &current_in_a_row, const int &needed_points_in_a_row)
 {
    if (current_in_a_row>needed_points_in_a_row)  
@@ -164,6 +185,9 @@ void tile_worker::set_not_defined(double* not_defined)
 
 void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SSW, 3: O -> W, 4: SSO -> NNW, 5: S -> N, 6: SSW -> NNO, 7: W -> O, 8: NNW -> SSO */)
 {
+
+  calc_optimal_vector();
+  
   int incx=0;
   int incy=0;
   int startx;

@@ -41,6 +41,9 @@ class tile_manager{
     void get_tile_array( tile_worker* worker_in, int idxX, int idxY); 
     string tiff_input_file;
     double landing_plane_length;
+    double angle_increment;
+    double start_angle_of_plane;
+    double current_angle;
     double short_range_slope;
     double long_range_slope; 
     map <extractionParameters, tileCharacteristics*,cmpByStruct > global_map_map;
@@ -52,7 +55,7 @@ class tile_manager{
   public:
     tile_manager();
     ~tile_manager();
-    tile_manager(string source_file_in, double landing_plane_length, double short_range_slope, double long_range_slope,double* not_definied);
+    tile_manager(string source_file_in, double landing_plane_length, double short_range_slope, double long_range_slope,double* not_definied,double start_angle_of_plane, double angle_increment);
     void get_tile(tile_worker* worker_in, int idxX, int idxY);
     int init_geo_handler();
     int select_area(int xmin, int xmax, int ymin, int ymax);
