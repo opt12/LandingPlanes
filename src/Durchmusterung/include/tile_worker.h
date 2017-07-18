@@ -30,7 +30,11 @@ class tile_worker{
    void calc_optimal_vector(); 
    double inc_x;
    double inc_y;
-  
+   void calc_start_coordinates();
+   double startx;
+   double starty; 
+
+ 
   public:
     tile_worker();
     ~tile_worker();
