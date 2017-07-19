@@ -11,8 +11,13 @@ void tile_worker::calc_optimal_vector()
 {
   cout << "Current angle is "<<current_angle<<endl;
 
-  inc_x=sin(current_angle*PI/180);
+  inc_x=-sin(current_angle*PI/180);
   inc_y=cos(current_angle*PI/180);
+
+  if (fabs(inc_x) < 0.00001)
+    inc_x=0.0;
+  if (fabs(inc_y) < 0.00001)
+    inc_y=0.0;
   cout << "inc x is "<<inc_x<<endl;
   cout << "inc y is "<<inc_y<<endl;  
 }
@@ -239,9 +244,9 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
   switch (direction){
     case 1:
         /*startx=0;
-        starty=0;*/
+        starty=0;
         inc_x=0;
-        inc_y=1;
+        inc_y=1;*/
         orth_x=1;
         orth_y=0;
         allowed_diff=short_range_slope*resolution_y/100.0;
@@ -249,9 +254,9 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
         break;
     case 2:
         /*startx=0;
-        starty=0;*/
+        starty=0;
         inc_x=-1;
-        inc_y=1;
+        inc_y=1;*/
         orth_x=1;
         orth_y=-1;
         allowed_diff=short_range_slope*sqrt(pow(resolution_y,2)+pow(resolution_x,2))/100.0;
@@ -259,9 +264,9 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
         break;
     case 3:
        /* startx=tile->width.x-1;
-        starty=0;*/
+        starty=0;
         inc_x=-1;
-        inc_y=0;
+        inc_y=0;*/
         orth_x=0;
         orth_y=1;
         allowed_diff=short_range_slope*resolution_x/100.0;
@@ -269,9 +274,9 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
         break;
     case 4:
         /*startx=tile->width.x-1;
-        starty=0;*/
+        starty=0;
         inc_x=-1;
-        inc_y=-1;
+        inc_y=-1;*/
         orth_x=1;
         orth_y=-1;
         allowed_diff=short_range_slope*sqrt(pow(resolution_y,2)+pow(resolution_x,2))/100.0; 
@@ -279,9 +284,9 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
         break;
     case 5:
         /*startx=0;
-        starty=tile->width.y-1;*/
+        starty=tile->width.y-1;
         inc_x=0;
-        inc_y=-1;
+        inc_y=-1;*/
         orth_x=1;
         orth_y=0;
         allowed_diff=short_range_slope*resolution_y/100.0;
@@ -289,9 +294,9 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
          break;
     case 6:
         /*startx=0;
-        starty=0;*/
+        starty=0;
         inc_x=1;
-        inc_y=-1; 
+        inc_y=-1; */
         orth_x=1;
         orth_y=1;
         allowed_diff=short_range_slope*sqrt(pow(resolution_y,2)+pow(resolution_x,2))/100.0; 
@@ -299,9 +304,9 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
         break;
     case 7:
         /*startx=0;
-        starty=0;*/
+        starty=0;
         inc_x=1;
-        inc_y=0;
+        inc_y=0;*/
         orth_x=0;
         orth_y=1;
         allowed_diff=short_range_slope*resolution_x/100.0;
@@ -309,9 +314,9 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
         break;
     case 8:
         /*startx=0;
-        starty=tile->width.y-1;*/
+        starty=tile->width.y-1;
         inc_x=1;
-        inc_y=1;
+        inc_y=1;*/
         orth_x=1;
         orth_y=-1;
         allowed_diff=short_range_slope*sqrt(pow(resolution_y,2)+pow(resolution_x,2))/100.0; 
@@ -323,11 +328,13 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
 
   cout << "allowed short range diff "<< allowed_diff<<endl;
   cout << "needed points in a row"<<needed_points_in_a_row<<endl;
+  cout << "startx "<<startx<<", starty "<<starty<<endl;
+  cout << "inc_x "<<inc_x<<", inc_y "<<inc_y<<endl;
   int completed=0;
 
   int current_in_a_row=0;
-  int i=startx;
-  int j=starty;
+  double i=startx;
+  double j=starty;
   int checksum = 0;
   
   int previous_x=0;
@@ -392,6 +399,7 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
     i +=inc_x;
     j +=inc_y;
 
+   cout << "point "<<i<<","<<j<<endl;
    
    if (direction == 1)
    {
