@@ -92,7 +92,7 @@ resultType GeoTiffHandler::openGeoTiff(const char* pszFilename) {
 	int bGotNodata = FALSE;
 	GDALRasterBandH const hBand = poDataset->GetRasterBand(1);
 	if (GDALGetRasterDataType(hBand) != GDT_Float32) {
-		throw("Incorrect Data format (expected Float32 for altitude values)");
+		return IMPROPER_DATA_FORMAT_FOR_ALTITUDE;
 	}
 	myDatasetInfo.noDataValue = (float) GDALGetRasterNoDataValue(hBand,
 			&bGotNodata);//we assume to have only Float32, not doubles in the dataset
