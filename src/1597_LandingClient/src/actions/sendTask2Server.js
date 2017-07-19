@@ -28,6 +28,11 @@ const save2MFileOnServer = (tiffInfo, mapExtent, mFileName) => {
         data: {
             TiffFileName: tiffInfo.fileInfo.files[0],
             mapExtent: mapExtent,
+            mFile: {    //TODO: Das ist nicht schön, sondern ein ziemliches Gefrickel mit den PFaden und nicht robust!!!
+                mFileObjName: mFileName.replace(/.*[\/\\]/, '').substring(0,mFileName.replace(/.*[\/\\]/, '').lastIndexOf(".")),
+                mFileExtension: mFileName.substring(mFileName.lastIndexOf('.')),
+                mFilePath: mFileName.substring(0,mFileName.lastIndexOf("/")+1),
+            },
             mFileName: mFileName
         },
     };

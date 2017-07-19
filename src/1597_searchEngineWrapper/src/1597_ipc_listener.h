@@ -18,7 +18,7 @@ struct tIpcListenerThreadParam {
 	pthread_mutex_t *taskQueueMutex;
 	pthread_cond_t *taskQueueConditional;
 	std::string alternatePath="";
-	std::queue<json> *taskQueue;
+	std::queue<tsocketMessage> *taskQueue;
 	int socketDescriptor;	//TODO: wir wollen den Socket eine ebene weiter oben öffnen, damit wir ihn durchreichen können und in beide richtungen einen Kanal haben
 	eResult taskResult;
 };

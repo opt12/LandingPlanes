@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
 
 	static pthread_mutex_t taskQueueMutex;
 	static pthread_cond_t taskQueueConditional;
-	static queue<json> taskQueue;
+	static queue<tsocketMessage> taskQueue;
 
 	pthread_mutex_init(&taskQueueMutex, NULL);
 	pthread_cond_init(&taskQueueConditional, NULL);

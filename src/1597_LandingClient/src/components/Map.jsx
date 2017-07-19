@@ -144,15 +144,17 @@ class MapOverview extends Component {
                     </FormGroup>
                     <FormGroup>
                         <Col componentClass={ControlLabel} sm={2}>Matlab Filename:</Col>
-                        <Col sm={7}>
-                            <FormControl id="MFileSelector" type="file"/>
+                        <Col sm={2}>
+                            <FormControl id="mfileName" type="text" defaultValue="test.m"/>
                         </Col>
                         <Col sm={2}>
                             <button class="col-sm-12 btn btn-primary"
                                     onClick={e => {
-                                        mFileName = document.getElementById('MFileSelector').value.replace(/.*[\/\\]/, '');
-                                        console.log("value: " + mFileName);
-                                        this.saveToMFile(e, mFileName);
+                                        mFileName = document.getElementById('mfileName').value.replace(/.*[\/\\]/, '');
+                                        let tiffFilePath = this.props.tiffInfo.fileInfo.description;
+                                        tiffFilePath = tiffFilePath.substring(0,tiffFilePath.lastIndexOf("/")+1);
+                                        console.log("M-file-full PAth: " +tiffFilePath+ mFileName);
+                                        this.saveToMFile(e, tiffFilePath+ mFileName);
                                     }}>
                                 Save to M-File
                             </button>

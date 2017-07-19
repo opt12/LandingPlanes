@@ -47,6 +47,11 @@ struct tTask {
 	json taskDescription;
 };
 
+struct tsocketMessage{
+	int connectedSocket;
+	json msg;
+};
+
 enum eResult {
 	NORMAL_EXIT, READ_ERROR, SOCKET_ERROR, BIND_ERROR, LISTEN_ERROR, PATHNAME_ERROR,
 	GEO_TIFF_READ_ERROR,
