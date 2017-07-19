@@ -11,7 +11,6 @@ var commands = require('./routes/commands');
 
 var cors = require('cors');
 
-
 var app = express();
 
 // view engine setup
@@ -32,6 +31,10 @@ app.use(express.static(process.env.CLIENT_PATH || '../1597_LandingClient'));
 app.use('/', index);
 app.use('/api/fileInfo', fileInfo);
 app.use('/api/commands', commands);
+
+//Here the "routes" from IPC socket incoming messages are registered...
+require('./routes/ipcReceiver')();
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
