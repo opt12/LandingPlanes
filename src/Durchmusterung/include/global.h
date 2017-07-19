@@ -1,0 +1,1 @@
+#define IMPRECISION 0.000001

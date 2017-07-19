@@ -1,5 +1,5 @@
 #include "tile_worker.h"
-
+#include "global.h"
 
 
 void tile_worker::set_angle(double angle)
@@ -14,9 +14,9 @@ void tile_worker::calc_optimal_vector()
   inc_x=-sin(current_angle*PI/180);
   inc_y=cos(current_angle*PI/180);
 
-  if (fabs(inc_x) < 0.00001)
+  if (fabs(inc_x) < IMPRECISION)
     inc_x=0.0;
-  if (fabs(inc_y) < 0.00001)
+  if (fabs(inc_y) < IMPRECISION)
     inc_y=0.0;
   cout << "inc x is "<<inc_x<<endl;
   cout << "inc y is "<<inc_y<<endl;  
