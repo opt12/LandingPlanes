@@ -6,6 +6,7 @@
 CPP_SRCS += \
 ../src/1597_QueueDispatcher.cpp \
 ../src/1597_ipc_listener.cpp \
+../src/1597_scanToMFile.cpp \
 ../src/1597_searchEngineWrapper.cpp \
 /home/eckstein/git/LandingPlanes/src/GeoTiff_Handler/src/GeoTiffHandler.cpp 
 
@@ -15,6 +16,7 @@ C_SRCS += \
 OBJS += \
 ./src/1597_QueueDispatcher.o \
 ./src/1597_ipc_listener.o \
+./src/1597_scanToMFile.o \
 ./src/1597_searchEngineWrapper.o \
 ./src/GeoTiffHandler.o \
 ./src/readInTiff.o 
@@ -22,6 +24,7 @@ OBJS += \
 CPP_DEPS += \
 ./src/1597_QueueDispatcher.d \
 ./src/1597_ipc_listener.d \
+./src/1597_scanToMFile.d \
 ./src/1597_searchEngineWrapper.d \
 ./src/GeoTiffHandler.d 
 

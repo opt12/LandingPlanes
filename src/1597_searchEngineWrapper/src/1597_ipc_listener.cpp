@@ -124,3 +124,19 @@ void *IPCListenerThreadStarter(void *par) {
 
 	return NULL;
 }
+
+
+/**************************************/
+/*
+ * Helper for 2 way socket communication
+ */
+
+void emitReceiptMsg(int connectedSock, string msgType, json msgJSON) {
+	json j = { { "type", msgType }, { "data", msgJSON } };
+	//XXX The node.js module needs a "\f" at the end of the serialized JSON-Message :-)
+	string msgString = j.dump() + "\f";
+	unsigned int msgSize = msgString.length();
+	for (unsigned int bytesTransferred = 0; bytesTransferred < msgSize;) {
+		bytesTransferred += write(connectedSock, msgString.c_str(), msgSize);
+	}
+}

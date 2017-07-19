@@ -26,4 +26,6 @@ struct tIpcListenerThreadParam {
 
 void *IPCListenerThreadStarter(void *par);
 
+void emitReceiptMsg(int connectedSock, string msgType, json msgJSON);
+
 #endif /* IPC_LISTENER_H_ */
