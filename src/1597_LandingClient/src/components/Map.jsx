@@ -119,8 +119,12 @@ class MapOverview extends Component {
                         <Col sm={2}>
                             <FormControl id="minLength" type="number" defaultValue="2000"/>
                         </Col>
+                        <Col componentClass={ControlLabel} sm={1}>min. Breite [m]:</Col>
+                        <Col sm={1}>
+                            <FormControl id="minWidth" type="number" defaultValue="30"/>
+                        </Col>
                         <Col componentClass={ControlLabel} sm={1}>max. Steigung [%]:</Col>
-                        <Col sm={2}>
+                        <Col sm={1}>
                             <FormControl id="maxRise" type="number" defaultValue="10.0"/>
                         </Col>
                         <Col componentClass={ControlLabel} sm={1}>max. Varianz:</Col>
@@ -132,6 +136,7 @@ class MapOverview extends Component {
                                     onClick={e => {
                                         let scanParameter = {
                                             minLength: parseInt(document.getElementById('minLength').value),
+                                            minWidth: parseInt(document.getElementById('minWidth').value),
                                             maxRise: parseFloat(document.getElementById('maxRise').value),
                                             maxVariance: parseFloat(document.getElementById('maxVariance').value),
                                         };

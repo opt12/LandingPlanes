@@ -8,7 +8,8 @@ CPP_SRCS += \
 ../src/1597_ipc_listener.cpp \
 ../src/1597_scanToMFile.cpp \
 ../src/1597_searchEngineWrapper.cpp \
-/home/eckstein/git/LandingPlanes/src/GeoTiff_Handler/src/GeoTiffHandler.cpp 
+/home/eckstein/git/LandingPlanes/src/GeoTiff_Handler/src/GeoTiffHandler.cpp \
+../src/geojson_utils.cpp 
 
 C_SRCS += \
 /home/eckstein/git/LandingPlanes/src/GeoTiff_Handler/src/readInTiff.c 
@@ -19,6 +20,7 @@ OBJS += \
 ./src/1597_scanToMFile.o \
 ./src/1597_searchEngineWrapper.o \
 ./src/GeoTiffHandler.o \
+./src/geojson_utils.o \
 ./src/readInTiff.o 
 
 CPP_DEPS += \
@@ -26,7 +28,8 @@ CPP_DEPS += \
 ./src/1597_ipc_listener.d \
 ./src/1597_scanToMFile.d \
 ./src/1597_searchEngineWrapper.d \
-./src/GeoTiffHandler.d 
+./src/GeoTiffHandler.d \
+./src/geojson_utils.d 
 
 C_DEPS += \
 ./src/readInTiff.d 

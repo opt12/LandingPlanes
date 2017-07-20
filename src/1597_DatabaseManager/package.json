@@ -13,6 +13,8 @@
     "express": "~4.15.2",
     "http-error-constructor": "^0.1.0",
     "jade": "~1.11.0",
+    "mongoose": "^4.11.3",
+    "mongoose-geojson-schema": "^2.1.2",
     "morgan": "~1.8.1",
     "node-ipc": "^9.0.1",
     "ramda": "^0.24.1",

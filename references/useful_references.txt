@@ -22,10 +22,13 @@ GDAL explains it a little bit here: http://www.gdal.org/osr_tutorial.html
 
 http://www.geos.ed.ac.uk/~smudd/TopoTutorials/html/tutorial_raster_conversion.html
 
+calculations with geoCoordinates in Javascript: http://www.movable-type.co.uk/scripts/latlong.html
+
 OpenStreetmap uses the WGS84 coordinate system: http://wiki.openstreetmap.org/wiki/Converting_to_WGS84
 To handle GeoObjects, the GeoJSON format is quite popular: http://wiki.openstreetmap.org/wiki/GeoJSON
 To play around with geoJSON have a look at: http://geojson.io/
 GeoJSON Primer: https://macwright.org/2015/03/23/geojson-second-bite.html
+awesome gejson tools to be looked at: https://github.com/tmcw/awesome-geojson
 
 To handle all the JSON stuff in our C++ code, we should use https://github.com/nlohmann/json
 
