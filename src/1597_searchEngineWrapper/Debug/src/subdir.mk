@@ -8,6 +8,7 @@ CPP_SRCS += \
 ../src/1597_ipc_listener.cpp \
 ../src/1597_scanToMFile.cpp \
 ../src/1597_searchEngineWrapper.cpp \
+../src/1597_searcherTask.cpp \
 /home/eckstein/git/LandingPlanes/src/GeoTiff_Handler/src/GeoTiffHandler.cpp \
 ../src/geojson_utils.cpp 
 
@@ -19,6 +20,7 @@ OBJS += \
 ./src/1597_ipc_listener.o \
 ./src/1597_scanToMFile.o \
 ./src/1597_searchEngineWrapper.o \
+./src/1597_searcherTask.o \
 ./src/GeoTiffHandler.o \
 ./src/geojson_utils.o \
 ./src/readInTiff.o 
@@ -28,6 +30,7 @@ CPP_DEPS += \
 ./src/1597_ipc_listener.d \
 ./src/1597_scanToMFile.d \
 ./src/1597_searchEngineWrapper.d \
+./src/1597_searcherTask.d \
 ./src/GeoTiffHandler.d \
 ./src/geojson_utils.d 
 

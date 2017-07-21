@@ -8,6 +8,7 @@
 #include "1597_QueueDispatcher.h"
 #include "1597_ipc_listener.h"	//TODO for the emitReceiptMsg(); sollte in andere Datei;
 #include "1597_scanToMFile.h"
+#include "1597_searcherTask.h"
 
 #include <sys/socket.h>
 #include <sys/un.h>
@@ -30,10 +31,6 @@ static pthread_mutex_t *taskQueueMutex;
 static pthread_cond_t *taskQueueConditional;
 static std::queue<tsocketMessage> *taskQueue;
 
-static eResult scanForLandingPlanes(json taskDescription) {
-	cout << "scanning for Landing Planes now" << endl;
-	return NORMAL_EXIT;
-}
 
 eResult Dispatcher(void) {
 	tTask currentTask;
@@ -62,32 +59,39 @@ eResult Dispatcher(void) {
 		cout << "taskJSON: " << currentTask.taskDescription.dump(4) << endl;
 
 		switch (currentTask.taskType) {
-		case SCAN:
+		case SCAN:{
 			cout
 					<< "Dispatcher Thread: dispatching task to scanForLandingPlanes()"
 					<< endl;
 			cout << currentTask.taskDescription.dump(4) << endl;
-			scanForLandingPlanes(currentTask.taskDescription);
-			//TODO change message type
-			emitReceiptMsg(commSocket, "message", currentTask.taskDescription);
+
+			tSearchTaskThreadStarterParam searchTaskThreadStarterPar;
+			searchTaskThreadStarterPar.taskDescription =
+					currentTask.taskDescription;
+			searchTaskThreadStarterPar.commSocket = commSocket;
+
+			pthread_t newScanTask;
+			pthread_create(&newScanTask, NULL, searchTaskThreadStarter,
+					&searchTaskThreadStarterPar);
+			pthread_join(newScanTask, NULL);//we only want to dispatch one task at a time;
+			//the tasks itself may spawn more threads if needed;
 			break;
+		}
 		case SAVE_2_M_FILE: {
 			cout << "Dispatcher Thread: dispatching task to saveDataToMFile()"
 					<< endl;
 			cout << currentTask.taskDescription.dump(4) << endl;
 
-			tScanToMFileThreadStarterParam ScanToMFileThreadStarterPar;
-			ScanToMFileThreadStarterPar.taskDescription =
+			tScanToMFileThreadStarterParam scanToMFileThreadStarterPar;
+			scanToMFileThreadStarterPar.taskDescription =
 					currentTask.taskDescription;
-			ScanToMFileThreadStarterPar.commSocket = commSocket;
+			scanToMFileThreadStarterPar.commSocket = commSocket;
 
 			pthread_t newScanTask;
-			pthread_create(&newScanTask, NULL, ScanToMFileThreadStarter,
-					&ScanToMFileThreadStarterPar);
+			pthread_create(&newScanTask, NULL, scanToMFileThreadStarter,
+					&scanToMFileThreadStarterPar);
 			pthread_join(newScanTask, NULL);//we only want to dispatch one task at a time;
 			//the tasks itself may spawn more threads if needed;
-			//TODO change message type
-//			emitReceiptMsg(commSocket, "message", currentTask.taskDescription);
 			break;
 		}
 		default:

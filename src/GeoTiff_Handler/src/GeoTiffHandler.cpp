@@ -488,6 +488,7 @@ geoCoord GeoTiffHandler::pixel2Geo(const int xTile, const int yTile,
 
 pixelCoord GeoTiffHandler::geo2Pixel(const int xTile, const int yTile,
 		const geoCoord source) {
+	//TODO: ist diese funktion notwendig??? eigentlich nicht, oder...
 }
 
 json GeoTiffHandler::getGeoJsonPolygon(const pixelCoordFloat pix0,
