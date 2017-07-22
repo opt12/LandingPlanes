@@ -51,6 +51,8 @@ class tile_manager{
     GeoTiffHandler myGeoTiffHandler;
     datasetInfo info;  
     tilingCharacteristics *tileChar;  
+    tileData* tile;
+
  
   public:
     tile_manager();
@@ -61,4 +63,5 @@ class tile_manager{
     int select_area(int xmin, int xmax, int ymin, int ymax);
    int get_tiles_X();
     int get_tiles_Y();
+    void release_tile(int i, int j);
 };

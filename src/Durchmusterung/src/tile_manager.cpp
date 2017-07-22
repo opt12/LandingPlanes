@@ -156,9 +156,11 @@ void tile_manager::get_tile_array(tile_worker *worker_in, int idxX, int idxY)
   cout << "Tiles in X "<<tileChar->tilesInX<<endl;
                 for(int idxX=0; idxX< tileChar->tilesInX; idxX++){
                         for(int idxY=0; idxY< tileChar->tilesInY; idxY++){*/
-                                tileData* tile;
+  //                              tileData* tile;
                                 tile = new tileData();
-                                myGeoTiffHandler.getTile(idxX, idxY, tile);
+                                cout << "Fetch tile"<<idxX<< " and " <<idxY<<endl;
+                                int retcode = myGeoTiffHandler.getTile(idxX, idxY, tile);
+                                cout << "Der Retcode ist "<<retcode<<endl;
                                 cout << *tile;
                                 string matrixName= "tile_"+to_string(idxX)+"_"+to_string(idxY);
                                 string fileNameOut = matrixName+string(".m");
@@ -198,5 +200,11 @@ cout << "Check2: "<<p->requestedxmin << " und " <<p->requestedymin<<" und " <<p-
   worker_in->set_long_range_slope(long_range_slope);
   worker_in->set_not_defined(not_defined);
   worker_in->set_angle(current_angle);
+  return;
+}
+
+void tile_manager::release_tile(int i, int j)
+{
+ myGeoTiffHandler.releaseTile(i, j);   
   return;
 }

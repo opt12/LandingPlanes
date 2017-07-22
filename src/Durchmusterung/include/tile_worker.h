@@ -26,7 +26,7 @@ class tile_worker{
    double short_range_slope;
    double long_range_slope;
    double* not_defined;
-   int check_current_landebahn(int &current_in_a_row, const int &needed_points_in_a_row);   
+   int check_current_landebahn(int &current_in_a_row, const int &needed_points_in_a_row,const int &x, const int &y);   
    void calc_optimal_vector(); 
    double inc_x;
    double inc_y;
@@ -35,8 +35,10 @@ class tile_worker{
    double starty;
    double orth_x;
    double orth_y; 
-
- 
+   int needed_points_in_a_row;
+   double allowed_diff;
+   pixelPair start_point;
+   pixelPair end_point;
   public:
     tile_worker();
     ~tile_worker();

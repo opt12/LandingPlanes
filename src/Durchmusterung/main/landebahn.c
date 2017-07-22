@@ -117,20 +117,23 @@ worker1 = new tile_worker();
     return LP_ERR_INIT_GEO ;
   }
  
-  central_manager->select_area(0, 1000, 0, 1000);
+  central_manager->select_area(0, 10000, 0, 10000);
 
  
  
   for (int i=0; i < central_manager->get_tiles_X();i++)
     for(int j=0; j < central_manager->get_tiles_Y();j++)
+    {
+      cout << "work on kachel "<<i<<" "<<j<<endl;
       central_manager->get_tile(worker1,i,j);
   //worker1.check_element_access();
   //return 6;
   //worker1.print_out_map();
   //return 5;
 
-  worker1->durchmustere_kachel();
-
+     worker1->durchmustere_kachel();
+     central_manager->release_tile(i,j);
+  }
 
 delete(worker1);
 delete not_defined;

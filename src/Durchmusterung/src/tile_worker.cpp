@@ -22,6 +22,8 @@ void tile_worker::calc_optimal_vector()
   cout << "inc y is "<<inc_y<<endl;  
   orth_x=-sin((current_angle+90.0)*PI/180.0);
   orth_y= cos((current_angle+90.0)*PI/180.0);
+  needed_points_in_a_row=ceil((double) landing_plane_length/sqrt(pow(((double) resolution_x*inc_x),2)+pow(((double) resolution_y*inc_y),2)));
+  allowed_diff=short_range_slope*sqrt(pow(resolution_x*inc_x,2)+pow(resolution_y*inc_y,2))/100.0;
 }
 
 void tile_worker::calc_start_coordinates()
@@ -57,11 +59,11 @@ void tile_worker::calc_start_coordinates()
 }
 
 
-int tile_worker::check_current_landebahn(int &current_in_a_row, const int &needed_points_in_a_row)
+int tile_worker::check_current_landebahn(int &current_in_a_row, const int &needed_points_in_a_row, const int &current_x, const int &current_y)
 {
    if (current_in_a_row>needed_points_in_a_row)  
    {
-     cout << "Landebahn gefunden"<<endl;
+     cout << "Landebahn gefunden "<<start_point.x<< "und " <<start_point.y <<" bis "<<current_x<<" und "<<current_y<<" current in row "<<current_in_a_row<<" und needed" <<needed_points_in_a_row<<endl;
      current_in_a_row=0;
    }
   return 0;
@@ -239,10 +241,11 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
   int orth_y=0;*/
   
   int allowed_diff=0;
-  int needed_points_in_a_row=0;
+//  int needed_points_in_a_row=0;
 
   cout << "slope "<<short_range_slope<<" and reso " << resolution_y<<endl;
 
+/*
   switch (direction){
     case 1:
         /*startx=0;
@@ -250,9 +253,9 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
         inc_x=0;
         inc_y=1;
         orth_x=1;
-        orth_y=0;*/
+        orth_y=0;
         allowed_diff=short_range_slope*resolution_y/100.0;
-        needed_points_in_a_row=ceil((double) landing_plane_length/(double) resolution_y);
+//        needed_points_in_a_row=ceil((double) landing_plane_length/(double) resolution_y);
         break;
     case 2:
         /*startx=0;
@@ -260,9 +263,9 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
         inc_x=-1;
         inc_y=1;
         orth_x=1;
-        orth_y=-1;*/
+        orth_y=-1;
         allowed_diff=short_range_slope*sqrt(pow(resolution_y,2)+pow(resolution_x,2))/100.0;
-        needed_points_in_a_row=ceil((double) landing_plane_length/ (double) sqrt(pow(resolution_y,2)+pow(resolution_x,2)));
+  //      needed_points_in_a_row=ceil((double) landing_plane_length/ (double) sqrt(pow(resolution_y,2)+pow(resolution_x,2)));
         break;
     case 3:
        /* startx=tile->width.x-1;
@@ -270,19 +273,19 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
         inc_x=-1;
         inc_y=0;
         orth_x=0;
-        orth_y=1;*/
+        orth_y=1;
         allowed_diff=short_range_slope*resolution_x/100.0;
-        needed_points_in_a_row=ceil((double) landing_plane_length/(double) resolution_x);
+  //      needed_points_in_a_row=ceil((double) landing_plane_length/(double) resolution_x);
         break;
     case 4:
         /*startx=tile->width.x-1;
         starty=0;
         inc_x=-1;
         inc_y=-1;*/
-        orth_x=1;
+        /*orth_x=1;
         orth_y=-1;
         allowed_diff=short_range_slope*sqrt(pow(resolution_y,2)+pow(resolution_x,2))/100.0; 
-        needed_points_in_a_row=ceil((double) landing_plane_length/ (double) sqrt(pow(resolution_y,2)+pow(resolution_x,2)));
+ //       needed_points_in_a_row=ceil((double) landing_plane_length/ (double) sqrt(pow(resolution_y,2)+pow(resolution_x,2)));
         break;
     case 5:
         /*startx=0;
@@ -290,9 +293,9 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
         inc_x=0;
         inc_y=-1;
         orth_x=1;
-        orth_y=0;*/
+        orth_y=0;
         allowed_diff=short_range_slope*resolution_y/100.0;
-         needed_points_in_a_row=ceil((double) landing_plane_length/(double) resolution_y);
+   //      needed_points_in_a_row=ceil((double) landing_plane_length/(double) resolution_y);
          break;
     case 6:
         /*startx=0;
@@ -300,9 +303,9 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
         inc_x=1;
         inc_y=-1;
         orth_x=1;
-        orth_y=1;*/
+        orth_y=1;
         allowed_diff=short_range_slope*sqrt(pow(resolution_y,2)+pow(resolution_x,2))/100.0; 
-        needed_points_in_a_row=ceil((double) landing_plane_length/(double) sqrt(pow(resolution_y,2)+pow(resolution_x,2)));
+  //      needed_points_in_a_row=ceil((double) landing_plane_length/(double) sqrt(pow(resolution_y,2)+pow(resolution_x,2)));
         break;
     case 7:
         /*startx=0;
@@ -310,9 +313,9 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
         inc_x=1;
         inc_y=0;
         orth_x=0;
-        orth_y=1;*/
+        orth_y=1;
         allowed_diff=short_range_slope*resolution_x/100.0;
-        needed_points_in_a_row=ceil((double) landing_plane_length/(double) resolution_x);
+  //      needed_points_in_a_row=ceil((double) landing_plane_length/(double) resolution_x);
         break;
     case 8:
         /*startx=0;
@@ -320,14 +323,14 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
         inc_x=1;
         inc_y=1;
         orth_x=1;
-        orth_y=-1;*/
+        orth_y=-1;
         allowed_diff=short_range_slope*sqrt(pow(resolution_y,2)+pow(resolution_x,2))/100.0; 
-        needed_points_in_a_row=ceil((double) landing_plane_length/(double) sqrt(pow(resolution_y,2)+pow(resolution_x,2)));
+  //      needed_points_in_a_row=ceil((double) landing_plane_length/(double) sqrt(pow(resolution_y,2)+pow(resolution_x,2)));
         break;
     default:
         return ; 
   }
-
+*/
   cout << "allowed short range diff "<< allowed_diff<<endl;
   cout << "needed points in a row"<<needed_points_in_a_row<<endl;
   cout << "startx "<<startx<<", starty "<<starty<<endl;
@@ -375,17 +378,23 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
         }
         if (ok)
         {
+          if (current_in_a_row==0)
+          {
+             //save_point_forlater
+             start_point.x=i;
+             start_point.y=j;
+          }
           ++current_in_a_row;
      //     printf("Ein fertiger Punkt ist %d, %d\n",i,j);  
         }
         if(!ok)
         {
-          check_current_landebahn(current_in_a_row, needed_points_in_a_row);
+          check_current_landebahn(current_in_a_row, needed_points_in_a_row,i,j);
         }
       }
       else
       {
-        check_current_landebahn(current_in_a_row, needed_points_in_a_row);
+        check_current_landebahn(current_in_a_row, needed_points_in_a_row,i,j);
     //    printf("not accept sh.sl. %lf und %lf\n",access_single_element(i,j),access_single_element(previous_x,previous_y)); 
       }
     }
@@ -402,13 +411,13 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
     i +=inc_x;
     j +=inc_y;
 
-   cout << "point "<<i<<","<<j<<endl;
+  // cout << "point "<<i<<","<<j<<endl;
    
    if (direction == 1)
    {
      if (j >= tile->width.y)
      {
-       check_current_landebahn(current_in_a_row, needed_points_in_a_row);
+       check_current_landebahn(current_in_a_row, needed_points_in_a_row,i,j);
        i++;
        j=0;
        previous_valid=0;
@@ -426,7 +435,7 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
 
        i=startx;
        j=starty;
-       check_current_landebahn(current_in_a_row, needed_points_in_a_row);
+       check_current_landebahn(current_in_a_row, needed_points_in_a_row,i,j);
        previous_valid=0;
      }
    }
@@ -438,7 +447,7 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
        i=startx;
        j++;
        previous_valid=0;
-       check_current_landebahn(current_in_a_row, needed_points_in_a_row);
+       check_current_landebahn(current_in_a_row, needed_points_in_a_row,i,j);
      }
    }
 
@@ -455,7 +464,7 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
        i=startx;
        j=starty;
        previous_valid=0;
-       check_current_landebahn(current_in_a_row, needed_points_in_a_row);
+       check_current_landebahn(current_in_a_row, needed_points_in_a_row,i,j);
      }
    }
 
@@ -466,7 +475,7 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
        j=tile->width.y-1;
        ++i;
        previous_valid=0;
-       check_current_landebahn(current_in_a_row, needed_points_in_a_row);
+       check_current_landebahn(current_in_a_row, needed_points_in_a_row,i,j);
      }
    }
 
@@ -482,7 +491,7 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
        i=startx;
        j=starty;
        previous_valid=0;
-       check_current_landebahn(current_in_a_row, needed_points_in_a_row);
+       check_current_landebahn(current_in_a_row, needed_points_in_a_row,i,j);
      }
 
    }
@@ -492,7 +501,7 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
      if (i > tile->width.x -1)
      {
        i=0;
-      check_current_landebahn(current_in_a_row, needed_points_in_a_row);
+      check_current_landebahn(current_in_a_row, needed_points_in_a_row,i,j);
        ++j;
      }
    }
@@ -509,7 +518,7 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
        i=startx;
        j=starty;
        previous_valid=0;
-       check_current_landebahn(current_in_a_row, needed_points_in_a_row);
+       check_current_landebahn(current_in_a_row, needed_points_in_a_row,i,j);
      }
 
    }
