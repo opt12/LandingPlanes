@@ -32,7 +32,9 @@ class tile_worker{
    double inc_y;
    void calc_start_coordinates();
    double startx;
-   double starty; 
+   double starty;
+   double orth_x;
+   double orth_y; 
 
  
   public:
