@@ -171,6 +171,9 @@ public:
 
 private:
 
+	inline float DEG_2_RAD(float deg) const { return (deg*M_PI/180.0);}
+	inline float RAD_2_DEG(float rad) const { return (rad*180.0/M_PI);}
+
 	struct currentTile {
 		bool tileLoaded = false;
 		int outstandingReferences = 0;	//this is a reference counter

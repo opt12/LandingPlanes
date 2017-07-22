@@ -52,7 +52,8 @@ static eResult scanForLandingPlanes(json taskDescription, int commSocket) {
 
 
 	tilingCharacteristics myTilingChar;
-	myGeoTiffHandler.getTilingInfo(geoTopLeft, geoBotRight, minLength, MAX_SIZE,
+	myGeoTiffHandler.getTilingInfo(geoTopLeft, geoBotRight, minLength,
+			MAX_SIZE,
 			&myTilingChar);
 	cout << "SCAN Thread: The file for " << geoTopLeft << " to " << geoBotRight
 			<< " will be tiled like this:\n" << myTilingChar;
@@ -67,8 +68,8 @@ static eResult scanForLandingPlanes(json taskDescription, int commSocket) {
 
 				cout << "SCAN Thread: Scan Parameters are: " << taskDescription["scanParameters"].dump(4)<<endl;
 
-//				fakeScan(tile, myGeoTiffHandler,
-//						taskDescription, actualHeading, commSocket);
+				fakeScan(&tile, &myGeoTiffHandler,
+						&taskDescription, actualHeading, commSocket);
 				/********************************************************************
 				 * //TODO spawn threads for scanning exactly here!!!
 				 ********************************************************************/

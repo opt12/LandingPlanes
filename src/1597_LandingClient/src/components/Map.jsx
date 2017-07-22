@@ -115,24 +115,30 @@ class MapOverview extends Component {
                 SouthEast: Lat: {this.state.botRightLat.toFixed(6)}, Lng: {this.state.botRightLng.toFixed(6)};
                 <Form horizontal>
                     <FormGroup>
-                        <Col componentClass={ControlLabel} sm={1}>min. Länge [m]:</Col>
+                        <Col componentClass={ControlLabel} sm={2}>min. Länge [m]:</Col>
                         <Col sm={2}>
                             <FormControl id="minLength" type="number" defaultValue="2000"/>
                         </Col>
-                        <Col componentClass={ControlLabel} sm={1}>min. Breite [m]:</Col>
+                        <Col componentClass={ControlLabel} sm={2}>min. Breite [m]:</Col>
                         <Col sm={1}>
                             <FormControl id="minWidth" type="number" defaultValue="30"/>
                         </Col>
-                        <Col componentClass={ControlLabel} sm={1}>max. Steigung [%]:</Col>
-                        <Col sm={1}>
+                        <Col componentClass={ControlLabel} sm={2}>Richtungen [°, °, ]:</Col>
+                        <Col sm={3}>
+                            <FormControl id="headings" type="text" defaultValue="[45, 135]"/>
+                        </Col>
+                    </FormGroup>
+                    <FormGroup>
+                    <Col componentClass={ControlLabel} sm={2}>max. Steigung [%]:</Col>
+                        <Col sm={2}>
                             <FormControl id="maxRise" type="number" defaultValue="10.0"/>
                         </Col>
-                        <Col componentClass={ControlLabel} sm={1}>max. Varianz:</Col>
+                        <Col componentClass={ControlLabel} sm={2}>max. Varianz:</Col>
                         <Col sm={2}>
                             <FormControl id="maxVariance" type="number" defaultValue="5.5"/>
                         </Col>
-                        <Col sm={2}>
-                            <button class="col-sm-12 btn btn-primary"
+                        <Col sm={3}>
+                            <button class="btn btn-primary"
                                     onClick={e => {
                                         let scanParameter = {
                                             minLength: parseInt(document.getElementById('minLength').value),
@@ -140,7 +146,8 @@ class MapOverview extends Component {
                                             maxRise: parseFloat(document.getElementById('maxRise').value),
                                             maxVariance: parseFloat(document.getElementById('maxVariance').value),
                                         };
-                                        let scanHeadings = [0.0, 30.0, 60.0, 90.0, 22.5, 270.0];
+                                        let scanHeadings = JSON.parse(document.getElementById('headings').value);
+                                            // [0.0, 45.0, 90.0, 120.0, 240, 270.0, 315,];
                                         this.startScan(e, scanParameter, scanHeadings);
                                     }}>
                                 Scan for Landing Planes

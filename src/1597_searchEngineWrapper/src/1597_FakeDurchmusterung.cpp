@@ -6,6 +6,7 @@
  */
 
 #include "1597_FakeDurchmusterung.h"
+#include "geojson_utils.h"
 #include "1597_searcherTask.h"
 
 #include "1597_ipc_listener.h"
@@ -18,19 +19,25 @@ using json = nlohmann::json;
 
 #include "../../GeoTiff_Handler/src/GeoTiffHandler.h"
 
-static json createFakeLandingPlane(tileData actualTile,
-		GeoTiffHandler myGeoTiffHandler, float heading, float minLength, float width) {
-	const int startX = actualTile.offset.x+ (rand() % static_cast<int>(actualTile.width.x + 1));
-	const int startY = actualTile.offset.y+ (rand() % static_cast<int>(actualTile.width.y + 1));
+static json createFakeLandingPlane(const tileData *actualTile,
+		GeoTiffHandler *myGeoTiffHandler, float heading, float minLength, float width) {
+	const int startX = actualTile->offset.x+ (rand() % static_cast<int>(actualTile->width.x + 1));
+	const int startY = actualTile->offset.y+ (rand() % static_cast<int>(actualTile->width.y + 1));
 	const float MIN_RAND = minLength, MAX_RAND = 2*minLength;
 	const float range = MAX_RAND - MIN_RAND;
 	const float length = range * ((((float) rand()) / (float) RAND_MAX)) + MIN_RAND ;
 
-	return myGeoTiffHandler.getGeoJsonPolygon({(float) startX, (float) startY}, length, heading, width);
+//	const float length= minLength;	//XXX TODO just for debug
+
+	json j =myGeoTiffHandler->getGeoJsonPolygon({(float) startX, (float) startY},length, heading, width);
+	j["properties"]["actualLength"] = length;
+	//TODO und hier müssen dann auch die aktuellen Parameter für "actualVariance" und "actualRise" eingetragen werden
+
+	return j;
 }
 
-eResult fakeScan(tileData actualTile, GeoTiffHandler myGeoTiffHandler,
-		json taskDescription, float actualHeading, int commSocket) {
+eResult fakeScan(const tileData *actualTile, GeoTiffHandler *myGeoTiffHandler,
+		const json *taskDescription, float actualHeading, int commSocket) {
 
 	/*TODO: Es ist sehr unschön, dass ich den GeoTiffHandler myGeoTiffHandler mit übergeben muss
 	 * nur um dort die Funktionen
@@ -47,12 +54,21 @@ eResult fakeScan(tileData actualTile, GeoTiffHandler myGeoTiffHandler,
 	//Jeder der threads gibt eine zufällige Ladebahn im Scan-Bereich zurück und meldet sie an
 	//den Unix Socket
 	json fakePlane = createFakeLandingPlane(actualTile, myGeoTiffHandler,
-			actualHeading, taskDescription["scanParameters"]["minLength"],
-			taskDescription["scanParameters"]["minWidth"]);
-	fakePlane["properties"] = taskDescription["scanParameters"];
+			actualHeading, (*taskDescription)["scanParameters"]["minLength"],
+			(*taskDescription)["scanParameters"]["minWidth"]);
+
+	float lengthFromJson = fakePlane["properties"]["actualLength"];	//TODO das müsste schöner gehen: Erst auspacken, dann ersetzten, dann wieder reinstecken ist blöd
+	//TODO und hier müssen dann auch die aktuellen Parameter für "actualVariance" und "actualRise" eingetragen werden
+	fakePlane["properties"] = (*taskDescription)["scanParameters"];
+	fakePlane["properties"]["actualLength"] = lengthFromJson;
+	fakePlane["properties"]["actualRise"] = 666.666;
+	fakePlane["properties"]["actualVariance"] = 666.666;
+	fakePlane["properties"]["actualHeading"] = actualHeading;
 
 	cout << "SCANNING: created fake plane: " << endl;
 	cout << fakePlane.dump(4)<< endl;
+
+
 
 	emitReceiptMsg(commSocket, "landingPlane", fakePlane);
 

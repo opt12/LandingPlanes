@@ -10,6 +10,7 @@
 #include "GeoTiffHandler.h"
 #include "readInTiff.h"
 #include <cassert>
+#define _USE_MATH_DEFINES
 #include <cmath>
 #include <iostream>
 
@@ -439,7 +440,7 @@ resultType GeoTiffHandler::releaseTile(const int xTile, const int yTile) {
 	return SUCCESS;
 }
 
-pixelCoord GeoTiffHandler::geo2Pixel(const geoCoord geoCoord) {
+pixelCoord GeoTiffHandler::geo2Pixel(geoCoord geoCoord) {
 	double backX = 0.0, backY = 0.0;
 	double dfGeoX = geoCoord.longitude, dfGeoY = geoCoord.latitude, dfZ = 0.0;
 	//First apply the transformation from geo to planar coordinates
@@ -451,7 +452,7 @@ pixelCoord GeoTiffHandler::geo2Pixel(const geoCoord geoCoord) {
 	return {(int )(backX), (int )(backY)};//TODO check whether we need to add +0.5 somewhere to get the middle of a pixel
 }
 
-geoCoord GeoTiffHandler::pixel2Geo(const pixelCoordFloat pixCoord) {
+geoCoord GeoTiffHandler::pixel2Geo (pixelCoordFloat pixCoord) {
 	double dfGeoX /**< longitude*/, dfGeoY /**< latitude*/, dfZ = 0.0;
 	// First apply the affine Transformation on the projection
 	GDALApplyGeoTransform(adfGeoTransfPixelToGeo, pixCoord.x, pixCoord.y,
@@ -461,7 +462,7 @@ geoCoord GeoTiffHandler::pixel2Geo(const pixelCoordFloat pixCoord) {
 	return {dfGeoY, dfGeoX};
 }
 
-geoCoord GeoTiffHandler::pixel2Geo(const int xTile, const int yTile,
+geoCoord GeoTiffHandler::pixel2Geo (const int xTile, const int yTile,
 		const pixelCoordFloat pixCoord) {
 	//first check the requested tile data:
 	if (xTile < 0 || yTile < 0 || xTile >= myTilingCharatcteristics.tilesInX
@@ -517,16 +518,6 @@ json GeoTiffHandler::getGeoJsonPolygon(const pixelCoordFloat pix0,
 	};
 }
 
-GeoTiffHandler::~GeoTiffHandler() {
-	//we need to release the memory, we allocated to our curTile.tileBuf
-	//however, be careful to destroy an object that has still outstandingReferences
-
-	if (curTile.tileBuf)
-		free(curTile.tileBuf);
-	//TODO: müssen wir noch eine Abfrage auf outstandingReferences einbauen und im Zweifel eine Exception werfen?
-	//In dem Fall zeigen ja noch Alias-Referenzen in den jetzt freigegebenen Speicher.
-}
-
 json GeoTiffHandler::getGeoJsonPolygon(const pixelCoordFloat start,
 		const pixelCoordFloat end, const float width) {
 	//TODO This implementation currently does not care about earth being a sphere
@@ -540,11 +531,11 @@ json GeoTiffHandler::getGeoJsonPolygon(const pixelCoordFloat start,
 	double deltaY = end.y - start.y;
 	double heading;
 	if (abs(deltaY) <= EPSILON) {
-		heading = deltaX >= 0 ? (90.0 / 180.0) * M_PI : (270.0 / 180.0) * M_PI;
+		heading = deltaX >= 0 ? DEG_2_RAD(90): DEG_2_RAD(270);
 	} else {
 		heading =
-				deltaX >= 0 ?
-						atan2(deltaX, -deltaY) : atan2(deltaX, deltaY) + M_PI;	//y goes from top to down
+				deltaY >= 0 ?
+						atan2(deltaX, -deltaY): atan2(-deltaX, deltaY) + M_PI ;	//y goes from top to down
 	}
 
 	pixelCoordFloat pix0 = { start.x
@@ -572,7 +563,7 @@ json GeoTiffHandler::getGeoJsonPolygon(const pixelCoordFloat start,
 }
 
 json GeoTiffHandler::getGeoJsonPolygon(const pixelCoordFloat start,
-		const float length, const float heading, const float width) {
+		const float length, const float headingDeg, const float width) {
 	//TODO This implementation currently does not care about earth being a sphere
 	//I just calculate the vertices of the polygon as if earth was flat
 	//if this is not sufficient, I'd have to solve the geodesic problem like shown here
@@ -580,10 +571,20 @@ json GeoTiffHandler::getGeoJsonPolygon(const pixelCoordFloat start,
 	//   * see https://geographiclib.sourceforge.io/1.40/C/inverse_8c_source.html
 
 	const pixelCoordFloat end = {start.x
-			+ length * sin(heading) / myDatasetInfo.pixelSize.x,
+			+ length * sin(DEG_2_RAD(headingDeg)) / myDatasetInfo.pixelSize.x,
 			start.y
-					+ length * cos(heading)
-							/ myDatasetInfo.pixelSize.y };
+					+ length * cos(DEG_2_RAD(headingDeg))
+							/ myDatasetInfo.pixelSize.y };	//myDatasetInfo.pixelSize.y already has the sign in it (-) towards north
 
 	return GeoTiffHandler::getGeoJsonPolygon(start, end, width);
+}
+
+GeoTiffHandler::~GeoTiffHandler() {
+	//we need to release the memory, we allocated to our curTile.tileBuf
+	//however, be careful to destroy an object that has still outstandingReferences
+
+	if (curTile.tileBuf)
+		free(curTile.tileBuf);
+	//TODO: müssen wir noch eine Abfrage auf outstandingReferences einbauen und im Zweifel eine Exception werfen?
+	//In dem Fall zeigen ja noch Alias-Referenzen in den jetzt freigegebenen Speicher.
 }

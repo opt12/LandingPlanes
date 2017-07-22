@@ -12,8 +12,8 @@
 #include "../../GeoTiff_Handler/src/GeoTiffHandler.h"
 
 
-eResult fakeScan(tileData actualTile, GeoTiffHandler myGeoTiffHandler,
-		json taskDescription, float actualHeading, int commSocket);
+eResult fakeScan(const tileData *actualTile, GeoTiffHandler *myGeoTiffHandler,
+		const json *taskDescription, float actualHeading, int commSocket);
 
 
 
