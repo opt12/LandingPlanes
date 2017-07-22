@@ -4,6 +4,7 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
+../src/1597_FakeDurchmusterung.cpp \
 ../src/1597_QueueDispatcher.cpp \
 ../src/1597_ipc_listener.cpp \
 ../src/1597_scanToMFile.cpp \
@@ -16,6 +17,7 @@ C_SRCS += \
 /home/eckstein/git/LandingPlanes/src/GeoTiff_Handler/src/readInTiff.c 
 
 OBJS += \
+./src/1597_FakeDurchmusterung.o \
 ./src/1597_QueueDispatcher.o \
 ./src/1597_ipc_listener.o \
 ./src/1597_scanToMFile.o \
@@ -26,6 +28,7 @@ OBJS += \
 ./src/readInTiff.o 
 
 CPP_DEPS += \
+./src/1597_FakeDurchmusterung.d \
 ./src/1597_QueueDispatcher.d \
 ./src/1597_ipc_listener.d \
 ./src/1597_scanToMFile.d \

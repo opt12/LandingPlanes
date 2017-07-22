@@ -21,7 +21,7 @@ const getConnectedIPC = () => {
     ipc.config.socketRoot = '/tmp/';
     ipc.config.appspace = '';
     ipc.config.retry = 1500;
-    ipc.config.silent = true;
+    // ipc.config.silent = true;
 
     //try to connect to ipc socket
     ipc.connectTo(
