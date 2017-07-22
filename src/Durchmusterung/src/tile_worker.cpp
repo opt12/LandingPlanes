@@ -1,6 +1,28 @@
 #include "tile_worker.h"
 #include "global.h"
 
+void tile_worker::set_GeoTiffHandler(GeoTiffHandler * master)
+{
+myGeoTiffHandler=master;
+}
+
+void tile_worker::create_landebahn_coord()
+{
+
+cout << "start point "<<start_point.x<<" und " <<start_point.y<<endl;
+pixelCoord pix = { tile->offset.x+start_point.x, tile->offset.y+start_point.y};
+ geoCoord start = myGeoTiffHandler->pixel2Geo( pix);
+cout <<"lb start"<<start<<endl;
+
+pix.x=tile->offset.x+end_point.x;
+pix.y=tile->offset.y+end_point.y;
+
+cout << "end point "<<end_point.x<<" und " <<end_point.y<<endl;
+
+geoCoord end = myGeoTiffHandler->pixel2Geo( pix);
+
+cout << "lb end "<<end<<endl;
+}
 
 void tile_worker::set_angle(double angle)
 {
@@ -64,6 +86,9 @@ int tile_worker::check_current_landebahn(int &current_in_a_row, const int &neede
    if (current_in_a_row>needed_points_in_a_row)  
    {
      cout << "Landebahn gefunden "<<start_point.x<< "und " <<start_point.y <<" bis "<<current_x<<" und "<<current_y<<" current in row "<<current_in_a_row<<" und needed" <<needed_points_in_a_row<<endl;
+     end_point.x=current_x;
+     end_point.y=current_y;
+    create_landebahn_coord(); 
      current_in_a_row=0;
    }
   return 0;

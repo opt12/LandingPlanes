@@ -64,4 +64,5 @@ class tile_manager{
    int get_tiles_X();
     int get_tiles_Y();
     void release_tile(int i, int j);
+    geoCoord  cal_geo_from_pixel(pixelCoord pix);
 };

@@ -2,6 +2,13 @@
 #include "error.h"
 
 
+geoCoord tile_manager::cal_geo_from_pixel(pixelCoord pix)
+{
+return myGeoTiffHandler.pixel2Geo( pix);
+}
+
+
+
 int printMatrixToFile(const char* filename, const char* matrixName,
                 const int tileSizeX, const int tileSizeY, float *matrix) {
     FILE* outputFile1 = fopen(filename,"w");
@@ -200,6 +207,7 @@ cout << "Check2: "<<p->requestedxmin << " und " <<p->requestedymin<<" und " <<p-
   worker_in->set_long_range_slope(long_range_slope);
   worker_in->set_not_defined(not_defined);
   worker_in->set_angle(current_angle);
+  worker_in->set_GeoTiffHandler(&myGeoTiffHandler);
   return;
 }
 
