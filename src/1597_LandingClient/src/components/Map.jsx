@@ -147,7 +147,8 @@ class MapOverview extends Component {
                                             maxVariance: parseFloat(document.getElementById('maxVariance').value),
                                         };
                                         let scanHeadings = JSON.parse(document.getElementById('headings').value);
-                                            // [0.0, 45.0, 90.0, 120.0, 240, 270.0, 315,];
+                                        scanHeadings = scanHeadings.constructor === Array?scanHeadings:[scanHeadings];
+
                                         this.startScan(e, scanParameter, scanHeadings);
                                     }}>
                                 Scan for Landing Planes
