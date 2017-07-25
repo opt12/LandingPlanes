@@ -11,6 +11,15 @@
 #include "1597_Task_Definition.h"
 #include "../../GeoTiff_Handler/src/GeoTiffHandler.h"
 
+struct tcreateFakePlaneStarterParam {
+	const tileData *actualTile;
+	GeoTiffHandler *myGeoTiffHandler;
+	const json *taskDescription;
+	float actualHeading;
+	int commSocket;
+	int threadNum;
+	eResult taskResult;
+};
 
 eResult fakeScan(const tileData *actualTile, GeoTiffHandler *myGeoTiffHandler,
 		const json *taskDescription, float actualHeading, int commSocket);
