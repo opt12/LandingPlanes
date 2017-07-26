@@ -46,6 +46,7 @@ void tile_worker::calc_optimal_vector()
   orth_y= cos((current_angle+90.0)*PI/180.0);
   needed_points_in_a_row=ceil((double) landing_plane_length/sqrt(pow(((double) resolution_x*inc_x),2)+pow(((double) resolution_y*inc_y),2)));
   allowed_diff=short_range_slope*sqrt(pow(resolution_x*inc_x,2)+pow(resolution_y*inc_y,2))/100.0;
+  cout << "allowed from "<<short_range_slope << " and " <<resolution_x<< " and incx " <<inc_x<<" and res y" <<resolution_y <<" and inc_y 2"<<inc_y<<endl;
 }
 
 void tile_worker::calc_start_coordinates()
@@ -86,11 +87,14 @@ int tile_worker::check_current_landebahn(int &current_in_a_row, const int &neede
    if (current_in_a_row>needed_points_in_a_row)  
    {
      cout << "Landebahn gefunden "<<start_point.x<< "und " <<start_point.y <<" bis "<<current_x<<" und "<<current_y<<" current in row "<<current_in_a_row<<" und needed" <<needed_points_in_a_row<<endl;
+      for (std::map<int,double>::iterator it=coordlist.begin(); it!=coordlist.end(); ++it)
+        std::cout << it->first << " => " << it->second << '\n';
      end_point.x=current_x;
      end_point.y=current_y;
     create_landebahn_coord(); 
-     current_in_a_row=0;
    }
+current_in_a_row=0;
+coordlist.clear();
   return 0;
 }
 
@@ -265,7 +269,7 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
   int orth_x=0;
   int orth_y=0;*/
   
-  int allowed_diff=0;
+//  int allowed_diff=0;
 //  int needed_points_in_a_row=0;
 
   cout << "slope "<<short_range_slope<<" and reso " << resolution_y<<endl;
@@ -383,7 +387,7 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
     if (previous_valid)
     {
  //     printf("compare point %d,%d with %d,%d\n",i,j,previous_x,previous_y);
-      if (fabs(access_single_element(i,j) - access_single_element(i,j)) < short_range_slope)
+      if (fabs(access_single_element(i,j) - access_single_element(previous_x,previous_y)) < allowed_diff)
       {
    //     printf("accept  sh.sl. %lf und %lf\n",access_single_element(i,j),access_single_element(previous_x,previous_y));
         int new_x=i+orth_x;
@@ -410,6 +414,7 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
              start_point.y=j;
           }
           ++current_in_a_row;
+          coordlist[current_in_a_row]=access_single_element(i,j);
      //     printf("Ein fertiger Punkt ist %d, %d\n",i,j);  
         }
         if(!ok)
@@ -430,6 +435,7 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
      //current point not def
      previous_valid=0;
      current_in_a_row=0;
+     coordlist.clear();
     }
     previous_x=i;
     previous_y=j;

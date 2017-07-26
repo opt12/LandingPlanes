@@ -42,6 +42,7 @@ class tile_worker{
 
    void create_landebahn_coord();
    GeoTiffHandler *myGeoTiffHandler;
+   map<int,double> coordlist;
 
   public:
     tile_worker();
