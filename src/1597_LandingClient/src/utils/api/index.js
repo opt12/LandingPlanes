@@ -50,10 +50,22 @@ function createGetRequest() {
     const headers = new Headers({
         'Content-Type': 'application/json',
     });
-;
+    ;
     return {
         headers,
         method: 'GET',
+        credentials: 'include',
+    };
+}
+
+function createDeleteRequest() {
+    const headers = new Headers({
+        'Content-Type': 'application/json',
+    });
+    ;
+    return {
+        headers,
+        method: 'DELETE',
         credentials: 'include',
     };
 }
@@ -126,3 +138,28 @@ export const sendTask2Server = (scanTask) =>{
             throw new Error('Other server error');
         });
 };
+
+export const requestGetDbEntries = (geoPolygon) =>{
+    const payload = geoPolygon;
+
+    return fetch(`${baseUrl}/${apiPrefix}/queries`, createPostRequest(payload))
+        .then((response) => {
+            if (response.status === 200) return response.json();
+
+            if (response.status === 400) throw new InvalidArgumentsError('Could query database for ', geoPolygon);
+
+            throw new Error('Other server error');
+        });
+};
+
+export const requestDropDb= () => {
+    return fetch(`${baseUrl}/${apiPrefix}/commands/drop`, createDeleteRequest())
+        .then((response) => {
+            if (response.status === 200) return response.json();
+
+            if (response.status === 400) throw new InvalidArgumentsError('Could query database for ', geoPolygon);
+
+            throw new Error('Other server error');
+        });
+};
+

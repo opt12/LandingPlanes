@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
 
-var getGDALInfo = require('../commands/CmdFileInfo').getGDALInfo;
-var getWGS84ExtentPolygon = require('../commands/CmdFileInfo').getWGS84ExtentPolygon;
+var getGDALInfo = require('../commands/cmdFileInfo').getGDALInfo;
+var getWGS84ExtentPolygon = require('../commands/cmdFileInfo').getWGS84ExtentPolygon;
 
 
 /* GET fileInfo for Tiff file as JSON. */

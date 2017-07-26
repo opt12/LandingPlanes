@@ -8,6 +8,7 @@ var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var fileInfo = require('./routes/fileInfo');
 var commands = require('./routes/commands');
+var queries = require('./routes/queries');
 
 var cors = require('cors');
 
@@ -31,6 +32,7 @@ app.use(express.static(process.env.CLIENT_PATH || '../1597_LandingClient'));
 app.use('/', index);
 app.use('/api/fileInfo', fileInfo);
 app.use('/api/commands', commands);
+app.use('/api/queries', queries);
 
 //Here the "routes" from IPC socket incoming messages are registered...
 require('./routes/ipcReceiver')();

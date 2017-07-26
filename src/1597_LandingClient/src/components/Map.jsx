@@ -1,8 +1,10 @@
 import {connect} from 'react-redux';
 import React, {Component} from 'react';
-import {Map, TileLayer, Marker, Popup, Polygon} from 'react-leaflet';
+import {Map, TileLayer, Marker, Popup, Polygon, GeoJSON} from 'react-leaflet';
+// import {GeoJsonCluster} from 'react-leaflet-geojson-cluster';
 import {Form, ControlLabel, FormControl, FormGroup, Col, Row} from 'react-bootstrap'
 import {scanForLandingPlanes, save2MFileOnServer} from '../actions/sendTask2Server';
+import {map} from 'ramda';
 
 
 const turfInv = require('turf-invariant');
@@ -20,6 +22,10 @@ class MapOverview extends Component {
         this.getCenterOfMap = this.getCenterOfMap.bind(this);
         this.getBoundingBox = this.getBoundingBox.bind(this);
         this.getExtentPolygon = this.getExtentPolygon.bind(this);
+
+        this.queryLandingPlanesDB = props.queryLandingPlanesDB;
+        this.dropLandingPlanesDB = props.dropLandingPlanesDB;
+
 
         this.state = {
             topLeftLat: this.boundingBox[1][0],
@@ -47,6 +53,24 @@ class MapOverview extends Component {
         return flippedPoints.map(pt => ([pt[1], pt[0]]));
     }
 
+    getExtentGeoJSON = () => (
+        {
+            type: "Polygon",
+            coordinates: [[
+                //top left:
+                [this.state.topLeftLng, this.state.topLeftLat],
+                //bottom left
+                [this.state.topLeftLng, this.state.botRightLat],
+                //bottom right
+                [this.state.botRightLng, this.state.botRightLat],
+                //top right
+                [this.state.botRightLng, this.state.topLeftLat],
+                //top left:
+                [this.state.topLeftLng, this.state.topLeftLat],
+            ]],
+        }
+    )
+
     moveend = (e) => {
         const zoomText = e.target.getZoom();
         console.log("Zoom: " + zoomText);
@@ -58,6 +82,7 @@ class MapOverview extends Component {
             botRightLng: mapBounds.getEast(),
         };
         this.setState(area);
+        this.queryLandingPlanesDB(this.getExtentGeoJSON())
     };
 
     startScan = (e, scanParameter, scanHeadings) => {
@@ -75,6 +100,19 @@ class MapOverview extends Component {
         scanForLandingPlanes(this.props.tiffInfo, mapExtent, scanParameter, scanHeadings);
     };
 
+    requestLandingPlanes = (e) => {
+        e.preventDefault();
+        let requestArea = this.getExtentGeoJSON()
+        console.log(JSON.stringify(requestArea));
+        this.queryLandingPlanesDB(requestArea);
+    };
+
+    dropDb = (e) => {
+        e.preventDefault();
+        this.dropLandingPlanesDB();
+    };
+
+
     saveToMFile = (e, mFileName) => {
         e.preventDefault();
         let mapExtent = {
@@ -91,14 +129,27 @@ class MapOverview extends Component {
     };
 
 
+    onEachFeature(feature, layer) {
+
+        layer.bindPopup(`<span>Landing Strip:<br/>Heading: ${feature.properties.actualHeading}<br/>Length: ${feature.properties.actualLength.toFixed(0)}</span>`)
+    }
+
     render() {
         const {extent} = this.props;
         const position = [this.centerLatLng.lat, this.centerLatLng.lng];
         let mFileName;
 
+        let planesFeatureCollection = {
+            type: "FeatureCollection",
+            features: map(p => p.geoJSON, this.props.landingPlanes.landingPlanes)
+        };
+
+        console.log("planesFeaturecollection: ");
+        console.log(planesFeatureCollection);
+
         return (
             <div>
-                <Map bounds={this.boundingBox} draw="true" onMoveend={this.moveend} onLoad={this.moveend}>
+                <Map id="map" bounds={this.boundingBox} draw="true" onMoveend={this.moveend} onLoad={this.moveend}>
                     <TileLayer
                         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                         url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
@@ -109,10 +160,18 @@ class MapOverview extends Component {
                         </Popup>
                     </Marker>
                     <Polygon color="lime" positions={this.extentPolygon}/>
+                    {planesFeatureCollection.features.length !== 0 &&
+                    <GeoJSON key={this.props.landingPlanes.cnt} data={planesFeatureCollection}
+                             onEachFeature={this.onEachFeature.bind(this)}
+                    />}
+                    {/*{planesFeatureCollection.features.length!=0 && <GeoJsonCluster data={planesFeatureCollection}/>}*/}
                 </Map>
                 Map shows: NorthWest: Lat: {this.state.topLeftLat.toFixed(6)},
                 Lng: {this.state.topLeftLng.toFixed(6)};
                 SouthEast: Lat: {this.state.botRightLat.toFixed(6)}, Lng: {this.state.botRightLng.toFixed(6)};
+                <span
+                    class="pull-right"> Amount of Landing Planes in viewport: {this.props.landingPlanes.landingPlanes.length} </span>
+
                 <Form horizontal>
                     <FormGroup>
                         <Col componentClass={ControlLabel} sm={2}>min. Länge [m]:</Col>
@@ -129,7 +188,7 @@ class MapOverview extends Component {
                         </Col>
                     </FormGroup>
                     <FormGroup>
-                    <Col componentClass={ControlLabel} sm={2}>max. Steigung [%]:</Col>
+                        <Col componentClass={ControlLabel} sm={2}>max. Steigung [%]:</Col>
                         <Col sm={2}>
                             <FormControl id="maxRise" type="number" defaultValue="10.0"/>
                         </Col>
@@ -147,7 +206,7 @@ class MapOverview extends Component {
                                             maxVariance: parseFloat(document.getElementById('maxVariance').value),
                                         };
                                         let scanHeadings = JSON.parse(document.getElementById('headings').value);
-                                        scanHeadings = scanHeadings.constructor === Array?scanHeadings:[scanHeadings];
+                                        scanHeadings = scanHeadings.constructor === Array ? scanHeadings : [scanHeadings];
 
                                         this.startScan(e, scanParameter, scanHeadings);
                                     }}>
@@ -165,24 +224,40 @@ class MapOverview extends Component {
                                     onClick={e => {
                                         mFileName = document.getElementById('mfileName').value.replace(/.*[\/\\]/, '');
                                         let tiffFilePath = this.props.tiffInfo.fileInfo.description;
-                                        tiffFilePath = tiffFilePath.substring(0,tiffFilePath.lastIndexOf("/")+1);
-                                        console.log("M-file-full PAth: " +tiffFilePath+ mFileName);
-                                        this.saveToMFile(e, tiffFilePath+ mFileName);
+                                        tiffFilePath = tiffFilePath.substring(0, tiffFilePath.lastIndexOf("/") + 1);
+                                        console.log("M-file-full PAth: " + tiffFilePath + mFileName);
+                                        this.saveToMFile(e, tiffFilePath + mFileName);
                                     }}>
                                 Save to M-File
+                            </button>
+                        </Col>
+                        <Col smOffset={2} sm={2}>
+                            <button class="col-sm-12 btn btn-success"
+                                    onClick={e => {
+                                        this.requestLandingPlanes(e);
+                                    }}>
+                                request Results
+                            </button>
+                        </Col>
+                        <Col smOffset={1} sm={1}>
+                            <button class="col-sm-12 btn btn-danger"
+                                    onClick={e => {
+                                        this.dropDb(e);
+                                    }}>
+                                Drop DB
                             </button>
                         </Col>
                     </FormGroup>
                 </Form>
             </div>
-        )
-            ;
+        );
     }
 }
 
 const mapStateToProps = state => ({
     extent: state.tiffinfo.fileExtent,
     tiffInfo: state.tiffinfo,
+    landingPlanes: state.landingPlanes,
 });
 
 
