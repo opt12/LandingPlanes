@@ -422,8 +422,14 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
           new_x += factor * orth_x;
           new_y += factor * orth_y;
           if (((new_x>=0) && (new_x<tile->width.x)) && ((new_y>=0) && (new_y < tile->width.y)))
+          {
              if (fabs(access_single_element(new_x,new_y) - access_single_element(old_x,old_y)) > allowed_orthogonal_diff)
                ok = 0;
+             if (fabs(access_single_element(new_x,new_y) - access_single_element(new_x-inc_x,new_y-inc_y)) < allowed_diff)
+               ok = 0;
+          }
+          else
+            ok = 0;
         }
         }
         if (ok)
