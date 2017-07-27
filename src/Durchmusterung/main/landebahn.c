@@ -38,6 +38,8 @@ int main(int argc, char* argv[]) {
   double *not_defined = NULL;
   double start_angle_of_plane=0;
   double angle_increment=45.0;
+  double width_of_plane = 0.0;
+  double orthogonal_slope = 0.0;
   while (arg < argc && argv[arg][0] == '-') {     //so lange noch Argumente da sind, die mit '-' beginnen
      if (argv[arg][1] == 'E')
      {
@@ -69,6 +71,16 @@ int main(int argc, char* argv[]) {
      else if (argv[arg][1] == 'I') // angle increment of searching
      {
        angle_increment=atof(argv[arg+1]);
+       ++arg;
+     }
+     else if (argv[arg][1] == 'W') // width of plane
+     {
+       width_of_plane = atof(argv[arg+1]);
+       ++arg;
+     }
+     else if (argv[arg][1] == 'O') // othogonal slope 
+     {
+       orthogonal_slope = atof(argv[arg+1]);
        ++arg;
      }
 /*     else if (argv[arg][1] == 'N') // not defined
@@ -110,7 +122,7 @@ worker1 = new tile_worker();
   tile_manager *central_manager;
                    
 
-  central_manager= new tile_manager(tiff_in,landing_plane_length,short_range_slope,long_range_slope,not_defined,start_angle_of_plane,angle_increment);
+  central_manager= new tile_manager(tiff_in,landing_plane_length,short_range_slope,long_range_slope,not_defined,start_angle_of_plane,angle_increment,width_of_plane,orthogonal_slope);
   if (central_manager->init_geo_handler() != SUCCESS)
   {
     cout << "Error init geo handler"<<endl;

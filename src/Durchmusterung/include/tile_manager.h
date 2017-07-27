@@ -46,6 +46,8 @@ class tile_manager{
     double current_angle;
     double short_range_slope;
     double long_range_slope; 
+    double orthogonal_slope;
+    double width_of_plane;
     map <extractionParameters, tileCharacteristics*,cmpByStruct > global_map_map;
     double* not_defined;
     GeoTiffHandler myGeoTiffHandler;
@@ -57,7 +59,7 @@ class tile_manager{
   public:
     tile_manager();
     ~tile_manager();
-    tile_manager(string source_file_in, double landing_plane_length, double short_range_slope, double long_range_slope,double* not_definied,double start_angle_of_plane, double angle_increment);
+    tile_manager(string source_file_in, double landing_plane_length, double short_range_slope, double long_range_slope,double* not_definied,double start_angle_of_plane, double angle_increment, double width_of_plane, double orthogonal_slope);
     void get_tile(tile_worker* worker_in, int idxX, int idxY);
     int init_geo_handler();
     int select_area(int xmin, int xmax, int ymin, int ymax);

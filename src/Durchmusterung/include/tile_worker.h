@@ -39,6 +39,8 @@ class tile_worker{
    double allowed_diff;
    pixelPair start_point;
    pixelPair end_point;
+   double orthogonal_slope;
+   double width_of_plane;
 
    void create_landebahn_coord();
    GeoTiffHandler *myGeoTiffHandler;
@@ -59,4 +61,6 @@ class tile_worker{
     void set_not_defined(double* not_defined);
     void set_angle(double angle);
     void set_GeoTiffHandler(GeoTiffHandler* master);
+    void set_width_of_plane(double width_of_plane);
+    void set_orthogonal_slope(double orthogonal_slope);
 };

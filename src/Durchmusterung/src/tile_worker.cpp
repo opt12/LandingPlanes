@@ -24,6 +24,16 @@ geoCoord end = myGeoTiffHandler->pixel2Geo( pix);
 cout << "lb end "<<end<<endl;
 }
 
+void tile_worker::set_orthogonal_slope(double orthogonal_slope)
+{
+  this->orthogonal_slope=orthogonal_slope;
+}
+
+void tile_worker::set_width_of_plane(double width_of_plane)
+{
+  this->width_of_plane=width_of_plane;
+}
+
 void tile_worker::set_angle(double angle)
 {
   current_angle=angle;
@@ -44,6 +54,10 @@ void tile_worker::calc_optimal_vector()
   cout << "inc y is "<<inc_y<<endl;  
   orth_x=-sin((current_angle+90.0)*PI/180.0);
   orth_y= cos((current_angle+90.0)*PI/180.0);
+  if (fabs(orth_x) < IMPRECISION)
+    orth_x=0.0;
+  if (fabs(orth_y) < IMPRECISION)
+    orth_y=0.0;
   needed_points_in_a_row=ceil((double) landing_plane_length/sqrt(pow(((double) resolution_x*inc_x),2)+pow(((double) resolution_y*inc_y),2)));
   allowed_diff=short_range_slope*sqrt(pow(resolution_x*inc_x,2)+pow(resolution_y*inc_y,2))/100.0;
   cout << "allowed from "<<short_range_slope << " and " <<resolution_x<< " and incx " <<inc_x<<" and res y" <<resolution_y <<" and inc_y 2"<<inc_y<<endl;
