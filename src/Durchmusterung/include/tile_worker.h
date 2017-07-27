@@ -36,7 +36,9 @@ class tile_worker{
    double orth_x;
    double orth_y; 
    int needed_points_in_a_row;
+   int needed_orthogonal_points_in_a_row;
    double allowed_diff;
+   double allowed_orthogonal_diff;
    pixelPair start_point;
    pixelPair end_point;
    double orthogonal_slope;

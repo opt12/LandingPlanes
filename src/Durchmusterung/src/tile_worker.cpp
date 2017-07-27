@@ -60,7 +60,9 @@ void tile_worker::calc_optimal_vector()
     orth_y=0.0;
   needed_points_in_a_row=ceil((double) landing_plane_length/sqrt(pow(((double) resolution_x*inc_x),2)+pow(((double) resolution_y*inc_y),2)));
   allowed_diff=short_range_slope*sqrt(pow(resolution_x*inc_x,2)+pow(resolution_y*inc_y,2))/100.0;
+  allowed_orthogonal_diff=orthogonal_slope*sqrt(pow(resolution_x*orth_x,2)+pow(resolution_y*orth_y,2))/100.0;
   cout << "allowed from "<<short_range_slope << " and " <<resolution_x<< " and incx " <<inc_x<<" and res y" <<resolution_y <<" and inc_y 2"<<inc_y<<endl;
+  needed_orthogonal_points_in_a_row=ceil(0.5 *(double) width_of_plane/sqrt(pow(((double) resolution_x*orth_x),2)+pow(((double) resolution_y*orth_y),2)));
 }
 
 void tile_worker::calc_start_coordinates()
@@ -375,7 +377,9 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
   }
 */
   cout << "allowed short range diff "<< allowed_diff<<endl;
+  cout << "allowed_orthogonal_diff" <<allowed_orthogonal_diff<<endl;
   cout << "needed points in a row"<<needed_points_in_a_row<<endl;
+  cout << "needed orthogonal points in a row"<<needed_orthogonal_points_in_a_row<<endl;
   cout << "startx "<<startx<<", starty "<<starty<<endl;
   cout << "inc_x "<<inc_x<<", inc_y "<<inc_y<<endl;
   cout << "orth_x "<<orth_x<<", orth_y "<<orth_y<<endl;
@@ -389,7 +393,7 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
   int previous_x=0;
   int previous_y=0;
   int previous_valid =0;
-  int accept_orthogonal_slope=1000;
+  int accept_orthogonal_slope=1000; /* temp only*/
   while (! completed)
   {
     ++checksum;
@@ -404,20 +408,23 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
       if (fabs(access_single_element(i,j) - access_single_element(previous_x,previous_y)) < allowed_diff)
       {
    //     printf("accept  sh.sl. %lf und %lf\n",access_single_element(i,j),access_single_element(previous_x,previous_y));
-        int new_x=i+orth_x;
-        int new_y=j+orth_y;
+        // now loop over all orthogonal elements
         int ok=1;
-        if (((new_x>=0) && (new_x<tile->width.x)) && ((new_y>=0) && (new_y < tile->width.y)))
-          if (fabs(access_single_element(i,j)-access_single_element(new_x,new_y)) > accept_orthogonal_slope)
-            ok=0;
-        if (ok)
+        for(int k=0; k < 2; k++)
         {
-          new_x=i-orth_x;
-          new_y=j-orth_y;
+          double new_x=i;
+          double new_y=j;
+          double factor = pow(-1,k);
+        for(int l=0; l < 2; l++)
+        {
+          double old_x=new_x;
+          double old_y=new_y;
+          new_x += factor * orth_x;
+          new_y += factor * orth_y;
           if (((new_x>=0) && (new_x<tile->width.x)) && ((new_y>=0) && (new_y < tile->width.y)))
-            if (fabs(access_single_element(i,j)-access_single_element(new_x,new_y)) > accept_orthogonal_slope)
-              ok=0;
-
+             if (fabs(access_single_element(new_x,new_y) - access_single_element(old_x,old_y)) > allowed_orthogonal_diff)
+               ok = 0;
+        }
         }
         if (ok)
         {
