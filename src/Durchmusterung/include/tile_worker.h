@@ -12,12 +12,14 @@ extern "C" {
 #define PI 3.14159265
 
 #include "json.hpp"
+#include "1597_ipc_listener.h"
 
 using namespace std;
 
 class tile_worker{
 
   private:
+   int commSocket;
    double current_angle;
    const tileData* tile;
    float access_single_element(int x, int y);
@@ -69,4 +71,5 @@ class tile_worker{
     void set_GeoTiffHandler(GeoTiffHandler* master);
     void set_width_of_plane(double width_of_plane);
     void set_orthogonal_slope(double orthogonal_slope);
+    void set_commSocket(int commSocket);
 };

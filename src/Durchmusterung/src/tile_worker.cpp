@@ -1,6 +1,11 @@
 #include "tile_worker.h"
 #include "global.h"
 
+void tile_worker::set_commSocket(int commSocket)
+{
+  this->commSocket=commSocket;
+}
+
 tile_worker::tile_worker(const tileData* tile_in, double landing_plane_length, double short_range_slope, double long_range_slope, double* not_defined, double angle, GeoTiffHandler* master, double width_of_plane, double orthogonal_slope)
 {
 
@@ -29,20 +34,32 @@ void tile_worker::create_landebahn_coord()
 {
 
 cout << "start point "<<start_point.x<<" und " <<start_point.y<<endl;
-pixelCoord pix = { tile->offset.x+start_point.x, tile->offset.y+start_point.y};
- geoCoord start = myGeoTiffHandler->pixel2Geo( pix);
+pixelCoord pixstart = { tile->offset.x+start_point.x, tile->offset.y+start_point.y};
+ geoCoord start = myGeoTiffHandler->pixel2Geo( pixstart);
 cout <<"lb start"<<start<<endl;
-
-pix.x=tile->offset.x+end_point.x;
-pix.y=tile->offset.y+end_point.y;
+pixelCoord pixend;
+pixend.x=tile->offset.x+end_point.x;
+pixend.y=tile->offset.y+end_point.y;
 
 cout << "end point "<<end_point.x<<" und " <<end_point.y<<endl;
 
-geoCoord end = myGeoTiffHandler->pixel2Geo( pix);
+geoCoord end = myGeoTiffHandler->pixel2Geo( pixend);
 
 cout << "lb end "<<end<<endl;
 
-json j = myGeoTiffHandler->getGeoJsonPolygon(start, end, width);
+json j = myGeoTiffHandler->getGeoJsonPolygon(pixstart, pixend, width_of_plane);
+float lengthFromJson = j["properties"]["actualLength"];
+
+//        j["properties"] = (*p.taskDescription)["scanParameters"];
+        j["properties"]["actualLength"] = lengthFromJson;
+        j["properties"]["actualRise"] = 666.666;
+        j["properties"]["actualVariance"] = 666.666;
+        j["properties"]["actualHeading"] = current_angle;
+
+cout << j.dump(4) << endl;
+
+        emitReceiptMsg(commSocket, "landingPlane", j);
+
 }
 
 void tile_worker::set_orthogonal_slope(double orthogonal_slope)

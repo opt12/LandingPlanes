@@ -2,10 +2,10 @@
 #include "error.h"
 
 
-geoCoord tile_manager::cal_geo_from_pixel(pixelCoord pix)
+/*geoCoord tile_manager::cal_geo_from_pixel(pixelCoord pix)
 {
 return myGeoTiffHandler.pixel2Geo( pix);
-}
+}*/
 
 
 

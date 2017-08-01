@@ -15,13 +15,13 @@ clean:
 	rm -rf html || true
 	rm ./obj/*.o || true
 ./bin/landebahn: ./main/landebahn.c ./obj/tile_manager.o ./obj/tile_worker.o ../GeoTiff_Handler/src/GeoTiffHandler.o ../GeoTiff_Handler/src/readInTiff.o ./bin/pcs.csv
-	$(CC) $(CFLAGS) -o ./bin/landebahn ./main/landebahn.c ../GeoTiff_Handler/src/GeoTiffHandler.o ../GeoTiff_Handler/src/readInTiff.o ./obj/tile_manager.o ./obj/tile_worker.o -I../readInTiff/src/ -I./include   -I../gdal/gdal-2.2.1/gcore -I../gdal/gdal-2.2.1/port -I../gdal/gdal-2.2.1/ogr -I../GeoTiff_Handler/src ../gdal/gdal-2.2.1/.libs/libgdal.so -ltiff
+	$(CC) $(CFLAGS) -o ./bin/landebahn ./main/landebahn.c ../GeoTiff_Handler/src/GeoTiffHandler.o ../GeoTiff_Handler/src/readInTiff.o ./obj/tile_manager.o ./obj/tile_worker.o -I../readInTiff/src/ -I./include   -I../gdal/gdal-2.2.1/gcore -I../gdal/gdal-2.2.1/port -I../gdal/gdal-2.2.1/ogr -I../GeoTiff_Handler/src -I../1597_searchEngineWrapper/src/ ../gdal/gdal-2.2.1/.libs/libgdal.so /home/bjoern/landebahnui2/LandingPlanes/src/1597_searchEngineWrapper/Debug/src/1597_ipc_listener.o -ltiff
 
 ./obj/tile_manager.o: ./src/tile_manager.cpp ./include/tile_manager.h
 	$(CC) $(CFLAGS) -c ./src/tile_manager.cpp -o ./obj/tile_manager.o -I../readInTiff/src/ -I./include -I../gdal/gdal-2.2.1/gcore -I../gdal/gdal-2.2.1/port -I../gdal/gdal-2.2.1/ogr -I../GeoTiff_Handler/src
 
 ./obj/tile_worker.o: ./src/tile_worker.cpp ./include/tile_worker.h
-	$(CC) $(CFLAGS) -c ./src/tile_worker.cpp -o ./obj/tile_worker.o -I../readInTiff/src/ -I./include -I../gdal/gdal-2.2.1/gcore -I../gdal/gdal-2.2.1/port -I../gdal/gdal-2.2.1/ogr -I../GeoTiff_Handler/src
+	$(CC) $(CFLAGS) -c ./src/tile_worker.cpp -o ./obj/tile_worker.o -I../readInTiff/src/ -I./include -I../gdal/gdal-2.2.1/gcore -I../gdal/gdal-2.2.1/port -I../gdal/gdal-2.2.1/ogr -I../GeoTiff_Handler/src -I../1597_searchEngineWrapper/src/
 
 ./obj/plane_library.o: ./src/plane_library.cpp
 	$(CC) $(CFLAGS) -c ./src/plane_library.cpp -o ./obj/plane_library.o -I../readInTiff/src/ -I./include -I../GeoTiff_Handler/src -I../gdal/gdal-2.2.1/gcore -I../gdal/gdal-2.2.1/port -I../gdal/gdal-2.2.1/ogr
