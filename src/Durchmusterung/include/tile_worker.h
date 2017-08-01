@@ -16,7 +16,7 @@ extern "C" {
 
 using namespace std;
 
-int search_for_planes(const tileData *actualTile, GeoTiffHandler *myGeoTiffHandler, float heading, float minLength, float width);
+int search_for_planes(const tileData *actualTile, GeoTiffHandler *myGeoTiffHandler, float heading, float minLength, float width, int commSocket);
 
 class tile_worker{
 
@@ -56,7 +56,7 @@ class tile_worker{
 
   public:
     tile_worker();
-    tile_worker(const tileData* tile_in, double landing_plane_length, double short_range_slope, double long_range_slope, double* not_defined, double angle, GeoTiffHandler* master, double width_of_plane, double orthogonal_slope); 
+    tile_worker(const tileData* tile_in, double landing_plane_length, double short_range_slope, double long_range_slope, double* not_defined, double angle, GeoTiffHandler* master, double width_of_plane, double orthogonal_slope, int commSocket); 
     ~tile_worker();
     void set_param_and_tile( tileData* tile_in);
     void set_param_and_tile (const tileData* tile_in);

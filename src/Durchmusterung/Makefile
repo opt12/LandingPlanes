@@ -24,7 +24,7 @@ clean:
 	$(CC) $(CFLAGS) -c ./src/tile_worker.cpp -o ./obj/tile_worker.o -I../readInTiff/src/ -I./include -I../gdal/gdal-2.2.1/gcore -I../gdal/gdal-2.2.1/port -I../gdal/gdal-2.2.1/ogr -I../GeoTiff_Handler/src -I../1597_searchEngineWrapper/src/
 
 ./obj/plane_library.o: ./src/plane_library.cpp
-	$(CC) $(CFLAGS) -c ./src/plane_library.cpp -o ./obj/plane_library.o -I../readInTiff/src/ -I./include -I../GeoTiff_Handler/src -I../gdal/gdal-2.2.1/gcore -I../gdal/gdal-2.2.1/port -I../gdal/gdal-2.2.1/ogr
+	$(CC) $(CFLAGS) -c ./src/plane_library.cpp -o ./obj/plane_library.o -I../readInTiff/src/ -I./include -I../GeoTiff_Handler/src -I../gdal/gdal-2.2.1/gcore -I../gdal/gdal-2.2.1/port -I../gdal/gdal-2.2.1/ogr -I../1597_searchEngineWrapper/src/
 
 ./lib/plane_library.a: ./obj/plane_library.o ./obj/tile_worker.o
 	ar rcs ./lib/plane_library.a ./obj/plane_library.o ./obj/tile_worker.o

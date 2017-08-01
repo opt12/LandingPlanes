@@ -6,7 +6,7 @@ void tile_worker::set_commSocket(int commSocket)
   this->commSocket=commSocket;
 }
 
-tile_worker::tile_worker(const tileData* tile_in, double landing_plane_length, double short_range_slope, double long_range_slope, double* not_defined, double angle, GeoTiffHandler* master, double width_of_plane, double orthogonal_slope)
+tile_worker::tile_worker(const tileData* tile_in, double landing_plane_length, double short_range_slope, double long_range_slope, double* not_defined, double angle, GeoTiffHandler* master, double width_of_plane, double orthogonal_slope, int commSocket)
 {
 
  set_param_and_tile(tile_in);
@@ -23,6 +23,7 @@ tile_worker::tile_worker(const tileData* tile_in, double landing_plane_length, d
  set_GeoTiffHandler(myGeoTiffHandler);
  set_width_of_plane(width_of_plane);
  set_orthogonal_slope(orthogonal_slope);
+ set_commSocket(commSocket);
 }
 
 void tile_worker::set_GeoTiffHandler(GeoTiffHandler * master)
