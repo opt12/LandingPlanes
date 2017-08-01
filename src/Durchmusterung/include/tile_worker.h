@@ -16,6 +16,8 @@ extern "C" {
 
 using namespace std;
 
+int search_for_planes(const tileData *actualTile, GeoTiffHandler *myGeoTiffHandler, float heading, float minLength, float width);
+
 class tile_worker{
 
   private:

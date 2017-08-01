@@ -26,8 +26,8 @@ clean:
 ./obj/plane_library.o: ./src/plane_library.cpp
 	$(CC) $(CFLAGS) -c ./src/plane_library.cpp -o ./obj/plane_library.o -I../readInTiff/src/ -I./include -I../GeoTiff_Handler/src -I../gdal/gdal-2.2.1/gcore -I../gdal/gdal-2.2.1/port -I../gdal/gdal-2.2.1/ogr
 
-./lib/plane_library.a: ./obj/plane_library.o
-	ar rcs ./lib/plane_library.a ./obj/plane_library.o
+./lib/plane_library.a: ./obj/plane_library.o ./obj/tile_worker.o
+	ar rcs ./lib/plane_library.a ./obj/plane_library.o ./obj/tile_worker.o
 
 ../GeoTiff_handler/src/readInTiff.o:
 	$(MAKE) -C ../GeoTiff_Handler/src/

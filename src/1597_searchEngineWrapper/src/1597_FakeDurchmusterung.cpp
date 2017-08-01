@@ -17,6 +17,8 @@
 
 #include "json.hpp"
 
+#include "tile_worker.h"
+
 // for convenience
 using json = nlohmann::json;
 
@@ -48,8 +50,8 @@ void *createFakePlaneThreadStarter(void *par) {
 	tcreateFakePlaneStarterParam p = *((tcreateFakePlaneStarterParam *) par);
 
 	cout << "Fake Plane Thread [" << p.threadNum << "] started." << endl;
-
-	//now start the worker
+search_for_planes(p.actualTile, p.myGeoTiffHandler, p.actualHeading, 3000, 30);
+	/*//now start the worker
 	json fakePlane = createFakeLandingPlane(p.actualTile, p.myGeoTiffHandler,
 			p.actualHeading,
 			(*p.taskDescription)["scanParameters"]["minLength"],
@@ -67,7 +69,7 @@ void *createFakePlaneThreadStarter(void *par) {
 	cout << fakePlane.dump(4) << endl;
 
 	emitReceiptMsg(p.commSocket, "landingPlane", fakePlane);
-
+*/
 	p.taskResult = NORMAL_EXIT;
 
 	return NULL;
