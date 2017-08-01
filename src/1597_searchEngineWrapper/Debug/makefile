@@ -47,7 +47,7 @@ all: 1597_searchEngineWrapper
 1597_searchEngineWrapper: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C++ Linker'
-	g++  -o "1597_searchEngineWrapper" $(OBJS) $(USER_OBJS) $(LIBS)
+	g++  -o "1597_searchEngineWrapper" -I../../gdal/gdal-2.2.1/gcore -I../../gdal/gdal-2.2.1/port -I../../gdal/gdal-2.2.1/ogr $(OBJS) $(USER_OBJS) $(LIBS) -L../../gdal/gdal-2.2.1/.libs
 	@echo 'Finished building target: $@'
 	@echo ' '
 

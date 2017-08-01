@@ -10,11 +10,11 @@ CPP_SRCS += \
 ../src/1597_scanToMFile.cpp \
 ../src/1597_searchEngineWrapper.cpp \
 ../src/1597_searcherTask.cpp \
-/home/eckstein/git/LandingPlanes/src/GeoTiff_Handler/src/GeoTiffHandler.cpp \
+../../GeoTiff_Handler/src/GeoTiffHandler.cpp \
 ../src/geojson_utils.cpp 
 
 C_SRCS += \
-/home/eckstein/git/LandingPlanes/src/GeoTiff_Handler/src/readInTiff.c 
+../../GeoTiff_Handler/src/readInTiff.c 
 
 OBJS += \
 ./src/1597_FakeDurchmusterung.o \
@@ -45,18 +45,18 @@ C_DEPS += \
 src/%.o: ../src/%.cpp
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C++ Compiler'
-	g++ -std=c++0x -I/usr/include/gdal -O0 -g3 -Wall -c -fmessage-length=0 -pthread -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
+	g++ -std=c++0x -I/usr/include/gdal -I../../gdal/gdal-2.2.1/gcore -I../../gdal/gdal-2.2.1/port -I../../gdal/gdal-2.2.1/ogr  -O0 -g3 -Wall -c -fmessage-length=0 -pthread -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
-src/GeoTiffHandler.o: /home/eckstein/git/LandingPlanes/src/GeoTiff_Handler/src/GeoTiffHandler.cpp
+src/GeoTiffHandler.o: ../../GeoTiff_Handler/src/GeoTiffHandler.cpp
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C++ Compiler'
-	g++ -std=c++0x -I/usr/include/gdal -O0 -g3 -Wall -c -fmessage-length=0 -pthread -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
+	g++ -std=c++0x -I/usr/include/gdal -I../../gdal/gdal-2.2.1/gcore -I../../gdal/gdal-2.2.1/port -I../../gdal/gdal-2.2.1/ogr -O0 -g3 -Wall -c -fmessage-length=0 -pthread -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
-src/readInTiff.o: /home/eckstein/git/LandingPlanes/src/GeoTiff_Handler/src/readInTiff.c
+src/readInTiff.o: ../../GeoTiff_Handler/src/readInTiff.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C Compiler'
 	gcc -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
