@@ -1,0 +1,135 @@
+#!/usr/bin/env node
+/**
+ * Module dependencies.
+ */
+
+var app = require('../app');
+var debug = require('debug')('1597-databasemanager:server');
+var http = require('http');
+
+
+const argv = require('yargs').argv;
+if(argv.tiffpath != null){
+    console.log('tiffpath is given as: ', argv.tiffpath);
+    //store the path to the tiff files into the process environment variables for later use
+    process.env.TIFFPATH = argv.tiffpath;
+} else {
+    console.log('tiffpath defaults to: ', process.cwd());
+    console.log('to define the path to the GeoTIFF files to be used,\nplease specify the --tiffpath="..." argument');
+    console.log('use:');
+    console.log('npm start -- --tiffpath="..."');
+    //store the path to the tiff files into the process environment variables for later use
+    process.env.TIFFPATH = process.cwd();
+};
+
+if(argv.wrapper){
+    process.env.WRAPPER = argv.wrapper;
+} else {
+    process.env.WRAPPER = "/home/eckstein/git/1597_searchEngineWrapper/Debug/1597_searchEngineWrapper";
+    console.log('wrapper defaults to: ', process.env.WRAPPER);
+    console.log('to define the path to the wrapper application to be used,\nplease specify the --wrapper="..." argument');
+    console.log('use:');
+    console.log('npm start -- --wrapper="..."');
+}
+
+if(argv.terminal){
+    process.env.TERMINAL = argv.terminal+' ';
+} else {
+    process.env.TERMINAL = "gnome-terminal -x ";
+    console.log('terminal defaults to: ', process.env.TERMINAL);
+    console.log('to define the path to the x-terminal application to be used,\nplease specify the --terminal="..." argument');
+    console.log('use:');
+    console.log('npm start -- --terminal="..."');
+}
+
+if(argv.clientpath){
+    process.env.CLIENT_PATH = argv.clientpath;
+} else {
+    process.env.CLIENT_PATH = '../1597_LandingClient';
+    console.log('client path defaults to: ', process.env.CLIENT_PATH);
+    console.log('to define the path to the client files to be used,\nplease specify the --clientpath="..." argument');
+    console.log('use:');
+    console.log('npm start -- --clientpath="..."');
+}
+
+
+/**
+ * Get port from environment and store in Express.
+ */
+
+var port = normalizePort(process.env.PORT || '3000');
+app.set('port', port);
+
+/**
+ * Create HTTP server.
+ */
+
+var server = http.createServer(app);
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.listen(port);
+server.on('error', onError);
+server.on('listening', onListening);
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+
+function onError(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  var bind = typeof port === 'string'
+    ? 'Pipe ' + port
+    : 'Port ' + port;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+}
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
+function onListening() {
+  var addr = server.address();
+  var bind = typeof addr === 'string'
+    ? 'pipe ' + addr
+    : 'port ' + addr.port;
+  debug('Listening on ' + bind);
+}

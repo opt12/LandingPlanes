@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Landing Planes Client</title>
+  <link rel="stylesheet" type="text/css" href="/bower_components/bootstrap/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/1.1.0/leaflet.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.css"/>
+  <style>
+    h1, h2, p {
+      font-family: sans-serif;
+      text-align: center;
+    }
+    .leaflet-container {
+      height: 500px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    #map {
+        margin: 0 auto;
+        width: 100%;
+        height: 500px;
+        border: 1px solid #ccc;
+    }
+    .sr-only {
+      display: none;
+    }
+    .marker-cluster {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #3498db;
+      color: #fff;
+      text-align: center;
+      font-size: 24px;
+    }
+    .leaflet-cluster-anim .leaflet-marker-icon, .leaflet-cluster-anim .leaflet-marker-shadow {
+      -webkit-transition: -webkit-transform 0.3s ease-out, opacity 0.3s ease-in;
+      -moz-transition: -moz-transform 0.3s ease-out, opacity 0.3s ease-in;
+      -o-transition: -o-transform 0.3s ease-out, opacity 0.3s ease-in;
+      transition: transform 0.3s ease-out, opacity 0.3s ease-in;
+    }
+  </style>
+
+</head>
+<body>
+  <div id="app"></div>
+  <script src="/static/bundle.js"></script>
+</body>
+</html>

@@ -18,6 +18,12 @@
 #include "cpl_conv.h" // for CPLMalloc()
 #include <ogr_spatialref.h>
 
+#include "json.hpp"
+
+// for convenience
+using json = nlohmann::json;
+
+
 using namespace std;
 
 static const size_t MAX_SIZE = 0;
@@ -27,9 +33,19 @@ struct pixelPair {
 	int y;
 };
 
+struct pixelCoordFloat {
+	double x;
+	double y;
+};
+
+std::ostream& operator<<(std::ostream& o, const pixelCoordFloat& pc);
+
 struct pixelCoord {
 	int x;
 	int y;
+
+    //implicit conversion
+    operator pixelCoordFloat() const { return {(double) x, (double) y};}
 };
 
 std::ostream& operator<<(std::ostream& o, const pixelCoord& pc);
@@ -97,6 +113,7 @@ enum resultType {SUCCESS, ///< success
 	INVALID_TILE_REQUESTED,
 	ERROR_MEMORY_ALLOCATION,
 	ERROR_DATASET_STILL_IN_USE,
+	IMPROPER_DATA_FORMAT_FOR_ALTITUDE,
 };
 
 
@@ -135,14 +152,27 @@ public:
 	resultType getTile(const int xTile, const int yTile, tileData *tile);
 	resultType releaseTile(const int xTile, const int yTile);
 
-	geoCoord pixel2Geo(const pixelCoord source);
-	geoCoord pixel2Geo(const int xTile, const int yTile, const pixelCoord source);
+	geoCoord pixel2Geo(const pixelCoordFloat source);
+	geoCoord pixel2Geo(const int xTile, const int yTile, const pixelCoordFloat source);
 	pixelCoord geo2Pixel(const geoCoord source);
 	pixelCoord geo2Pixel(const int xTile, const int yTile, const geoCoord source);
+
+	/**
+	 * returns a valid geoJSON Object with the properties set to "properties":{}
+	 * This has to be overwritten later on.
+	 * see https://gis.stackexchange.com/questions/144084/using-gdal-c-to-calculate-distance-in-meters
+	 * see https://geographiclib.sourceforge.io/1.40/C/inverse_8c_source.html
+	 */
+	json getGeoJsonPolygon(const pixelCoordFloat start, const pixelCoordFloat end, const float width);
+	json getGeoJsonPolygon(const pixelCoordFloat start, const float length, const float heading, const float width);
+	json getGeoJsonPolygon(const pixelCoordFloat pix0, const pixelCoordFloat pix1, const pixelCoordFloat pix2, const pixelCoordFloat pix3);
 
 	virtual ~GeoTiffHandler();
 
 private:
+
+	inline float DEG_2_RAD(float deg) const { return (deg*M_PI/180.0);}
+	inline float RAD_2_DEG(float rad) const { return (rad*180.0/M_PI);}
 
 	struct currentTile {
 		bool tileLoaded = false;

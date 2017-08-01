@@ -164,7 +164,7 @@ int main(int argc, char * argv[]) {
 
 		resultType result;
 
-		pixelCoord pix = {0,0};
+		pixelCoordFloat pix = {0,0};
 		geoCoord geoTopLeft = myGeoTiffHandler.pixel2Geo(pix);
 		cout << "Pixel "<<pix <<" in GeoCoordinates: " << geoTopLeft << endl;
 		pix = myGeoTiffHandler.geo2Pixel(geoTopLeft);
@@ -330,6 +330,15 @@ int main(int argc, char * argv[]) {
 				myGeoTiffHandler.releaseTile(idxX, idxY);
 			}
 		}
+
+		cout << myGeoTiffHandler.getGeoJsonPolygon({myTilingChar.topLeftPix.x+20.0,myTilingChar.topLeftPix.y+50.0},
+				{myTilingChar.topLeftPix.x+50.0,myTilingChar.topLeftPix.y+20.0}, 40.0).dump(4) << endl;
+		cout << myGeoTiffHandler.getGeoJsonPolygon({myTilingChar.topLeftPix.x+20.0,myTilingChar.topLeftPix.y+20.0}, 2000.0, 270.0/180.0*M_PI, 40.0).dump(4) << endl;
+		cout << myGeoTiffHandler.getGeoJsonPolygon({myTilingChar.topLeftPix.x+20.0,myTilingChar.topLeftPix.y+20.0}, 2000.0, 135.0/180.0*M_PI, 40.0).dump(4) << endl;
+		cout << myGeoTiffHandler.getGeoJsonPolygon({myTilingChar.topLeftPix.x+20.0,myTilingChar.topLeftPix.y+20.0}, 2000.0, 50.0/180.0*M_PI, 40.0).dump(4) << endl;
+//		cout << myGeoTiffHandler.getGeoJsonPolygon({3186.53,6930.46}, {3179.46,6937.53}, {3216.53,6900.46}, {3209.46,6907.53}).dump(4) << endl;
+//		cout << myGeoTiffHandler.getGeoJsonPolygon({3186.53,6937.53}, {3179.46,6930.46}, {3209.46,6900.46}, {3216.53,6907.53}).dump(4) << endl;
+
 
 		//Elbe
 		geoTL={53.5517, 9.7758}; geoBR = {53.5303, 9.8266};
