@@ -1,6 +1,25 @@
 #include "tile_worker.h"
 #include "global.h"
 
+tile_worker::tile_worker(const tileData* tile_in, double landing_plane_length, double short_range_slope, double long_range_slope, double* not_defined, double angle, GeoTiffHandler* master, double width_of_plane, double orthogonal_slope)
+{
+
+ set_param_and_tile(tile_in);
+  cout << "before call to worker"<<endl;
+
+ set_x_resolution(20.0);
+ set_y_resolution(20.0); // ask Felix how to retrieve this information from tiff
+ set_landing_plane_length(landing_plane_length);
+ cout << "hier ist slope "<<short_range_slope<<endl;
+ set_short_range_slope(short_range_slope);
+ set_long_range_slope(long_range_slope);
+ set_not_defined(not_defined);
+ set_angle(current_angle);
+ set_GeoTiffHandler(myGeoTiffHandler);
+ set_width_of_plane(width_of_plane);
+ set_orthogonal_slope(orthogonal_slope);
+}
+
 void tile_worker::set_GeoTiffHandler(GeoTiffHandler * master)
 {
 myGeoTiffHandler=master;
@@ -22,6 +41,8 @@ cout << "end point "<<end_point.x<<" und " <<end_point.y<<endl;
 geoCoord end = myGeoTiffHandler->pixel2Geo( pix);
 
 cout << "lb end "<<end<<endl;
+
+json j = myGeoTiffHandler->getGeoJsonPolygon(start, end, width);
 }
 
 void tile_worker::set_orthogonal_slope(double orthogonal_slope)
@@ -142,6 +163,11 @@ tile_worker::~tile_worker()
 void tile_worker::set_param_and_tile(tileData* tile_in)
 {
   tile = tile_in;
+}
+
+void tile_worker::set_param_and_tile(const tileData* tile_in)
+{
+  tile= tile_in;
 }
 
 

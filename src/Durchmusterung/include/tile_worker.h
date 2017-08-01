@@ -11,13 +11,15 @@ extern "C" {
 
 #define PI 3.14159265
 
+#include "json.hpp"
+
 using namespace std;
 
 class tile_worker{
 
   private:
    double current_angle;
-   tileData* tile;
+   const tileData* tile;
    float access_single_element(int x, int y);
    void check_steigungen(const int direction /*1: N -> S, 2: NNO -> SSW, 3: O -> W, 4: SSO -> NNW, 5: S -> N, 6: SSW -> NNO, 7: W -> O, 8: NNW -> SSO */);
    double resolution_x;
@@ -50,8 +52,10 @@ class tile_worker{
 
   public:
     tile_worker();
+    tile_worker(const tileData* tile_in, double landing_plane_length, double short_range_slope, double long_range_slope, double* not_defined, double angle, GeoTiffHandler* master, double width_of_plane, double orthogonal_slope); 
     ~tile_worker();
     void set_param_and_tile( tileData* tile_in);
+    void set_param_and_tile (const tileData* tile_in);
     void print_out_map();
     void check_element_access();
     void durchmustere_kachel();
