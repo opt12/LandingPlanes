@@ -1,12 +1,36 @@
 #include "tile_worker.h"
 #include "global.h"
 
+#include <fstream>
+
+void tile_worker::set_taskDescription(const json *taskDescription)
+{
+this->taskDescription = taskDescription;
+}
+
+string floattostring(double in)
+{
+std::ostringstream strs;
+strs << in;
+return strs.str();
+}
+
+void tile_worker::report(std::string report)
+{
+ std::ofstream outfile;
+
+  outfile.open("/tmp/landingreport.txt", std::ios_base::app);
+  outfile << report <<endl;
+  outfile.close();
+
+}
+
 void tile_worker::set_commSocket(int commSocket)
 {
   this->commSocket=commSocket;
 }
 
-tile_worker::tile_worker(const tileData* tile_in, double landing_plane_length, double short_range_slope, double long_range_slope, double* not_defined, double angle, GeoTiffHandler* master, double width_of_plane, double orthogonal_slope, int commSocket)
+tile_worker::tile_worker(const tileData* tile_in, double landing_plane_length, double short_range_slope, double long_range_slope, double* not_defined, double angle, GeoTiffHandler* master, double width_of_plane, double orthogonal_slope, int commSocket, const json *taskDescription)
 {
 
  set_param_and_tile(tile_in);
@@ -20,15 +44,19 @@ tile_worker::tile_worker(const tileData* tile_in, double landing_plane_length, d
  set_long_range_slope(long_range_slope);
  set_not_defined(not_defined);
  set_angle(current_angle);
- set_GeoTiffHandler(myGeoTiffHandler);
+ set_GeoTiffHandler(master);
  set_width_of_plane(width_of_plane);
  set_orthogonal_slope(orthogonal_slope);
  set_commSocket(commSocket);
+  set_taskDescription(taskDescription);
+  report("size is "+floattostring(tile_in->width.x)+" uind " +floattostring(tile_in->width.y));
 }
 
 void tile_worker::set_GeoTiffHandler(GeoTiffHandler * master)
 {
 myGeoTiffHandler=master;
+
+
 }
 
 void tile_worker::create_landebahn_coord()
@@ -36,29 +64,39 @@ void tile_worker::create_landebahn_coord()
 
 cout << "start point "<<start_point.x<<" und " <<start_point.y<<endl;
 pixelCoord pixstart = { tile->offset.x+start_point.x, tile->offset.y+start_point.y};
- geoCoord start = myGeoTiffHandler->pixel2Geo( pixstart);
-cout <<"lb start"<<start<<endl;
+ //geoCoord start = myGeoTiffHandler->pixel2Geo( pixstart);
+//cout <<"lb start"<<start<<endl;
 pixelCoord pixend;
 pixend.x=tile->offset.x+end_point.x;
 pixend.y=tile->offset.y+end_point.y;
 
 cout << "end point "<<end_point.x<<" und " <<end_point.y<<endl;
 
-geoCoord end = myGeoTiffHandler->pixel2Geo( pixend);
+//geoCoord end = myGeoTiffHandler->pixel2Geo( pixend);
 
-cout << "lb end "<<end<<endl;
+//cout << "lb end "<<end<<endl;
 
-json j = myGeoTiffHandler->getGeoJsonPolygon(pixstart, pixend, width_of_plane);
-float lengthFromJson = j["properties"]["actualLength"];
+json j = myGeoTiffHandler->getGeoJsonPolygon(pixstart, pixend, /*width_of_plane*/1);
+
+std::ofstream outfile;
+
+  outfile.open("/tmp/landingreport.txt", std::ios_base::app);
+  outfile << j.dump(4)<<endl;
+  outfile.close();
+
+float lengthFromJson=2000;
+//float lengthFromJson = j["properties"]["actualLength"];
 
 //        j["properties"] = (*p.taskDescription)["scanParameters"];
+       j["properties"] = (*taskDescription)["scanParameters"];
+
         j["properties"]["actualLength"] = lengthFromJson;
         j["properties"]["actualRise"] = 666.666;
         j["properties"]["actualVariance"] = 666.666;
         j["properties"]["actualHeading"] = current_angle;
-
 cout << j.dump(4) << endl;
 
+report("landebahn found");
         emitReceiptMsg(commSocket, "landingPlane", j);
 
 }
@@ -139,6 +177,7 @@ void tile_worker::calc_start_coordinates()
 
 int tile_worker::check_current_landebahn(int &current_in_a_row, const int &needed_points_in_a_row, const int &current_x, const int &current_y)
 {
+   report("call check current "+floattostring(current_in_a_row));
    if (current_in_a_row>needed_points_in_a_row)  
    {
      cout << "Landebahn gefunden "<<start_point.x<< "und " <<start_point.y <<" bis "<<current_x<<" und "<<current_y<<" current in row "<<current_in_a_row<<" und needed" <<needed_points_in_a_row<<endl;
@@ -269,6 +308,8 @@ float tile_worker::access_single_element(int x, int y)
  */
 void tile_worker::durchmustere_kachel()
 {
+
+report("durchmustere kacheln\n");
                            set_angle(0);
                            check_steigungen(1);
                            set_angle(45);
@@ -318,7 +359,7 @@ void tile_worker::set_not_defined(double* not_defined)
 
 void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SSW, 3: O -> W, 4: SSO -> NNW, 5: S -> N, 6: SSW -> NNO, 7: W -> O, 8: NNW -> SSO */)
 {
-
+report("check_steigungen");
   calc_optimal_vector();
   calc_start_coordinates(); 
 /*  int inc_x=0;
@@ -420,6 +461,8 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
         return ; 
   }
 */
+
+report("allowed short range diff "+ floattostring(allowed_diff)+"\nallowed_orthogonal_diff "+floattostring(allowed_orthogonal_diff)+"\nneeded_points_in_a_row "+floattostring(needed_points_in_a_row)+"\nneeded orthogonal points in a row "+floattostring(needed_orthogonal_points_in_a_row)+"\ninc_x "+floattostring(inc_x)+"\ninc_y "+floattostring(inc_y)+"\n orthx "+floattostring(orth_x)+"\north_y "+floattostring(orth_y) );
   cout << "allowed short range diff "<< allowed_diff<<endl;
   cout << "allowed_orthogonal_diff" <<allowed_orthogonal_diff<<endl;
   cout << "needed points in a row"<<needed_points_in_a_row<<endl;
@@ -468,12 +511,21 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
           if (((new_x>=0) && (new_x<tile->width.x)) && ((new_y>=0) && (new_y < tile->width.y)))
           {
              if (fabs(access_single_element(new_x,new_y) - access_single_element(old_x,old_y)) > allowed_orthogonal_diff)
+             {
                ok = 0;
-             if (fabs(access_single_element(new_x,new_y) - access_single_element(new_x-inc_x,new_y-inc_y)) < allowed_diff)
+               //report("fail1 since "+floattostring(access_single_element(new_x,new_y))+" and "+floattostring(access_single_element(old_x,old_y))+" is larger than "+floattostring(allowed_orthogonal_diff));
+             }
+             if (fabs(access_single_element(new_x,new_y) - access_single_element(new_x-inc_x,new_y-inc_y)) > allowed_diff)
+             {
                ok = 0;
+               //report("diff is "+floattostring(fabs(access_single_element(new_x,new_y) - access_single_element(new_x-inc_x,new_y-inc_y))));
+             }
           }
           else
+          {
+            //report("fail3");
             ok = 0;
+          }
         }
         }
         if (ok)
@@ -490,11 +542,13 @@ void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SS
         }
         if(!ok)
         {
+          report("check1");
           check_current_landebahn(current_in_a_row, needed_points_in_a_row,i,j);
         }
       }
       else
       {
+        report("check2");
         check_current_landebahn(current_in_a_row, needed_points_in_a_row,i,j);
     //    printf("not accept sh.sl. %lf und %lf\n",access_single_element(i,j),access_single_element(previous_x,previous_y)); 
       }
