@@ -17,6 +17,7 @@ return strs.str();
 
 void tile_worker::report(std::string report)
 {
+  return;
  std::ofstream outfile;
 
   outfile.open("/tmp/landingreport.txt", std::ios_base::app);
@@ -84,7 +85,7 @@ std::ofstream outfile;
   outfile << j.dump(4)<<endl;
   outfile.close();
 
-float lengthFromJson=2000;
+float lengthFromJson=3000;
 //float lengthFromJson = j["properties"]["actualLength"];
 
 //        j["properties"] = (*p.taskDescription)["scanParameters"];
@@ -96,7 +97,6 @@ float lengthFromJson=2000;
         j["properties"]["actualHeading"] = current_angle;
 cout << j.dump(4) << endl;
 
-report("landebahn found");
         emitReceiptMsg(commSocket, "landingPlane", j);
 
 }
@@ -177,7 +177,6 @@ void tile_worker::calc_start_coordinates()
 
 int tile_worker::check_current_landebahn(int &current_in_a_row, const int &needed_points_in_a_row, const int &current_x, const int &current_y)
 {
-   report("call check current "+floattostring(current_in_a_row));
    if (current_in_a_row>needed_points_in_a_row)  
    {
      cout << "Landebahn gefunden "<<start_point.x<< "und " <<start_point.y <<" bis "<<current_x<<" und "<<current_y<<" current in row "<<current_in_a_row<<" und needed" <<needed_points_in_a_row<<endl;
@@ -359,7 +358,6 @@ void tile_worker::set_not_defined(double* not_defined)
 
 void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SSW, 3: O -> W, 4: SSO -> NNW, 5: S -> N, 6: SSW -> NNO, 7: W -> O, 8: NNW -> SSO */)
 {
-report("check_steigungen");
   calc_optimal_vector();
   calc_start_coordinates(); 
 /*  int inc_x=0;
@@ -462,7 +460,6 @@ report("check_steigungen");
   }
 */
 
-report("allowed short range diff "+ floattostring(allowed_diff)+"\nallowed_orthogonal_diff "+floattostring(allowed_orthogonal_diff)+"\nneeded_points_in_a_row "+floattostring(needed_points_in_a_row)+"\nneeded orthogonal points in a row "+floattostring(needed_orthogonal_points_in_a_row)+"\ninc_x "+floattostring(inc_x)+"\ninc_y "+floattostring(inc_y)+"\n orthx "+floattostring(orth_x)+"\north_y "+floattostring(orth_y) );
   cout << "allowed short range diff "<< allowed_diff<<endl;
   cout << "allowed_orthogonal_diff" <<allowed_orthogonal_diff<<endl;
   cout << "needed points in a row"<<needed_points_in_a_row<<endl;
@@ -542,13 +539,11 @@ report("allowed short range diff "+ floattostring(allowed_diff)+"\nallowed_ortho
         }
         if(!ok)
         {
-          report("check1");
           check_current_landebahn(current_in_a_row, needed_points_in_a_row,i,j);
         }
       }
       else
       {
-        report("check2");
         check_current_landebahn(current_in_a_row, needed_points_in_a_row,i,j);
     //    printf("not accept sh.sl. %lf und %lf\n",access_single_element(i,j),access_single_element(previous_x,previous_y)); 
       }
