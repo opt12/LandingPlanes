@@ -17,7 +17,6 @@ return strs.str();
 
 void tile_worker::report(std::string report)
 {
-  return;
  std::ofstream outfile;
 
   outfile.open("/tmp/landingreport.txt", std::ios_base::app);
@@ -33,10 +32,10 @@ void tile_worker::set_commSocket(int commSocket)
 
 tile_worker::tile_worker(const tileData* tile_in, double landing_plane_length, double short_range_slope, double long_range_slope, double* not_defined, double angle, GeoTiffHandler* master, double width_of_plane, double orthogonal_slope, int commSocket, const json *taskDescription)
 {
-
+own_tile=0;
  set_param_and_tile(tile_in);
   cout << "before call to worker"<<endl;
-
+report("init worker with angle "+floattostring(angle));
  set_x_resolution(20.0);
  set_y_resolution(20.0); // ask Felix how to retrieve this information from tiff
  set_landing_plane_length(landing_plane_length);
@@ -44,7 +43,7 @@ tile_worker::tile_worker(const tileData* tile_in, double landing_plane_length, d
  set_short_range_slope(short_range_slope);
  set_long_range_slope(long_range_slope);
  set_not_defined(not_defined);
- set_angle(current_angle);
+ set_angle(angle);
  set_GeoTiffHandler(master);
  set_width_of_plane(width_of_plane);
  set_orthogonal_slope(orthogonal_slope);
@@ -144,32 +143,35 @@ void tile_worker::calc_optimal_vector()
 
 void tile_worker::calc_start_coordinates()
 {
+  report("calc coord with angle "+floattostring(current_angle));
   if (current_angle >= 0.0 && current_angle < 90.0)  
   {
     startx=0;
     starty=0;
-
+    direction=1;
   } 
   else if (current_angle >= 90.0 && current_angle < 180.0)  {
         startx=tile->width.x-1;
         starty=0;
-
+  direction=3;
   }
   else if (current_angle == 180.0) 
   {
          startx=0;
         starty=tile->width.y-1;
-
+direction=5;
   }
   else if (current_angle > 180.0 && current_angle < 315.0)
   {
     startx=0;
     starty=0;
+   direction = 6;
   }
   else if (current_angle >= 315.0)
   {
     startx=0;
     starty=tile->width.y-1;
+    direction = 8;
   }
   
 }
@@ -198,6 +200,7 @@ coordlist.clear();
  */
 tile_worker::tile_worker()
 {
+  own_tile=1;
    tile = NULL;
    resolution_y=0;
    resolution_x=0;
@@ -206,7 +209,8 @@ tile_worker::tile_worker()
 
 tile_worker::~tile_worker()
 {
-  delete(tile);
+  if (own_tile)
+    delete(tile);
 }
 
 
@@ -309,9 +313,9 @@ void tile_worker::durchmustere_kachel()
 {
 
 report("durchmustere kacheln\n");
-                           set_angle(0);
-                           check_steigungen(1);
-                           set_angle(45);
+                         //  set_angle(0);
+                           check_steigungen(/*1*/);
+                           /*set_angle(45);
                            check_steigungen(2);
                            set_angle(90);
                            check_steigungen(3);
@@ -324,7 +328,7 @@ report("durchmustere kacheln\n");
                            set_angle(270);
                            check_steigungen(7);
                            set_angle(315);
-                           check_steigungen(8);
+                           check_steigungen(8);*/
   return;
 }
 
@@ -356,7 +360,7 @@ void tile_worker::set_not_defined(double* not_defined)
  *   This function is currently realized by a simple approach with 8 given orientations (45° stepwise). It has included some internal validations for debug reasons. This is still under construction.
  */
 
-void tile_worker::check_steigungen(const int direction /*1: N -> S, 2: NNO -> SSW, 3: O -> W, 4: SSO -> NNW, 5: S -> N, 6: SSW -> NNO, 7: W -> O, 8: NNW -> SSO */)
+void tile_worker::check_steigungen(/*const int direction*/ /*1: N -> S, 2: NNO -> SSW, 3: O -> W, 4: SSO -> NNW, 5: S -> N, 6: SSW -> NNO, 7: W -> O, 8: NNW -> SSO */)
 {
   calc_optimal_vector();
   calc_start_coordinates(); 

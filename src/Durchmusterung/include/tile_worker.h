@@ -21,12 +21,13 @@ int search_for_planes(const tileData *actualTile, GeoTiffHandler *myGeoTiffHandl
 class tile_worker{
 
   private:
+  int own_tile;
   void report(string report);
    int commSocket;
    double current_angle;
    const tileData* tile;
    float access_single_element(int x, int y);
-   void check_steigungen(const int direction /*1: N -> S, 2: NNO -> SSW, 3: O -> W, 4: SSO -> NNW, 5: S -> N, 6: SSW -> NNO, 7: W -> O, 8: NNW -> SSO */);
+   void check_steigungen(/*const int direction*//*1: N -> S, 2: NNO -> SSW, 3: O -> W, 4: SSO -> NNW, 5: S -> N, 6: SSW -> NNO, 7: W -> O, 8: NNW -> SSO */);
    double resolution_x;
    double resolution_y;
    double landing_plane_length;
@@ -56,7 +57,9 @@ class tile_worker{
    map<int,double> coordlist;
    const json *taskDescription;
 
-  public:
+    int direction;
+
+    public:
     tile_worker();
     tile_worker(const tileData* tile_in, double landing_plane_length, double short_range_slope, double long_range_slope, double* not_defined, double angle, GeoTiffHandler* master, double width_of_plane, double orthogonal_slope, int commSocket, const json *taskDescription); 
     ~tile_worker();
