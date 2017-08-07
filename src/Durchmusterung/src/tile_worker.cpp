@@ -156,13 +156,16 @@ void tile_worker::calc_start_coordinates()
     else
     direction=1;
   } 
-  else if (current_angle >= 90.0 && current_angle < 180.0)  {
+  else if (current_angle == 90.0 )  {
         startx=tile->width.x-1;
         starty=0;
-  if (current_angle > 90.0)
-    direction=4;
-  else
     direction=3;
+  }
+  else if (current_angle > 90.0 && current_angle < 180.0)
+  {
+    startx=0;
+    starty=tile->width.y;
+    direction = 4;
   }
   else if (current_angle == 180.0) 
   {
@@ -172,8 +175,8 @@ direction=5;
   }
   else if (current_angle > 180.0 && current_angle < 270)
   {
-    startx=0;
-    starty=0;
+    startx=tile->width.x-1;
+    starty=tile->width.y-1;
    direction = 6;
   }
   else if (current_angle == 270.0)
@@ -589,7 +592,7 @@ void tile_worker::check_steigungen(/*const int direction*/ /*1: N -> S, 2: NNO -
      if (j >= tile->width.y)
      {
        check_current_landebahn(current_in_a_row, needed_points_in_a_row,i,j);
-       i++;
+       i++; //since inc_x zero increment by 1
        j=0;
        previous_valid=0;
      }
@@ -603,10 +606,9 @@ void tile_worker::check_steigungen(/*const int direction*/ /*1: N -> S, 2: NNO -
          startx-=inc_x;
        else
          starty+=inc_y;
-
+       check_current_landebahn(current_in_a_row, needed_points_in_a_row,i,j);
        i=startx;
        j=starty;
-       check_current_landebahn(current_in_a_row, needed_points_in_a_row,i,j);
        previous_valid=0;
      }
    }
@@ -615,10 +617,10 @@ void tile_worker::check_steigungen(/*const int direction*/ /*1: N -> S, 2: NNO -
    {
      if (i<0)
      {
-       i=startx;
-       j++;
-       previous_valid=0;
        check_current_landebahn(current_in_a_row, needed_points_in_a_row,i,j);
+       i=startx;
+       j+=1; //since inc_y zero increment by 1
+       previous_valid=0;
      }
    }
 
@@ -627,15 +629,14 @@ void tile_worker::check_steigungen(/*const int direction*/ /*1: N -> S, 2: NNO -
    {
      if ((i<0) || (j < 0))
      {
-       if (starty < tile->width.y  -1)
-         ++starty;
+       if (startx < tile->width.x  -1)
+         startx -= inc_x;
        else
-         --startx;
-
+         starty +=inc_y;
+check_current_landebahn(current_in_a_row, needed_points_in_a_row,i,j);
        i=startx;
        j=starty;
        previous_valid=0;
-       check_current_landebahn(current_in_a_row, needed_points_in_a_row,i,j);
      }
    }
 
@@ -643,10 +644,10 @@ void tile_worker::check_steigungen(/*const int direction*/ /*1: N -> S, 2: NNO -
    {
      if (j < 0)
      {
-       j=tile->width.y-1;
-       ++i;
-       previous_valid=0;
        check_current_landebahn(current_in_a_row, needed_points_in_a_row,i,j);
+       j=tile->width.y-1;
+       i+=1;; // since inc_x zero shift by 1
+       previous_valid=0;
      }
    }
 
@@ -654,15 +655,16 @@ void tile_worker::check_steigungen(/*const int direction*/ /*1: N -> S, 2: NNO -
    {
      if ((i>tile->width.x -1) || (j < 0))
      {
-       if (starty < tile->width.y  -1)
-         ++starty;
+       if (startx > 0)
+         startx -= inc_x;
        else
-         ++startx;
-
+         starty += inc_y;;
+       check_current_landebahn(current_in_a_row, needed_points_in_a_row,i,j);
+       if (startx < 0)
+         startx = 0;
        i=startx;
        j=starty;
        previous_valid=0;
-       check_current_landebahn(current_in_a_row, needed_points_in_a_row,i,j);
      }
 
    }
@@ -671,9 +673,9 @@ void tile_worker::check_steigungen(/*const int direction*/ /*1: N -> S, 2: NNO -
    {
      if (i > tile->width.x -1)
      {
-       i=0;
       check_current_landebahn(current_in_a_row, needed_points_in_a_row,i,j);
-       ++j;
+      i=0;
+       j+=1; //set to 1 because inc_y is 0
      }
    }
 
@@ -687,11 +689,11 @@ void tile_worker::check_steigungen(/*const int direction*/ /*1: N -> S, 2: NNO -
          startx-=inc_x;
        if ((startx < 0) && (starty == 0))
          startx = 0;
+       check_current_landebahn(current_in_a_row, needed_points_in_a_row,i,j);
+
        i=startx;
        j=starty;
-       report("start point is "+floattostring(i)+" , "+floattostring(j));
        previous_valid=0;
-       check_current_landebahn(current_in_a_row, needed_points_in_a_row,i,j);
      }
 
    }
@@ -700,11 +702,14 @@ void tile_worker::check_steigungen(/*const int direction*/ /*1: N -> S, 2: NNO -
    //report("Corrected point "+floattostring(i)+","+floattostring(j));
      if( i < 0)
        completed =1;
-  
-      if (i >= tile->width.x)
+ 
+     if ( j < 0)
+       completed = 1;
+ 
+      if (i > tile->width.x)
         completed = 1;
 
-      if (j >= tile->width.y)
+      if (j > tile->width.y)
         completed=1;
   }
 
