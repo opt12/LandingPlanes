@@ -127,7 +127,10 @@ void tile_worker::calc_optimal_vector()
   if (fabs(inc_y) < IMPRECISION)
     inc_y=0.0;
   cout << "inc x is "<<inc_x<<endl;
-  cout << "inc y is "<<inc_y<<endl;  
+  cout << "inc y is "<<inc_y<<endl; 
+
+  report("inc x is "+floattostring(inc_x));
+  report("inc y is "+floattostring(inc_y)); 
   orth_x=-sin((current_angle+90.0)*PI/180.0);
   orth_y= cos((current_angle+90.0)*PI/180.0);
   if (fabs(orth_x) < IMPRECISION)
@@ -148,12 +151,18 @@ void tile_worker::calc_start_coordinates()
   {
     startx=0;
     starty=0;
+    if (current_angle > 0.0)
+      direction = 2;
+    else
     direction=1;
   } 
   else if (current_angle >= 90.0 && current_angle < 180.0)  {
         startx=tile->width.x-1;
         starty=0;
-  direction=3;
+  if (current_angle > 90.0)
+    direction=4;
+  else
+    direction=3;
   }
   else if (current_angle == 180.0) 
   {
@@ -161,16 +170,22 @@ void tile_worker::calc_start_coordinates()
         starty=tile->width.y-1;
 direction=5;
   }
-  else if (current_angle > 180.0 && current_angle < 315.0)
+  else if (current_angle > 180.0 && current_angle < 270)
   {
     startx=0;
     starty=0;
    direction = 6;
   }
-  else if (current_angle >= 315.0)
+  else if (current_angle == 270.0)
   {
     startx=0;
-    starty=tile->width.y-1;
+    starty=0;
+    direction =7;
+  }
+  else if (current_angle > 270.0)
+  {
+    startx=tile->width.x-1;
+    starty=0;
     direction = 8;
   }
   
@@ -566,7 +581,8 @@ void tile_worker::check_steigungen(/*const int direction*/ /*1: N -> S, 2: NNO -
     i +=inc_x;
     j +=inc_y;
 
-  // cout << "point "<<i<<","<<j<<endl;
+   //report("point after inc "+floattostring(i)+","+floattostring(j));
+ // cout << "point "<<i<<","<<j<<endl;
    
    if (direction == 1)
    {
@@ -584,9 +600,9 @@ void tile_worker::check_steigungen(/*const int direction*/ /*1: N -> S, 2: NNO -
      if ((i<0) || (j>=tile->width.y))
      {
        if (startx < tile->width.x -1)
-         startx++;
+         startx-=inc_x;
        else
-         starty++;
+         starty+=inc_y;
 
        i=startx;
        j=starty;
@@ -665,13 +681,15 @@ void tile_worker::check_steigungen(/*const int direction*/ /*1: N -> S, 2: NNO -
    {
      if ((i> tile->width.x -1) || (j > tile->width.y -1))
      {
-       if (starty > 0)
-         --starty;
+       if (startx == 0)
+         starty+=inc_y;
        else
-         ++startx;
-
+         startx-=inc_x;
+       if ((startx < 0) && (starty == 0))
+         startx = 0;
        i=startx;
        j=starty;
+       report("start point is "+floattostring(i)+" , "+floattostring(j));
        previous_valid=0;
        check_current_landebahn(current_in_a_row, needed_points_in_a_row,i,j);
      }
@@ -679,7 +697,7 @@ void tile_worker::check_steigungen(/*const int direction*/ /*1: N -> S, 2: NNO -
    }
 
    //completed check
-
+   //report("Corrected point "+floattostring(i)+","+floattostring(j));
      if( i < 0)
        completed =1;
   
@@ -690,6 +708,7 @@ void tile_worker::check_steigungen(/*const int direction*/ /*1: N -> S, 2: NNO -
         completed=1;
   }
 
+  report("Checksum is "+floattostring(checksum));
   printf("Checksum is %d\n",checksum);
  
   if (checksum == tile->width.x*tile->width.y) 
