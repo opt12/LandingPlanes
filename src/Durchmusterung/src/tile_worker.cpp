@@ -1,12 +1,8 @@
 #include "tile_worker.h"
 #include "global.h"
+#include "landing_plane.h"
 
 #include <fstream>
-
-void tile_worker::set_taskDescription(const json *taskDescription)
-{
-this->taskDescription = taskDescription;
-}
 
 string floattostring(double in)
 {
@@ -14,6 +10,73 @@ std::ostringstream strs;
 strs << in;
 return strs.str();
 }
+
+void tile_worker::find_best_planes()
+{
+//  report("Find best planes for length "+floattostring(coordlist.size()));
+  landing_plane * plane_min_varianz = NULL;
+  landing_plane * plane_max_length = NULL;
+  for(int i=0; i < coordlist.size(); i++)
+  {
+//    landing_plane * plane_min_varianz = NULL;
+//    landing_plane * plane_max_length = NULL;
+
+
+    double sum = 0;
+    double varianz = 0;
+    int count =0;
+    for(int j=i; j < coordlist.size() - 1; j++)
+    {
+      sum += fabs(access_single_element(coordlist[j].first,coordlist[j].second)-access_single_element(coordlist[j+1].first,coordlist[j+1].second));
+      ++count;
+       double length;
+       if ((length= sqrt(pow(((coordlist[i].first-coordlist[j].first)*resolution_x),2)+pow(((coordlist[i].second-coordlist[j].second)*resolution_y),2))) >= landing_plane_length) 
+       {
+         double varianz = 0;
+         double mean = sum / (double) count;
+//         report("Varianz geht von "+floattostring(i)+" bis "+floattostring(j)+ " hat also count von "+floattostring(count)+", der Mittelwert ist "+floattostring(mean));
+         for (int k=i; k <j; k++)
+         {
+//           report("k ist "+floattostring(access_single_element(coordlist[k].first,coordlist[k].second))+", k+1 ist "+floattostring(access_single_element(coordlist[k+1].first,coordlist[k+1].second)));
+           varianz +=pow(fabs(access_single_element(coordlist[k].first,coordlist[k].second)-access_single_element(coordlist[k+1].first,coordlist[k+1].second))-mean,2);
+         }
+         varianz = varianz / count;
+         if (plane_min_varianz == NULL)
+           plane_min_varianz=new landing_plane(length,varianz,make_pair(coordlist[i].first,coordlist[i].second),make_pair(coordlist[j-1].first, coordlist[j-1].second));
+         else
+           plane_min_varianz->check_better_varianz(length,varianz,make_pair(coordlist[i].first,coordlist[i].second),make_pair(coordlist[j-1].first, coordlist[j-1].second));
+ if (plane_max_length == NULL)
+           plane_max_length=new landing_plane(length,varianz,make_pair(coordlist[i].first,coordlist[i].second),make_pair(coordlist[j-1].first, coordlist[j-1].second));
+         else
+           plane_max_length->check_better_length(length,varianz,make_pair(coordlist[i].first,coordlist[i].second),make_pair(coordlist[j-1].first, coordlist[j-1].second));
+//         report("Die Varianz ist "+floattostring(varianz));
+       }
+    }
+/*    if (plane_max_length != NULL)
+      report("Die Bahn mit maximaler Laenge ist "+floattostring(plane_max_length->print_length()));
+    delete plane_max_length;
+    plane_max_length = NULL;
+    if (plane_min_varianz != NULL)
+      report("Die Bahn mit minimaler Varianz ist "+floattostring(plane_min_varianz->print_varianz()));
+    delete plane_min_varianz;
+    plane_min_varianz = NULL;*/
+  }
+    if (plane_max_length != NULL)
+      report("Die Bahn mit maximaler Laenge ist "+floattostring(plane_max_length->print_length()));
+    delete plane_max_length;
+    plane_max_length = NULL;
+    if (plane_min_varianz != NULL)
+      report("Die Bahn mit minimaler Varianz ist "+floattostring(plane_min_varianz->print_varianz()));
+    delete plane_min_varianz;
+    plane_min_varianz = NULL;
+
+}
+
+void tile_worker::set_taskDescription(const json *taskDescription)
+{
+this->taskDescription = taskDescription;
+}
+
 
 void tile_worker::report(std::string report)
 {
@@ -197,15 +260,23 @@ direction=5;
 
 int tile_worker::check_current_landebahn(int &current_in_a_row, const int &needed_points_in_a_row, const int &current_x, const int &current_y)
 {
-   if (current_in_a_row>needed_points_in_a_row)  
+  if (coordlist.size() > 1)
+  {
+  report("in with coordsize "+floattostring(coordlist.size()));
+  if (sqrt(pow(((coordlist[0].first-coordlist.back().first)*resolution_x),2)+pow(((coordlist[0].second-coordlist.back().second)*resolution_y),2)) >= landing_plane_length) 
+//   if (current_in_a_row>needed_points_in_a_row)  
    {
      cout << "Landebahn gefunden "<<start_point.x<< "und " <<start_point.y <<" bis "<<current_x<<" und "<<current_y<<" current in row "<<current_in_a_row<<" und needed" <<needed_points_in_a_row<<endl;
-      for (std::map<int,double>::iterator it=coordlist.begin(); it!=coordlist.end(); ++it)
-        std::cout << it->first << " => " << it->second << '\n';
+      for (int i=0; i < coordlist.size(); i++)
+        cout << i <<" => "<<access_single_element(coordlist[i].first,coordlist[i].second)<<'\n';
+//      for (std::map<int,double>::iterator it=coordlist.begin(); it!=coordlist.end(); ++it)
+ //       std::cout << it->first << " => " << it->second << '\n';
      end_point.x=current_x;
      end_point.y=current_y;
     create_landebahn_coord(); 
    }
+  find_best_planes();
+  }
 current_in_a_row=0;
 coordlist.clear();
   return 0;
@@ -556,7 +627,7 @@ void tile_worker::check_steigungen(/*const int direction*/ /*1: N -> S, 2: NNO -
              start_point.y=j;
           }
           ++current_in_a_row;
-          coordlist[current_in_a_row]=access_single_element(i,j);
+          coordlist.push_back(make_pair(i,j));
      //     printf("Ein fertiger Punkt ist %d, %d\n",i,j);  
         }
         if(!ok)

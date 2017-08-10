@@ -52,9 +52,10 @@ class tile_worker{
    double orthogonal_slope;
    double width_of_plane;
 
+  void find_best_planes();
    void create_landebahn_coord();
    GeoTiffHandler *myGeoTiffHandler;
-   map<int,double> coordlist;
+   vector< pair<int,int> > coordlist;
    const json *taskDescription;
 
     int direction;
