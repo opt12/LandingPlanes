@@ -25,12 +25,12 @@ void tile_worker::find_best_planes()
     double sum = 0;
     double varianz = 0;
     int count =0;
-    for(int j=i; j < coordlist.size() - 1; j++)
+    for(int j=i; j < coordlist.size()-1; j++)
     {
       sum += fabs(access_single_element(coordlist[j].first,coordlist[j].second)-access_single_element(coordlist[j+1].first,coordlist[j+1].second));
       ++count;
        double length;
-       if ((length= sqrt(pow(((coordlist[i].first-coordlist[j].first)*resolution_x),2)+pow(((coordlist[i].second-coordlist[j].second)*resolution_y),2))) >= landing_plane_length) 
+       if ((length= sqrt(pow(((coordlist[i].first-coordlist[j+1].first)*resolution_x),2)+pow(((coordlist[i].second-coordlist[j+1].second)*resolution_y),2))) >= landing_plane_length) 
        {
          double varianz = 0;
          double mean = sum / (double) count;
@@ -61,8 +61,11 @@ void tile_worker::find_best_planes()
     delete plane_min_varianz;
     plane_min_varianz = NULL;*/
   }
+    
     if (plane_max_length != NULL)
       report("Die Bahn mit maximaler Laenge ist "+floattostring(plane_max_length->print_length()));
+    else if (coordlist.size()>= needed_points_in_a_row)
+      report("Konnte keine Bahn finden "+floattostring(coordlist[0].first)+","+floattostring(coordlist[0].second)+" und "+floattostring(coordlist.back().first)+","+floattostring(coordlist.back().second));
     delete plane_max_length;
     plane_max_length = NULL;
     if (plane_min_varianz != NULL)
@@ -271,6 +274,7 @@ int tile_worker::check_current_landebahn(int &current_in_a_row, const int &neede
         cout << i <<" => "<<access_single_element(coordlist[i].first,coordlist[i].second)<<'\n';
 //      for (std::map<int,double>::iterator it=coordlist.begin(); it!=coordlist.end(); ++it)
  //       std::cout << it->first << " => " << it->second << '\n';
+     report("Landebahn gefunden wirklich");
      end_point.x=current_x;
      end_point.y=current_y;
     create_landebahn_coord(); 
