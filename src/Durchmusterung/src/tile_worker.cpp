@@ -1,18 +1,21 @@
-#include "tile_worker.h"
+//#include "tile_worker.h"
 #include "global.h"
 #include "landing_plane.h"
+#include "thread_data.h"
 
 #include <fstream>
 
-void *check_single_plane(void *x_void_ptr)
+void *thread_data::check_single_plane(void *x_void_ptr)
 {
-
+tile_worker *my_tile_worker=((thread_data*)x_void_ptr)->my_tile_worker;
 /* increment x to 100 */
 /*int *x_ptr = (int *)x_void_ptr;
 while(++(*x_ptr) < 100);
 */
-printf("x increment finished\n");
+my_tile_worker->report("this is the new thread");
 
+printf("x increment finished\n");
+sleep(30);
 /* the function must return something - NULL will do */
 return NULL;
 
@@ -499,7 +502,9 @@ sem_wait (count_sem);
 
 pthread_t newthread;
 
-if (pthread_create(&newthread, NULL, check_single_plane, NULL))
+thread_data *thread_data_temp = new thread_data(this);
+
+if (pthread_create(&newthread, NULL, thread_data::check_single_plane, thread_data_temp))
 {
   fprintf(stderr, "Error creating thread\n");
   return; 

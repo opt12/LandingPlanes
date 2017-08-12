@@ -65,6 +65,8 @@ class tile_worker{
    vector<pthread_t> threads;
  
     public:
+    friend class thread_data;
+    void *check_single_plane(void *x_void_ptr);
     tile_worker();
     tile_worker(const tileData* tile_in, double landing_plane_length, double short_range_slope, double long_range_slope, double* not_defined, double angle, GeoTiffHandler* master, double width_of_plane, double orthogonal_slope, int commSocket, const json *taskDescription,  sem_t *count_sem); 
     ~tile_worker();
