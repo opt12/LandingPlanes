@@ -9,7 +9,9 @@ int search_for_planes(const tileData *actualTile, GeoTiffHandler *myGeoTiffHandl
   *not_defined= -32767;
   double orthogonal_slope = 3.0;
   minLength=3000;
-  tile_worker *worker1 = new tile_worker(actualTile, minLength, short_range_slope, long_range_slope, not_defined, heading, myGeoTiffHandler, width, orthogonal_slope, commSocket,taskDescription);
+  sem_t semaphore;
+   sem_init(&semaphore,0,1000);
+  tile_worker *worker1 = new tile_worker(actualTile, minLength, short_range_slope, long_range_slope, not_defined, heading, myGeoTiffHandler, width, orthogonal_slope, commSocket,taskDescription,&semaphore);
   worker1->durchmustere_kachel();
 
   delete(worker1);

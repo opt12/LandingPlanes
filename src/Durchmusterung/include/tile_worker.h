@@ -13,6 +13,7 @@ extern "C" {
 
 #include "json.hpp"
 #include "1597_ipc_listener.h"
+#include <semaphore.h>  /* required for semaphores */
 
 using namespace std;
 
@@ -60,9 +61,12 @@ class tile_worker{
 
     int direction;
 
+   sem_t* count_sem;
+   vector<pthread_t> threads;
+ 
     public:
     tile_worker();
-    tile_worker(const tileData* tile_in, double landing_plane_length, double short_range_slope, double long_range_slope, double* not_defined, double angle, GeoTiffHandler* master, double width_of_plane, double orthogonal_slope, int commSocket, const json *taskDescription); 
+    tile_worker(const tileData* tile_in, double landing_plane_length, double short_range_slope, double long_range_slope, double* not_defined, double angle, GeoTiffHandler* master, double width_of_plane, double orthogonal_slope, int commSocket, const json *taskDescription,  sem_t *count_sem); 
     ~tile_worker();
     void set_param_and_tile( tileData* tile_in);
     void set_taskDescription( const json *taskDescription);
@@ -81,4 +85,5 @@ class tile_worker{
     void set_width_of_plane(double width_of_plane);
     void set_orthogonal_slope(double orthogonal_slope);
     void set_commSocket(int commSocket);
+    void set_semaphore(sem_t * count_sem);
 };

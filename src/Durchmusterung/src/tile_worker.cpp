@@ -4,6 +4,20 @@
 
 #include <fstream>
 
+void *check_single_plane(void *x_void_ptr)
+{
+
+/* increment x to 100 */
+/*int *x_ptr = (int *)x_void_ptr;
+while(++(*x_ptr) < 100);
+*/
+printf("x increment finished\n");
+
+/* the function must return something - NULL will do */
+return NULL;
+
+}
+
 string floattostring(double in)
 {
 std::ostringstream strs;
@@ -99,7 +113,13 @@ void tile_worker::set_commSocket(int commSocket)
   this->commSocket=commSocket;
 }
 
-tile_worker::tile_worker(const tileData* tile_in, double landing_plane_length, double short_range_slope, double long_range_slope, double* not_defined, double angle, GeoTiffHandler* master, double width_of_plane, double orthogonal_slope, int commSocket, const json *taskDescription)
+
+void tile_worker::set_semaphore(sem_t *count_sem)
+{
+  this->count_sem=count_sem;
+}
+
+tile_worker::tile_worker(const tileData* tile_in, double landing_plane_length, double short_range_slope, double long_range_slope, double* not_defined, double angle, GeoTiffHandler* master, double width_of_plane, double orthogonal_slope, int commSocket, const json *taskDescription, sem_t *count_sem)
 {
 own_tile=0;
  set_param_and_tile(tile_in);
@@ -118,6 +138,7 @@ report("init worker with angle "+floattostring(angle));
  set_orthogonal_slope(orthogonal_slope);
  set_commSocket(commSocket);
   set_taskDescription(taskDescription);
+ set_semaphore(count_sem); 
   report("size is "+floattostring(tile_in->width.x)+" uind " +floattostring(tile_in->width.y));
 }
 
@@ -473,6 +494,31 @@ void tile_worker::check_steigungen(/*const int direction*/ /*1: N -> S, 2: NNO -
   
 //  int allowed_diff=0;
 //  int needed_points_in_a_row=0;
+cout << "before sem"<<endl;
+sem_wait (count_sem);
+
+pthread_t newthread;
+
+if (pthread_create(&newthread, NULL, check_single_plane, NULL))
+{
+  fprintf(stderr, "Error creating thread\n");
+  return; 
+
+}
+
+
+threads.push_back(newthread);
+
+
+if(pthread_join(threads[threads.size()-1], NULL)) {
+
+fprintf(stderr, "Error joining thread\n");
+return; 
+
+}
+
+cout << "after sem"<<endl;
+
 
   cout << "slope "<<short_range_slope<<" and reso " << resolution_y<<endl;
 
