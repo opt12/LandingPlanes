@@ -31,7 +31,9 @@ void tile_worker::find_best_planes()
       ++count;
        double length;
        if ((length= sqrt(pow(((coordlist[i].first-coordlist[j+1].first)*resolution_x),2)+pow(((coordlist[i].second-coordlist[j+1].second)*resolution_y),2))) >= landing_plane_length) 
-       {
+       { 
+         if (fabs(access_single_element(coordlist[i].first,coordlist[i].second)-access_single_element(coordlist[j+1].first,coordlist[j+1].second)) <= long_range_slope*length/100.0)
+         {
          double varianz = 0;
          double mean = sum / (double) count;
 //         report("Varianz geht von "+floattostring(i)+" bis "+floattostring(j)+ " hat also count von "+floattostring(count)+", der Mittelwert ist "+floattostring(mean));
@@ -50,6 +52,7 @@ void tile_worker::find_best_planes()
          else
            plane_max_length->check_better_length(length,varianz,make_pair(coordlist[i].first,coordlist[i].second),make_pair(coordlist[j-1].first, coordlist[j-1].second));
 //         report("Die Varianz ist "+floattostring(varianz));
+       }
        }
     }
 /*    if (plane_max_length != NULL)
@@ -178,7 +181,10 @@ void tile_worker::set_width_of_plane(double width_of_plane)
 
 void tile_worker::set_angle(double angle)
 {
-  current_angle=angle;
+  double shift = 0;
+  double newangle= angle + ceil( (-angle+shift) / 360.0 ) * 360.0;
+  current_angle=newangle;
+  report("Angle is "+floattostring(current_angle));
 }
 
 void tile_worker::calc_optimal_vector()
