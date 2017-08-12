@@ -35,34 +35,39 @@ class tile_worker{
    double short_range_slope;
    double long_range_slope;
    double* not_defined;
-   int check_current_landebahn(int &current_in_a_row, const int &needed_points_in_a_row,const int &x, const int &y);   
+   int check_current_landebahn(int &current_in_a_row, const int &needed_points_in_a_row,const int &x, const int &y,vector< pair<int,int> > & coordlist,pixelPair start_point);   
    void calc_optimal_vector(); 
    double inc_x;
    double inc_y;
    void calc_start_coordinates();
    double startx;
    double starty;
+   double current_x;
+   double current_y;
+   int still_needed();
    double orth_x;
    double orth_y; 
    int needed_points_in_a_row;
    int needed_orthogonal_points_in_a_row;
    double allowed_diff;
    double allowed_orthogonal_diff;
-   pixelPair start_point;
+   //pixelPair start_point;
    pixelPair end_point;
    double orthogonal_slope;
    double width_of_plane;
 
-  void find_best_planes();
-   void create_landebahn_coord();
+  void find_best_planes(vector< pair<int,int> > &coordlist);
+   void create_landebahn_coord(pixelPair start_point);
    GeoTiffHandler *myGeoTiffHandler;
-   vector< pair<int,int> > coordlist;
+   //vector< pair<int,int> > coordlist;
    const json *taskDescription;
 
     int direction;
 
    sem_t* count_sem;
    vector<pthread_t> threads;
+   int get_start_values(double &startposx, double &startposy);
+   pthread_mutex_t mutex_start_value;
  
     public:
     friend class thread_data;
