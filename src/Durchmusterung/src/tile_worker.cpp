@@ -25,7 +25,7 @@ int tile_worker::still_needed()
       if (current_x > tile->width.x)
        still=0;
 
-      if (current_x > tile->width.y)
+      if (current_y > tile->width.y)
        still=0;
 
  pthread_mutex_unlock( &mutex_start_value );
@@ -40,8 +40,8 @@ int tile_worker::get_start_values(double &startposx, double &startposy)
  startposy=current_y;
 
 
-    current_x +=inc_x;
-    current_y +=inc_y;
+    //current_x +=inc_x;
+    //current_y +=inc_y;
 
    //report("point after inc "+floattostring(i)+","+floattostring(j));
  // cout << "point "<<i<<","<<j<<endl;
@@ -57,12 +57,12 @@ int tile_worker::get_start_values(double &startposx, double &startposy)
    
    if (direction == 2)
    {
-     if ((current_x<0) || (current_y>=tile->width.y))
+     current_x -=inc_x;
+     //current_y=0;
+     if ((current_x>=tile->width.x-1))
      {
-       if (startx < tile->width.x -1)
-         startx-=inc_x;
-       else
-         starty+=inc_y;
+       startx= tile->width.x -1;
+       starty+=inc_y;
        current_x=startx;
        current_y=starty;
      }
@@ -70,23 +70,18 @@ int tile_worker::get_start_values(double &startposx, double &startposy)
 
    if (direction == 3)
    {
-     if (current_x<0)
-     {
        current_x=startx;
        current_y+=1; //since inc_y zero increment by 1
-     }
    }
 
 
    if (direction == 4)
    {
-     if ((current_x<0) || (current_y < 0))
+     current_x -= inc_x;
+     if ((current_x>= tile->width.x-1) )
      {
-       if (startx < tile->width.x  -1)
-         startx -= inc_x;
-       else
          starty +=inc_y;
-       current_x=startx;
+       current_x=tile->width.x-1;
        current_y=starty;
      }
    }
@@ -154,7 +149,7 @@ pthread_mutex_unlock( &mutex_start_value );
       if (current_x > tile->width.x)
        return 1;
 
-      if (current_x > tile->width.y)
+      if (current_y > tile->width.y)
        return 1;
 
 
