@@ -1,5 +1,5 @@
 
-CC=g++ -g -std=c++11
+CC=g++ -g -std=c++11 -O3
 
 ifeq ($(DEBUG), 1)
     CFLAGS =-DDEBUG
@@ -18,7 +18,7 @@ clean:
 	$(CC) $(CFLAGS) -o ./bin/landebahn ./main/landebahn.c ../GeoTiff_Handler/src/GeoTiffHandler.o ../GeoTiff_Handler/src/readInTiff.o ./obj/tile_manager.o ./obj/tile_worker.o ./obj/landing_plane.o ./obj/thread_data.o -I../readInTiff/src/ -I./include   -I../gdal/gdal-2.2.1/gcore -I../gdal/gdal-2.2.1/port -I../gdal/gdal-2.2.1/ogr -I../GeoTiff_Handler/src -I../1597_searchEngineWrapper/src/ ../gdal/gdal-2.2.1/.libs/libgdal.so /home/bjoern/landebahnui2/LandingPlanes/src/1597_searchEngineWrapper/Debug/src/1597_ipc_listener.o  -ltiff -lpthread
 
 ./obj/tile_manager.o: ./src/tile_manager.cpp ./include/tile_manager.h
-	$(CC) $(CFLAGS) -c ./src/tile_manager.cpp -o ./obj/tile_manager.o -I../readInTiff/src/ -I./include -I../gdal/gdal-2.2.1/gcore -I../gdal/gdal-2.2.1/port -I../gdal/gdal-2.2.1/ogr -I../GeoTiff_Handler/src
+	$(CC) $(CFLAGS) -c ./src/tile_manager.cpp -o ./obj/tile_manager.o -I../readInTiff/src/ -I./include -I../gdal/gdal-2.2.1/gcore -I../gdal/gdal-2.2.1/port -I../gdal/gdal-2.2.1/ogr -I../GeoTiff_Handler/src -I../1597_searchEngineWrapper/src/
 
 ./obj/tile_worker.o: ./src/tile_worker.cpp ./include/tile_worker.h
 	$(CC) $(CFLAGS) -c ./src/tile_worker.cpp -o ./obj/tile_worker.o -I../readInTiff/src/ -I./include -I../gdal/gdal-2.2.1/gcore -I../gdal/gdal-2.2.1/port -I../gdal/gdal-2.2.1/ogr -I../GeoTiff_Handler/src -I../1597_searchEngineWrapper/src/
