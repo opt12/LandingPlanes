@@ -529,7 +529,7 @@ float lengthFromJson=3000;
         j["properties"]["actualRise"] = 666.666;
         j["properties"]["actualVariance"] = 666.666;
         j["properties"]["actualHeading"] = current_angle;
-cout << j.dump(4) << endl;
+//cout << j.dump(4) << endl;
 
         emitReceiptMsg(commSocket, "landingPlane", j);
 
@@ -642,9 +642,9 @@ int tile_worker::check_current_landebahn(int &current_in_a_row, const int &neede
   if (sqrt(pow(((coordlist[0].first-coordlist.back().first)*resolution_x),2)+pow(((coordlist[0].second-coordlist.back().second)*resolution_y),2)) >= landing_plane_length) 
 //   if (current_in_a_row>needed_points_in_a_row)  
    {
-     cout << "Landebahn gefunden "<<start_point.x<< "und " <<start_point.y <<" bis "<<current_x<<" und "<<current_y<<" current in row "<<current_in_a_row<<" und needed" <<needed_points_in_a_row<<endl;
-      for (int i=0; i < coordlist.size(); i++)
-        cout << i <<" => "<<access_single_element(coordlist[i].first,coordlist[i].second)<<'\n';
+//     cout << "Landebahn gefunden "<<start_point.x<< "und " <<start_point.y <<" bis "<<current_x<<" und "<<current_y<<" current in row "<<current_in_a_row<<" und needed" <<needed_points_in_a_row<<endl;
+//      for (int i=0; i < coordlist.size(); i++)
+//        cout << i <<" => "<<access_single_element(coordlist[i].first,coordlist[i].second)<<'\n';
 //      for (std::map<int,double>::iterator it=coordlist.begin(); it!=coordlist.end(); ++it)
  //       std::cout << it->first << " => " << it->second << '\n';
      report("Landebahn gefunden wirklich");
