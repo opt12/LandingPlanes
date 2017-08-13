@@ -88,24 +88,17 @@ int tile_worker::get_start_values(double &startposx, double &startposy)
 
    if (direction == 5)
    {
-     if (current_y < 0)
-     {
        current_y=tile->width.y-1;
        current_x+=1;; // since inc_x zero shift by 1
-     }
    }
 
    if (direction == 6)
    {
-     if ((current_x>tile->width.x -1) || (current_y < 0))
+     current_x -= inc_x;
+     if ((current_x<=0) )
      {
-       if (startx > 0)
-         startx -= inc_x;
-       else
-         starty += inc_y;;
-       if (startx < 0)
-         startx = 0;
-       current_x=startx;
+       starty += inc_y;;
+       current_x=0;
        current_y=starty;
      }
 
@@ -113,25 +106,18 @@ int tile_worker::get_start_values(double &startposx, double &startposy)
    
    if (direction == 7)
    {
-     if (current_x > tile->width.x -1)
-     {
       current_x=0;
       current_y+=1; //set to 1 because inc_y is 0
-     }
    }
 
    if (direction == 8)
    {
-     if ((current_x> tile->width.x -1) || (current_y > tile->width.y -1))
-     {
-       if (startx == 0)
-         starty+=inc_y;
-       else
-         startx-=inc_x;
-       if ((startx < 0) && (starty == 0))
-         startx = 0;
+     current_x -= inc_x;
 
-       current_x=startx;
+     if ((current_x<= 0) )
+     {
+       starty +=inc_y;
+       current_x=0;
        current_y=starty;
      }
 
@@ -313,9 +299,10 @@ my_tile_worker->check_current_landebahn(current_in_a_row, my_tile_worker->needed
      if (j < 0)
      {
        my_tile_worker->check_current_landebahn(current_in_a_row, my_tile_worker->needed_points_in_a_row,i,j,coordlist, start_point);
-       j=my_tile_worker->tile->width.y-1;
-       i+=1;; // since inc_x zero shift by 1
-       previous_valid=0;
+       //j=my_tile_worker->tile->width.y-1;
+       //i+=1;; // since inc_x zero shift by 1
+       //previous_valid=0;
+       break;
      }
    }
 
@@ -350,17 +337,29 @@ my_tile_worker->check_current_landebahn(current_in_a_row, my_tile_worker->needed
 
    //completed check
    //report("Corrected point "+floattostring(i)+","+floattostring(j));
+     /*   if(i < 0)
+         break;
+
+     if ( j < 0)
+       break;
+
+      if (i > tile->width.x)
+       break;
+
+      if (j > tile->width.y)
+       break;
+*/
   }
   }
 
-  my_tile_worker->report("Checksum is "+floattostring(checksum));
+/*  my_tile_worker->report("Checksum is "+floattostring(checksum));
   printf("Checksum is %d\n",checksum);
  
   if (checksum == my_tile_worker->tile->width.x*my_tile_worker->tile->width.y) 
    printf("OK\n");
   else
     printf("FATAL\n");
-
+*/
 sem_post(my_tile_worker->count_sem); 
 /* the function must return something - NULL will do */
 return NULL;
