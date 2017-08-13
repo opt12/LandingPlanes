@@ -50,7 +50,7 @@ void *createFakePlaneThreadStarter(void *par) {
 	tcreateFakePlaneStarterParam p = *((tcreateFakePlaneStarterParam *) par);
 
 	cout << "Fake Plane Thread [" << p.threadNum << "] started." << endl;
-search_for_planes(p.actualTile, p.myGeoTiffHandler, p.actualHeading, 3000, 30,p.commSocket, p.taskDescription);
+search_for_planes(p.actualTile, p.myGeoTiffHandler, p.actualHeading, 3000, 30,p.commSocket, p.taskDescription,p.noDataValue,p.pixelSize );
 	/*//now start the worker
 	json fakePlane = createFakeLandingPlane(p.actualTile, p.myGeoTiffHandler,
 			p.actualHeading,
@@ -76,7 +76,7 @@ search_for_planes(p.actualTile, p.myGeoTiffHandler, p.actualHeading, 3000, 30,p.
 }
 
 eResult fakeScan(const tileData *actualTile, GeoTiffHandler *myGeoTiffHandler,
-		const json *taskDescription, float actualHeading, int commSocket) {
+		const json *taskDescription, float actualHeading, int commSocket, float noDataValue,  rectSize pixelSize ) {
 
 	/*TODO: Es ist sehr unschön, dass ich den GeoTiffHandler myGeoTiffHandler mit übergeben muss
 	 * nur um dort die Funktionen
@@ -106,7 +106,8 @@ eResult fakeScan(const tileData *actualTile, GeoTiffHandler *myGeoTiffHandler,
 		createFakePlaneStarterParams[t].myGeoTiffHandler = myGeoTiffHandler;
 		createFakePlaneStarterParams[t].taskDescription = taskDescription;
 		createFakePlaneStarterParams[t].threadNum = t;
-
+                createFakePlaneStarterParams[t].noDataValue =noDataValue ;
+                createFakePlaneStarterParams[t].pixelSize =pixelSize ;
 		pthread_create(&scanThreads[t], NULL, createFakePlaneThreadStarter,
 				&createFakePlaneStarterParams[t]);
 	}

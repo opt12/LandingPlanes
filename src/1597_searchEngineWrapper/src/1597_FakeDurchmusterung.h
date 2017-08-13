@@ -19,10 +19,12 @@ struct tcreateFakePlaneStarterParam {
 	int commSocket;
 	int threadNum;
 	eResult taskResult;
+        float noDataValue;
+       rectSize pixelSize;
 };
 
 eResult fakeScan(const tileData *actualTile, GeoTiffHandler *myGeoTiffHandler,
-		const json *taskDescription, float actualHeading, int commSocket);
+		const json *taskDescription, float actualHeading, int commSocket,float noDataValue, rectSize pixelSize );
 
 
 

@@ -69,7 +69,7 @@ static eResult scanForLandingPlanes(json taskDescription, int commSocket) {
 				cout << "SCAN Thread: Scan Parameters are: " << taskDescription["scanParameters"].dump(4)<<endl;
 
 				fakeScan(&tile, &myGeoTiffHandler,
-						&taskDescription, actualHeading, commSocket);
+						&taskDescription, actualHeading, commSocket,info.noDataValue,info.pixelSize  );
 				/********************************************************************
 				 * //TODO spawn threads for scanning exactly here!!!
 				 ********************************************************************/

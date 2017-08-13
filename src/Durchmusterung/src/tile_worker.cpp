@@ -146,11 +146,6 @@ pthread_mutex_unlock( &mutex_start_value );
 void *thread_data::check_single_plane(void *x_void_ptr)
 {
 tile_worker *my_tile_worker=((thread_data*)x_void_ptr)->my_tile_worker;
-/* increment x to 100 */
-/*int *x_ptr = (int *)x_void_ptr;
-while(++(*x_ptr) < 100);
-*/
-my_tile_worker->report("this is the new thread");
 
 
 
@@ -166,23 +161,19 @@ my_tile_worker->report("this is the new thread");
   int previous_valid =0;
   while (! my_tile_worker->get_start_values(i,j) )
   {
-    my_tile_worker->report("I get start point "+floattostring(i)+","+floattostring(j)); 
     pixelPair start_point;
 vector< pair<int,int> > coordlist;
     while(!completed)
     {
     ++checksum;
-//    printf("aktuell %d und %d mit %lf\n",i,j,access_single_element(i,j));
    
 
     if (my_tile_worker->not_defined == NULL || *my_tile_worker->not_defined != my_tile_worker->access_single_element(i,j)) 
     {
     if (previous_valid)
     {
- //     printf("compare point %d,%d with %d,%d\n",i,j,previous_x,previous_y);
       if (fabs(my_tile_worker->access_single_element(i,j) - my_tile_worker->access_single_element(previous_x,previous_y)) < my_tile_worker->allowed_diff)
       {
-   //     printf("accept  sh.sl. %lf und %lf\n",access_single_element(i,j),access_single_element(previous_x,previous_y));
         // now loop over all orthogonal elements
         int ok=1;
         for(int k=0; k < 2; k++)
@@ -441,14 +432,14 @@ void tile_worker::set_semaphore(sem_t *count_sem)
   this->count_sem=count_sem;
 }
 
-tile_worker::tile_worker(const tileData* tile_in, double landing_plane_length, double short_range_slope, double long_range_slope, double* not_defined, double angle, GeoTiffHandler* master, double width_of_plane, double orthogonal_slope, int commSocket, const json *taskDescription, sem_t *count_sem)
+tile_worker::tile_worker(const tileData* tile_in, double landing_plane_length, double short_range_slope, double long_range_slope, double* not_defined, double angle, GeoTiffHandler* master, double width_of_plane, double orthogonal_slope, int commSocket, const json *taskDescription, sem_t *count_sem, rectSize  pixelSize )
 {
 own_tile=0;
  set_param_and_tile(tile_in);
   cout << "before call to worker"<<endl;
 report("init worker with angle "+floattostring(angle));
- set_x_resolution(20.0);
- set_y_resolution(20.0); // ask Felix how to retrieve this information from tiff
+ set_x_resolution(pixelSize.x);
+ set_y_resolution(pixelSize.y); // ask Felix how to retrieve this information from tiff
  set_landing_plane_length(landing_plane_length);
  cout << "hier ist slope "<<short_range_slope<<endl;
  set_short_range_slope(short_range_slope);
