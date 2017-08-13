@@ -164,7 +164,6 @@ my_tile_worker->report("this is the new thread");
   int previous_x=0;
   int previous_y=0;
   int previous_valid =0;
-  int accept_orthogonal_slope=1000; /* temp only*/
   while (! my_tile_worker->get_start_values(i,j) )
   {
     my_tile_worker->report("I get start point "+floattostring(i)+","+floattostring(j)); 
@@ -369,19 +368,15 @@ return NULL;
 
 void tile_worker::find_best_planes(vector< pair<int,int> > &coordlist)
 {
-//  report("Find best planes for length "+floattostring(coordlist.size()));
   landing_plane * plane_min_varianz = NULL;
   landing_plane * plane_max_length = NULL;
-  for(int i=0; i < coordlist.size(); i++)
+  for(int i=0; i < (int) coordlist.size(); i++)
   {
-//    landing_plane * plane_min_varianz = NULL;
-//    landing_plane * plane_max_length = NULL;
 
 
     double sum = 0;
-    double varianz = 0;
     int count =0;
-    for(int j=i; j < coordlist.size()-1; j++)
+    for(int j=i; j < (int) coordlist.size()-1; j++)
     {
       sum += fabs(access_single_element(coordlist[j].first,coordlist[j].second)-access_single_element(coordlist[j+1].first,coordlist[j+1].second));
       ++count;
@@ -407,28 +402,13 @@ void tile_worker::find_best_planes(vector< pair<int,int> > &coordlist)
            plane_max_length=new landing_plane(length,varianz,make_pair(coordlist[i].first,coordlist[i].second),make_pair(coordlist[j-1].first, coordlist[j-1].second));
          else
            plane_max_length->check_better_length(length,varianz,make_pair(coordlist[i].first,coordlist[i].second),make_pair(coordlist[j-1].first, coordlist[j-1].second));
-//         report("Die Varianz ist "+floattostring(varianz));
        }
        }
     }
-/*    if (plane_max_length != NULL)
-      report("Die Bahn mit maximaler Laenge ist "+floattostring(plane_max_length->print_length()));
-    delete plane_max_length;
-    plane_max_length = NULL;
-    if (plane_min_varianz != NULL)
-      report("Die Bahn mit minimaler Varianz ist "+floattostring(plane_min_varianz->print_varianz()));
-    delete plane_min_varianz;
-    plane_min_varianz = NULL;*/
   }
     
-    if (plane_max_length != NULL)
-      report("Die Bahn mit maximaler Laenge ist "+floattostring(plane_max_length->print_length()));
-    else if (coordlist.size()>= needed_points_in_a_row)
-      report("Konnte keine Bahn finden "+floattostring(coordlist[0].first)+","+floattostring(coordlist[0].second)+" und "+floattostring(coordlist.back().first)+","+floattostring(coordlist.back().second));
     delete plane_max_length;
     plane_max_length = NULL;
-    if (plane_min_varianz != NULL)
-      report("Die Bahn mit minimaler Varianz ist "+floattostring(plane_min_varianz->print_varianz()));
     delete plane_min_varianz;
     plane_min_varianz = NULL;
 
@@ -864,7 +844,7 @@ if (pthread_create(&newthread, NULL, thread_data::check_single_plane, thread_dat
 threads.push_back(newthread);
 }
 
-for(int i=0; i < threads.size(); i++)
+for(int i=0; i < (int) threads.size(); i++)
 if(pthread_join(threads[i], NULL)) {
 
 fprintf(stderr, "Error joining thread\n");
@@ -876,332 +856,5 @@ return;
 
   cout << "slope "<<short_range_slope<<" and reso " << resolution_y<<endl;
 
-/*
-  switch (direction){
-    case 1:
-        /*startx=0;
-        starty=0;
-        inc_x=0;
-        inc_y=1;
-        orth_x=1;
-        orth_y=0;
-        allowed_diff=short_range_slope*resolution_y/100.0;
-//        needed_points_in_a_row=ceil((double) landing_plane_length/(double) resolution_y);
-        break;
-    case 2:
-        /*startx=0;
-        starty=0;
-        inc_x=-1;
-        inc_y=1;
-        orth_x=1;
-        orth_y=-1;
-        allowed_diff=short_range_slope*sqrt(pow(resolution_y,2)+pow(resolution_x,2))/100.0;
-  //      needed_points_in_a_row=ceil((double) landing_plane_length/ (double) sqrt(pow(resolution_y,2)+pow(resolution_x,2)));
-        break;
-    case 3:
-       /* startx=tile->width.x-1;
-        starty=0;
-        inc_x=-1;
-        inc_y=0;
-        orth_x=0;
-        orth_y=1;
-        allowed_diff=short_range_slope*resolution_x/100.0;
-  //      needed_points_in_a_row=ceil((double) landing_plane_length/(double) resolution_x);
-        break;
-    case 4:
-        /*startx=tile->width.x-1;
-        starty=0;
-        inc_x=-1;
-        inc_y=-1;*/
-        /*orth_x=1;
-        orth_y=-1;
-        allowed_diff=short_range_slope*sqrt(pow(resolution_y,2)+pow(resolution_x,2))/100.0; 
- //       needed_points_in_a_row=ceil((double) landing_plane_length/ (double) sqrt(pow(resolution_y,2)+pow(resolution_x,2)));
-        break;
-    case 5:
-        /*startx=0;
-        starty=tile->width.y-1;
-        inc_x=0;
-        inc_y=-1;
-        orth_x=1;
-        orth_y=0;
-        allowed_diff=short_range_slope*resolution_y/100.0;
-   //      needed_points_in_a_row=ceil((double) landing_plane_length/(double) resolution_y);
-         break;
-    case 6:
-        /*startx=0;
-        starty=0;
-        inc_x=1;
-        inc_y=-1;
-        orth_x=1;
-        orth_y=1;
-        allowed_diff=short_range_slope*sqrt(pow(resolution_y,2)+pow(resolution_x,2))/100.0; 
-  //      needed_points_in_a_row=ceil((double) landing_plane_length/(double) sqrt(pow(resolution_y,2)+pow(resolution_x,2)));
-        break;
-    case 7:
-        /*startx=0;
-        starty=0;
-        inc_x=1;
-        inc_y=0;
-        orth_x=0;
-        orth_y=1;
-        allowed_diff=short_range_slope*resolution_x/100.0;
-  //      needed_points_in_a_row=ceil((double) landing_plane_length/(double) resolution_x);
-        break;
-    case 8:
-        /*startx=0;
-        starty=tile->width.y-1;
-        inc_x=1;
-        inc_y=1;
-        orth_x=1;
-        orth_y=-1;
-        allowed_diff=short_range_slope*sqrt(pow(resolution_y,2)+pow(resolution_x,2))/100.0; 
-  //      needed_points_in_a_row=ceil((double) landing_plane_length/(double) sqrt(pow(resolution_y,2)+pow(resolution_x,2)));
-        break;
-    default:
-        return ; 
-  }
-*/
-
-/*
-  cout << "allowed short range diff "<< allowed_diff<<endl;
-  cout << "allowed_orthogonal_diff" <<allowed_orthogonal_diff<<endl;
-  cout << "needed points in a row"<<needed_points_in_a_row<<endl;
-  cout << "needed orthogonal points in a row"<<needed_orthogonal_points_in_a_row<<endl;
-  cout << "startx "<<startx<<", starty "<<starty<<endl;
-  cout << "inc_x "<<inc_x<<", inc_y "<<inc_y<<endl;
-  cout << "orth_x "<<orth_x<<", orth_y "<<orth_y<<endl;
-  int completed=0;
-
-  int current_in_a_row=0;
-  double i=startx;
-  double j=starty;
-  int checksum = 0;
-  
-  int previous_x=0;
-  int previous_y=0;
-  int previous_valid =0;
-  int accept_orthogonal_slope=1000; 
-  while (! completed)
-  {
-    ++checksum;
-//    printf("aktuell %d und %d mit %lf\n",i,j,access_single_element(i,j));
-   
-
-    if (not_defined == NULL || *not_defined != access_single_element(i,j)) 
-    {
-    if (previous_valid)
-    {
- //     printf("compare point %d,%d with %d,%d\n",i,j,previous_x,previous_y);
-      if (fabs(access_single_element(i,j) - access_single_element(previous_x,previous_y)) < allowed_diff)
-      {
-   //     printf("accept  sh.sl. %lf und %lf\n",access_single_element(i,j),access_single_element(previous_x,previous_y));
-        // now loop over all orthogonal elements
-        int ok=1;
-        for(int k=0; k < 2; k++)
-        {
-          double new_x=i;
-          double new_y=j;
-          double factor = pow(-1,k);
-        for(int l=0; l < 2; l++)
-        {
-          double old_x=new_x;
-          double old_y=new_y;
-          new_x += factor * orth_x;
-          new_y += factor * orth_y;
-          if (((new_x>=0) && (new_x<tile->width.x)) && ((new_y>=0) && (new_y < tile->width.y)))
-          {
-             if (fabs(access_single_element(new_x,new_y) - access_single_element(old_x,old_y)) > allowed_orthogonal_diff)
-             {
-               ok = 0;
-               //report("fail1 since "+floattostring(access_single_element(new_x,new_y))+" and "+floattostring(access_single_element(old_x,old_y))+" is larger than "+floattostring(allowed_orthogonal_diff));
-             }
-             if (fabs(access_single_element(new_x,new_y) - access_single_element(new_x-inc_x,new_y-inc_y)) > allowed_diff)
-             {
-               ok = 0;
-               //report("diff is "+floattostring(fabs(access_single_element(new_x,new_y) - access_single_element(new_x-inc_x,new_y-inc_y))));
-             }
-          }
-          else
-          {
-            //report("fail3");
-            ok = 0;
-          }
-        }
-        }
-        if (ok)
-        {
-          if (current_in_a_row==0)
-          {
-             //save_point_forlater
-             start_point.x=i;
-             start_point.y=j;
-          }
-          ++current_in_a_row;
-          coordlist.push_back(make_pair(i,j));
-     //     printf("Ein fertiger Punkt ist %d, %d\n",i,j);  
-        }
-        if(!ok)
-        {
-          check_current_landebahn(current_in_a_row, needed_points_in_a_row,i,j);
-        }
-      }
-      else
-      {
-        check_current_landebahn(current_in_a_row, needed_points_in_a_row,i,j);
-    //    printf("not accept sh.sl. %lf und %lf\n",access_single_element(i,j),access_single_element(previous_x,previous_y)); 
-      }
-    }
-      previous_valid=1;
-    }
-    else
-    {
-     //current point not def
-     previous_valid=0;
-     current_in_a_row=0;
-     coordlist.clear();
-    }
-    previous_x=i;
-    previous_y=j;
-    i +=inc_x;
-    j +=inc_y;
-
-   //report("point after inc "+floattostring(i)+","+floattostring(j));
- // cout << "point "<<i<<","<<j<<endl;
-   
-   if (direction == 1)
-   {
-     if (j >= tile->width.y)
-     {
-       check_current_landebahn(current_in_a_row, needed_points_in_a_row,i,j);
-       i++; //since inc_x zero increment by 1
-       j=0;
-       previous_valid=0;
-     }
-   }
-   
-   if (direction == 2)
-   {
-     if ((i<0) || (j>=tile->width.y))
-     {
-       if (startx < tile->width.x -1)
-         startx-=inc_x;
-       else
-         starty+=inc_y;
-       check_current_landebahn(current_in_a_row, needed_points_in_a_row,i,j);
-       i=startx;
-       j=starty;
-       previous_valid=0;
-     }
-   }
-
-   if (direction == 3)
-   {
-     if (i<0)
-     {
-       check_current_landebahn(current_in_a_row, needed_points_in_a_row,i,j);
-       i=startx;
-       j+=1; //since inc_y zero increment by 1
-       previous_valid=0;
-     }
-   }
-
-
-   if (direction == 4)
-   {
-     if ((i<0) || (j < 0))
-     {
-       if (startx < tile->width.x  -1)
-         startx -= inc_x;
-       else
-         starty +=inc_y;
-check_current_landebahn(current_in_a_row, needed_points_in_a_row,i,j);
-       i=startx;
-       j=starty;
-       previous_valid=0;
-     }
-   }
-
-   if (direction == 5)
-   {
-     if (j < 0)
-     {
-       check_current_landebahn(current_in_a_row, needed_points_in_a_row,i,j);
-       j=tile->width.y-1;
-       i+=1;; // since inc_x zero shift by 1
-       previous_valid=0;
-     }
-   }
-
-   if (direction == 6)
-   {
-     if ((i>tile->width.x -1) || (j < 0))
-     {
-       if (startx > 0)
-         startx -= inc_x;
-       else
-         starty += inc_y;;
-       check_current_landebahn(current_in_a_row, needed_points_in_a_row,i,j);
-       if (startx < 0)
-         startx = 0;
-       i=startx;
-       j=starty;
-       previous_valid=0;
-     }
-
-   }
-   
-   if (direction == 7)
-   {
-     if (i > tile->width.x -1)
-     {
-      check_current_landebahn(current_in_a_row, needed_points_in_a_row,i,j);
-      i=0;
-       j+=1; //set to 1 because inc_y is 0
-     }
-   }
-
-   if (direction == 8)
-   {
-     if ((i> tile->width.x -1) || (j > tile->width.y -1))
-     {
-       if (startx == 0)
-         starty+=inc_y;
-       else
-         startx-=inc_x;
-       if ((startx < 0) && (starty == 0))
-         startx = 0;
-       check_current_landebahn(current_in_a_row, needed_points_in_a_row,i,j);
-
-       i=startx;
-       j=starty;
-       previous_valid=0;
-     }
-
-   }
-
-   //completed check
-   //report("Corrected point "+floattostring(i)+","+floattostring(j));
-     if( i < 0)
-       completed =1;
- 
-     if ( j < 0)
-       completed = 1;
- 
-      if (i > tile->width.x)
-        completed = 1;
-
-      if (j > tile->width.y)
-        completed=1;
-  }
-
-  report("Checksum is "+floattostring(checksum));
-  printf("Checksum is %d\n",checksum);
- 
-  if (checksum == tile->width.x*tile->width.y) 
-   printf("OK\n");
-  else
-    printf("FATAL\n");
-*/
   return;
 }

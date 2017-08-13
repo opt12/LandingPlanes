@@ -1,5 +1,5 @@
 
-CC=g++ -g -std=c++11 -O3
+CC=g++ -pg -g -std=c++11 -O3 -Wall
 
 ifeq ($(DEBUG), 1)
     CFLAGS =-DDEBUG
