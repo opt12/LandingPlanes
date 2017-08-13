@@ -494,7 +494,7 @@ myGeoTiffHandler=master;
 
 }
 
-void tile_worker::create_landebahn_coord(pixelPair start_point)
+void tile_worker::create_landebahn_coord(pixelPair start_point,pixelPair end_point)
 {
 
 cout << "start point "<<start_point.x<<" und " <<start_point.y<<endl;
@@ -532,6 +532,8 @@ float lengthFromJson=3000;
 cout << j.dump(4) << endl;
 
         emitReceiptMsg(commSocket, "landingPlane", j);
+
+
 
 }
 
@@ -637,7 +639,6 @@ int tile_worker::check_current_landebahn(int &current_in_a_row, const int &neede
 {
   if (coordlist.size() > 1)
   {
-  report("in with coordsize "+floattostring(coordlist.size()));
   if (sqrt(pow(((coordlist[0].first-coordlist.back().first)*resolution_x),2)+pow(((coordlist[0].second-coordlist.back().second)*resolution_y),2)) >= landing_plane_length) 
 //   if (current_in_a_row>needed_points_in_a_row)  
    {
@@ -647,9 +648,10 @@ int tile_worker::check_current_landebahn(int &current_in_a_row, const int &neede
 //      for (std::map<int,double>::iterator it=coordlist.begin(); it!=coordlist.end(); ++it)
  //       std::cout << it->first << " => " << it->second << '\n';
      report("Landebahn gefunden wirklich");
+     pixelPair end_point;
      end_point.x=current_x;
      end_point.y=current_y;
-    create_landebahn_coord(start_point); 
+    create_landebahn_coord(start_point,end_point); 
    }
   find_best_planes(coordlist);
   }

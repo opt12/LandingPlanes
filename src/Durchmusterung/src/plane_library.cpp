@@ -11,7 +11,7 @@ int search_for_planes(const tileData *actualTile, GeoTiffHandler *myGeoTiffHandl
   double orthogonal_slope = 3.0;
   minLength=3000;
   sem_t semaphore;
-   sem_init(&semaphore,0,1);
+   sem_init(&semaphore,0,16);
   cout << "before worker init"<<endl;
   tile_worker *worker1 = new tile_worker(actualTile, minLength, short_range_slope, long_range_slope, not_defined, heading, myGeoTiffHandler, width, orthogonal_slope, commSocket,taskDescription,&semaphore);
   cout << "before durchmustere"<<endl;

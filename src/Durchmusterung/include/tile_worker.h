@@ -52,12 +52,12 @@ class tile_worker{
    double allowed_diff;
    double allowed_orthogonal_diff;
    //pixelPair start_point;
-   pixelPair end_point;
+   //pixelPair end_point;
    double orthogonal_slope;
    double width_of_plane;
 
   void find_best_planes(vector< pair<int,int> > &coordlist);
-   void create_landebahn_coord(pixelPair start_point);
+   void create_landebahn_coord(pixelPair start_point,pixelPair end_point);
    GeoTiffHandler *myGeoTiffHandler;
    //vector< pair<int,int> > coordlist;
    const json *taskDescription;
@@ -68,7 +68,7 @@ class tile_worker{
    vector<pthread_t> threads;
    int get_start_values(double &startposx, double &startposy);
    pthread_mutex_t mutex_start_value;
- 
+   
     public:
     friend class thread_data;
     void *check_single_plane(void *x_void_ptr);
