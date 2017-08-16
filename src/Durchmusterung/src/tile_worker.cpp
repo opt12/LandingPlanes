@@ -481,7 +481,7 @@ cout << "end point "<<end_point.x<<" und " <<end_point.y<<endl;
 //geoCoord end = myGeoTiffHandler->pixel2Geo( pixend);
 
 //cout << "lb end "<<end<<endl;
-
+report("width of plane is "+floattostring(width_of_plane));
 json j = myGeoTiffHandler->getGeoJsonPolygon(pixstart, pixend, width_of_plane/2.0);
 
 std::ofstream outfile;
