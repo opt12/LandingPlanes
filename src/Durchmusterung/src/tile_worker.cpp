@@ -482,7 +482,7 @@ cout << "end point "<<end_point.x<<" und " <<end_point.y<<endl;
 
 //cout << "lb end "<<end<<endl;
 
-json j = myGeoTiffHandler->getGeoJsonPolygon(pixstart, pixend, /*width_of_plane*/1);
+json j = myGeoTiffHandler->getGeoJsonPolygon(pixstart, pixend, width_of_plane/2.0);
 
 std::ofstream outfile;
 
@@ -490,7 +490,7 @@ std::ofstream outfile;
   outfile << j.dump(4)<<endl;
   outfile.close();
 
-float lengthFromJson=3000;
+float lengthFromJson=landing_plane_length;
 //float lengthFromJson = j["properties"]["actualLength"];
 
 //        j["properties"] = (*p.taskDescription)["scanParameters"];
