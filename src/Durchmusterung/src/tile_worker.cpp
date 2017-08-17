@@ -181,7 +181,7 @@ vector< pair<int,int> > coordlist;
           double new_x=i;
           double new_y=j;
           double factor = pow(-1,k);
-        for(int l=0; l < 2; l++)
+        for(int l=0; l < my_tile_worker->needed_orthogonal_points_in_a_row; l++)
         {
           double old_x=new_x;
           double old_y=new_y;
@@ -553,6 +553,7 @@ void tile_worker::calc_optimal_vector()
   allowed_orthogonal_diff=orthogonal_slope*sqrt(pow(resolution_x*orth_x,2)+pow(resolution_y*orth_y,2))/100.0;
   cout << "allowed from "<<short_range_slope << " and " <<resolution_x<< " and incx " <<inc_x<<" and res y" <<resolution_y <<" and inc_y 2"<<inc_y<<endl;
   needed_orthogonal_points_in_a_row=ceil(0.5 *(double) width_of_plane/sqrt(pow(((double) resolution_x*orth_x),2)+pow(((double) resolution_y*orth_y),2)));
+  report("orthogonal points in a row are "+floattostring(needed_orthogonal_points_in_a_row));
 }
 
 void tile_worker::calc_start_coordinates()
