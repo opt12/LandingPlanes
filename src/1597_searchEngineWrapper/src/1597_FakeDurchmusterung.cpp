@@ -92,7 +92,9 @@ eResult fakeScan(const tileData *actualTile, GeoTiffHandler *myGeoTiffHandler,
 	//Das hier ist eine Funktion, die _SC_NPROCESSORS_ONLN Threads aufspannt.
 	//Jeder der Threads gibt eine zufällige Ladebahn im Scan-Bereich zurück und meldet sie an
 	//den Unix Socket
-	const int NUM_THREADS = sysconf(_SC_NPROCESSORS_ONLN);
+	//TODO: hier starten wir dann wohl nur einen Thread. Parallelisierung findet in der search_for_planes statt
+//	const int NUM_THREADS = sysconf(_SC_NPROCESSORS_ONLN);
+	const int NUM_THREADS = 1;
 
 	std::vector<pthread_t> scanThreads(NUM_THREADS);
 

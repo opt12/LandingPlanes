@@ -56,7 +56,7 @@ function handleCreateLandingPlane(params) {
 
     //the test of the params passed
     return LandingPlanes.create(newLandingPlane).then((landingPlane) => {
-        console.log("created new newLandingPlane:\n", JSON.stringify(landingPlane.toObject().geoJSON, null, 2));
+        // console.log("created new newLandingPlane:\n", JSON.stringify(landingPlane.toObject().geoJSON, null, 2));
         return newLandingPlane;
     }, (error) => {
         return Promise.reject(new HttpError(500, 'Unknown error while trying to store new landing plane\n' + error.message));

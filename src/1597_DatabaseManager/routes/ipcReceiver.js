@@ -32,14 +32,14 @@ const messageListener = function() {
 const landingPlaneListener = function() {
     connectedIPC.on('landingPlane',
         function (data) {
-            console.log("Got a landingPlane!");
+            // console.log("Got a landingPlane!");
             // console.log('data content is : ')
             // console.log(JSON.stringify(data, null, 2));
 
             cmdDataBase.handleCreateLandingPlane(data)
                 .then(function (result) {
-                    console.log("added landingPlane to database: ");
-                    console.log(JSON.stringify(result, null, 2))
+                    // console.log("added landingPlane to database: ");
+                    // console.log(JSON.stringify(result, null, 2))
                 })
                 .catch(function (err) {
                     console.log("adding landingPlane to database FAILED: ");
