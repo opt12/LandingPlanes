@@ -95,14 +95,15 @@ class MapOverview extends Component {
         };
 
         console.log("sending Scan request to server;");
-        console.log("tiffinfo: ", this.props.tiffInfo);
-        console.log("mapExtent: ", mapExtent);
+        console.log("tiffinfo: ", JSON.stringify(this.props.tiffInfo, null,2));
+        console.log("mapExtent: ", JSON.stringify(mapExtent,null,2));
+        console.log("scanParameter: ", JSON.stringify(scanParameter,null,2));
         scanForLandingPlanes(this.props.tiffInfo, mapExtent, scanParameter, scanHeadings);
     };
 
     requestLandingPlanes = (e) => {
         e.preventDefault();
-        let requestArea = this.getExtentGeoJSON()
+        let requestArea = this.getExtentGeoJSON();
         console.log(JSON.stringify(requestArea));
         this.queryLandingPlanesDB(requestArea);
     };
@@ -176,11 +177,11 @@ class MapOverview extends Component {
                     <FormGroup>
                         <Col componentClass={ControlLabel} sm={2}>min. Länge [m]:</Col>
                         <Col sm={2}>
-                            <FormControl id="minLength" type="number" defaultValue="2000"/>
+                            <FormControl id="minLength" type="number" defaultValue="2000" step="1"/>
                         </Col>
                         <Col componentClass={ControlLabel} sm={2}>min. Breite [m]:</Col>
                         <Col sm={1}>
-                            <FormControl id="minWidth" type="number" defaultValue="30"/>
+                            <FormControl id="minWidth" type="number" defaultValue="30" step="1"/>
                         </Col>
                         <Col componentClass={ControlLabel} sm={2}>Richtungen [°, °, ]:</Col>
                         <Col sm={3}>
@@ -190,20 +191,27 @@ class MapOverview extends Component {
                     <FormGroup>
                         <Col componentClass={ControlLabel} sm={2}>max. Steigung [%]:</Col>
                         <Col sm={2}>
-                            <FormControl id="maxRise" type="number" defaultValue="10.0"/>
+                            <FormControl id="maxRise" type="number" defaultValue="10.0" step="0.01"/>
                         </Col>
-                        <Col componentClass={ControlLabel} sm={2}>max. Varianz:</Col>
+                        <Col componentClass={ControlLabel} sm={2}>max. Varianz: (längs)</Col>
+                        <Col sm={1}>
+                            <FormControl id="maxVarianceLong" type="number" defaultValue="5.50" step="0.01"/>
+                        </Col>
+                        <Col componentClass={ControlLabel} sm={2}>max. Varianz: (quer)</Col>
+                        <Col sm={1}>
+                            <FormControl id="maxVarianceCross" type="number" defaultValue="5.50" step="0.01"/>
+                        </Col>
                         <Col sm={2}>
-                            <FormControl id="maxVariance" type="number" defaultValue="5.5"/>
-                        </Col>
-                        <Col sm={3}>
                             <button class="btn btn-primary"
                                     onClick={e => {
                                         let scanParameter = {
                                             minLength: parseInt(document.getElementById('minLength').value),
                                             minWidth: parseInt(document.getElementById('minWidth').value),
                                             maxRise: parseFloat(document.getElementById('maxRise').value),
-                                            maxVariance: parseFloat(document.getElementById('maxVariance').value),
+                                            maxVariance: parseFloat(document.getElementById('maxVarianceLong').value), //TODO equals maxVarianceLong for compatibility, will be removed soon
+                                            maxVarianceLong: parseFloat(document.getElementById('maxVarianceLong').value),
+                                            maxVarianceCross: parseFloat(document.getElementById('maxVarianceCross').value),
+                                            numThreads: parseInt(document.getElementById('numThreads').value),
                                         };
                                         let scanHeadings = JSON.parse(document.getElementById('headings').value);
                                         scanHeadings = scanHeadings.constructor === Array ? scanHeadings : [scanHeadings];
@@ -231,20 +239,24 @@ class MapOverview extends Component {
                                 Save to M-File
                             </button>
                         </Col>
-                        <Col smOffset={2} sm={2}>
-                            <button class="col-sm-12 btn btn-success"
-                                    onClick={e => {
-                                        this.requestLandingPlanes(e);
-                                    }}>
-                                request Results
-                            </button>
-                        </Col>
-                        <Col smOffset={1} sm={1}>
+                        <Col smOffset={0} sm={1}>
                             <button class="col-sm-12 btn btn-danger"
                                     onClick={e => {
                                         this.dropDb(e);
                                     }}>
                                 Drop DB
+                            </button>
+                        </Col>
+                        <Col componentClass={ControlLabel} sm={2}>Threads</Col>
+                        <Col sm={1}>
+                            <FormControl id="numThreads" type="number" defaultValue="8" step="1"/>
+                        </Col>
+                        <Col smOffset={0} sm={2}>
+                            <button class="col-sm-12 btn btn-success"
+                                    onClick={e => {
+                                        this.requestLandingPlanes(e);
+                                    }}>
+                                request Results
                             </button>
                         </Col>
                     </FormGroup>
