@@ -36,6 +36,10 @@ var propertiesSchema = new Schema({
         type: Number,
         required: true,
     },
+    mergeable: {
+        type: Boolean,
+        required: true,
+    },
 }, {_id: false});
 
 

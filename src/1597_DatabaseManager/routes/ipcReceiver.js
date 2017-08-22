@@ -37,9 +37,14 @@ const landingPlaneListener = function() {
             // console.log(JSON.stringify(data, null, 2));
 
             cmdDataBase.handleCreateLandingPlane(data)
-                .then(function (result) {
-                    // console.log("added landingPlane to database: ");
-                    // console.log(JSON.stringify(result, null, 2))
+                .then(function ({result, newPlane = true}) {
+                    if(newPlane) {
+                        // console.log("added landingPlane to database: ");
+                        // console.log(JSON.stringify(result, null, 2))
+                    } else {
+                        console.log("plane already exists in database");
+                        console.log(JSON.stringify(result, null, 2))
+                    }
                 })
                 .catch(function (err) {
                     console.log("adding landingPlane to database FAILED: ");

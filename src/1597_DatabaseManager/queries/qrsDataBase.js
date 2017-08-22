@@ -29,6 +29,33 @@ const getDbEntries = (geoPolygon) => {
 
 };
 
+const getDbEntriesWithHeading = (geoPolygon, heading) => {
+
+    var excludeList = {};  //add fields to include with name:0 ...
+    var queryObject;
+
+    queryObject = {
+        "geoJSON.geometry": {
+            $geoIntersects: {
+                $geometry: geoPolygon
+            }
+        },
+        "geoJSON.properties.actualHeading":heading,
+        "geoJSON.properties.mergeable":true,
+    };
+
+
+    console.log("Database query for Heading "+heading+" intersecting this region:");
+    console.log(JSON.stringify(geoPolygon, null, 2));
+
+    //TODO hier jetzt schnell die Datenbank abfragen und dann geht's vielleicht schon...
+
+    return LandingPlanes.find(queryObject, excludeList);
+
+};
+
+
 module.exports = {
     getDbEntries: getDbEntries,
+    getDbEntriesWithHeading: getDbEntriesWithHeading,
 };
