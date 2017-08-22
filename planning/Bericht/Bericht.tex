@@ -1,0 +1,126 @@
+\documentclass[10pt,a4paper]{report}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{struktex}
+\begin{document}
+\chapter{Durchmusterung der Geotiff Daten und Auffinden der Landebahnen}
+Die Durchmusterung der Geodaten wurden in einer eigenen statischen Library gekapselt ($plane\_library.a$). Innerhalb dieser Library finden sich alle Algorithmen, die zum Auffinden der Landebahnen benötigt werden wieder. Für den Aufrufer ist die Implementation komplett unsichtbar. Alle funktionalen Requirements werden von dieser Library übernommen.
+
+
+\section{Interface der Library}
+
+Die Parameter des Interfaces sind im Listing \ref{interface} beschrieben.
+
+\begin{lstlisting}[caption=Interface Beschreibung, label=interface]
+int search_for_planes(const tileData *actualTile, 
+GeoTiffHandler *myGeoTiffHandler, 
+float heading, float minLength, float width, int commSocket,
+const json *taskDescription, float noDataValue , rectSize pixelSize );
+\end{lstlisting}
+
+Die einzelnen Aufrufparameter und deren funktionale Eigenschaft sind in Tabelle~\ref{beschreibungparameter} aufgezeigt.
+
+\begin{table}[htb]
+\centering
+\begin{tabular}{|p{4.5cm}|p{10cm}|}
+\hline 
+Parameter & Funktion \\ 
+\hline 
+*actualTile & Zeiger auf das Geo Kartenobjekt mit den einzelnen Höhendaten \\ 
+\hline 
+*myGeoTiffHandler & Zeiger auf eine Instanz eines GeoTiffHandler Objekts, 
+welches diverse Funktionen zur Umrechnung, Konvertierung etc. im GeoTiff Format unterstützt \\ 
+\hline 
+heading & Durchmusterungswinkel für die Landebahnen $0^\circ$ => Nord-Süd Achse \\ 
+\hline 
+minLength & minimale geforderte Länge der Landebahn \\ 
+\hline 
+width & Breite der geforderten Landebahn \\ 
+\hline 
+commSocket & Socket für das abspeichern gefundener Landebahnen in der Mongo DB\\ 
+\hline 
+*taskDescription & Taskbeschreibung, um die gefundene Bahn korrekt in Mongo abzulegen \\ 
+\hline 
+noDataValue & Zahlenwert für undefinierte Kartenpunkte \\ 
+\hline 
+pixelSize & Auflösung der Rasterpunkte in [m]\\
+\hline 
+
+\end{tabular} 
+\caption{Beschreibung der Aufrufparameter Funktionalität}\label{beschreibungparameter}
+\end{table}
+
+\section{logischer Ablauf innerhalb der Landebahn Erkennung}
+
+Der logische Ablauf ist schematisch im Nassi-Shneiderman-Diagramm~\ref{nasshnlogisch} dargestellt.
+
+\clearpage
+\begin{struktogramm}(100,200)\label{nasshnlogisch}
+  \assign{Initialisisierung $tile\_worker$ Objekt}
+  \assign{Berechne winkel-, steigungs- und holprigkeitsabhängige Parameter}
+\forallin{Für alle Startpunkte einer Landebahn in gegebener Richtung (Thread Pool)}
+\assign{wähle den nächsten Punkt}
+\ifthenelse[15]{1}{1}
+{kurzreichweitige Steigung zum Vorgänger OK?}{\sTrue}{\sFalse}
+\ifthenelse[17]{1}{6}
+{checke Holprigkeit in Querrichtung}{\sTrue}{\sFalse}
+\change
+\ifthenelse[25]{1}{1}
+{ist die aktuelle Landebahn länger als die Mindestlänge}{\sTrue}{\sFalse}
+\assign{Suche die beste Landebahn mit Mindestlänge}
+\assign{Speichere beide Landebahnen in der Mongo DB}
+\assign{starte eine neue Landbahn mit aktuellem Punkt}
+\change
+\assign{starte eine neue Landbahn mit aktuellem Punkt}
+\ifend
+\ifend
+\change
+\ifthenelse[30]{1}{1}
+{ist die aktuelle Landebahn länger als die Mindestlänge}{\sTrue}{\sFalse}
+\assign{Suche die beste Landebahn mit Mindestlänge}
+\assign{Speichere beide Landebahnen in der Mongo DB}
+\assign{starte eine neue Landbahn mit aktuellem Punkt}
+\change
+\assign{starte eine neue Landbahn mit aktuellem Punkt}
+\ifend
+\assign{starte eine neue Landbahn mit aktuellem Punkt}
+\ifend
+\forallinend
+\end{struktogramm}
+
+\clearpage
+\section{Initialisierung}
+
+Die Initialisierung erzeugt zunächst ein $tile_worker$ Objekt und initialisiert die Instanzvariablen mit den bei der Objekterzeugung angegebenen Durchmusterungscharakteriska wie maximale erlaubt Steigung, Varianz, minimale Landebahnlänge.
+Mit dem Aufruf von $check_steigungen$ werden dann die optimalen Schrittvektoren und die Startkoordinaten des Durchmusterungsvorgangs bestimmt.
+Die optimalen Durchmusterungsvektoren sind winkelabhängig. Die Idee hierbei ist, dass in Abhängigkeit der Auflösung diese Vektoren so initialisiert werden, dass alle möglichen Landebahnen in gefunden werden. Dies führt dazu, dass bestimmte Winkel beim Durchmustern dichtere Landebahnen abtasten können. Somit wird sichergestellt, dass jede Landebahn mindestens einmal untersucht wird.
+Zusätzlich dazu werden dann orthogonale Vektoren aus den Schrittvektoren abgeleitet, die zum Durchmustern in orthogonaler Richtung (Breite der Landebahn) benutzt werden.
+Anhand der gegebenen Kartenauflösung und Schrittvektoren kann dann bestimmt werden, wie viele aufeinander folgende Punkte mindestens benötigt werden, damit die landebahn die Mindestlängenvoraussetzung erfüllt.
+Entsprechendes gilt natürlich auch für die Breite der Bahn.
+Anschließend werden dann die Startpunkte der Durchmusterung bestimmt.
+Diese sind abhängig vom Durchmusterungswinkel. 
+Für Winkel, die ein vielfaches von 90 betragen wird einfach eine Seite des Quadranten abgeschritten. Ist eine Bahn z.B. in y-Richtung abgetastet, wird der Abzissenwert inkrementiert / dekrementiert und erneut in y-Richtung abgeschritten, die der Rand der Kachel erreicht wird.
+Bei Winkeln, die nicht dem vielfachen von 90 entsprechen, werden sukkzessiv sowohl Abzisse als auch Ordinate abgeschritten und das Terrain in Diagonaler Richtung durchmustert. 
+Einige grafische Beispiele sind in Diagramm ... angegeben.
+
+\clearpage
+\section{Parallelverarbeitung mittels pthreads zum Finden der Landebahnen}
+
+Die Parallelverarbeitung arbeitet nach einem Taskmodell, welches mit einem Semaphor gesteuert wird. Jeder Startpunkt, der auf einem Kartenrand liegt (auch wenn der Kartenpunkt keine valide Höhenangabe repräsentiert), ist hier als ein Task anzusehen. Das Semaphor dient dazu, die gleichzeitige Anzahl der Threads zu steuern. Dies dient einmal Untersuchungszwecken, um festzustellen, die der Speedup bei Variation der Threads ist. Weiterhin würde eine zu hohe Zahl an an Threads die ausführende Maschine in extreme Ressourcenknappheit bringen können.
+Das Workerobjekt kontrolliert mit einem mutex die Herausgabe von Startwerten. In einem kritischen Bereich wird durch Inkrementierung des Startpunktes ein neuer Startpunkt generiert, der an einen Worker herausgegben wird. Dieser kritische Bereich, der dafür sorgt, dass jeder Startpunkt auch nur wirklich einmal herausgeben wird, stellt somit auch das Bottleneck der Parallelverarbeitung dar. So lange die Anzahl der Punkte pro Bahn und die Berechnungszeit, die ein Thread benötigt, um die Bahn in der vorgegebenen Richtung abzuscannen und die zur Bahn gehörigen Parameter wie Varianz etc. zu berechnen größer ist als die Zeit, die vergeht, bis der Thread wieder in der Warteschlange zum Erhalt eines neuen Startwert größer ist, sollte dieses Bottleneck gering sein.
+Zudem ist zu beachten, dass natürlich nicht alle Landebahnen gleich lang sind. So lange der Startpunkt in der Nähe einer Kartenecke ist und die Durchmusterungsrichtung nur wenige Punkte bis zum Kartenrand umfasst, wird die Durchmusterung schnell vorbei sein und ein neuer Startwert benötigt werden. 
+
+\section{Detaillierte Beschreibung des Suchalgorithmus}
+
+Ausgehend vom jeweiligen Startpunkt wird mittels p\_thread\_create ein neuer Thread erzeugt und die Funktion void *thread\_data::check\_single\_plane(void *x\_void\_ptr) als Startroutine mitgegeben. Innerhalb dieses erzeugten Threads existiert eine while Schleife, die solange true returniert, wie noch nicht alle Startpunkte an Threads ausgeben wurden.
+Innerhalb einiger verschachtelten Bedingungen wird überprüft, ob der betrachtete Geopunkt tatsächlich Höheninformationen hat und ob die Steigung zu seinem unmittelbaren Vorgänger innerhalb des erlaubten Bereiches liegt.
+Trifft dies zu, so ist noch die Steigung benachbarter Punkte in orthogonaler Richtung zu betrachten. Sind all diese Kriterien erfüllt, wird der betrachtete Geopunkt in eine Liste an gültigen Punkten aufgenommen. Diese Prozedur wird so lange wieder holt, bis ein Kriterium nicht mehr erfüllt ist oder der Kartenrand erreicht ist.
+Ist eines dieser Abbruchkriterien erfüllt, wird überprüft, ob das Ensemble aneinanderhängender Punkte die Mindestlänge der Datenbank erfüllt.
+Dann wird eine Subroutine find\_best\_planes() aufgerufen, welche innerhalb der gefunden Liste an zusammenhängenden Punkten zwei Landebahnen ermittelt. Zum einen wird die längste Bahn, die das Steigungskriterium erfüllt ermittelt und des weiteren die Landebahn, die die geringste Varianz aufweist uind trotzdem noch die geforderte Mindestlänge erreicht. 
+Beide Bahnen werden dann, so fern vorhanden, in eine Mongo DB geschrieben.
+
+
+\end{document}
