@@ -57,7 +57,7 @@ class tile_worker{
    double width_of_plane;
 
   void find_best_planes(vector< pair<int,int> > &coordlist);
-   void create_landebahn_coord(pixelPair start_point,pixelPair end_point);
+   void create_landebahn_coord(pixelPair start_point,pixelPair end_point,string type,double actualRise, double actualVariance );
    GeoTiffHandler *myGeoTiffHandler;
    //vector< pair<int,int> > coordlist;
    const json *taskDescription;
