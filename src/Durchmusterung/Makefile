@@ -37,11 +37,10 @@ clean:
 	ar rcs ./lib/plane_library.a ./obj/plane_library.o ./obj/tile_worker.o ./obj/landing_plane.o ./obj/thread_data.o
 
 ../GeoTiff_handler/src/readInTiff.o:
-	$(MAKE) -C ../GeoTiff_Handler/src/ -I/usr/include/gdal/
+	cd ../GeoTiff_Handler/src && make -f Makefile -I/usr/include/gdal/ -I../gdal/gdal-2.2.1/gcore -I../gdal/gdal-2.2.1/port -I../gdal/gdal-2.2.1/ogr
 
-../GeoTiff_handler/src/GeoTiffHandler.o:
-	$(MAKE) -C ../GeoTiff_Handler/src/ -I/usr/include/gdal/
-
+../GeoTiff_Handler/src/GeoTiffHandler.o:
+	cd ../GeoTiff_Handler/src && make -f Makefile -I/usr/include/gdal/ -I../gdal/gdal-2.2.1/gcore -I../gdal/gdal-2.2.1/port -I../gdal/gdal-2.2.1/ogr
 
 ./bin/pcs.csv: ../gdal/gdal-2.2.1/data/pcs.csv
 	cp  ../gdal/gdal-2.2.1/data/pcs.csv ./bin
