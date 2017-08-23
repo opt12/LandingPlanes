@@ -122,5 +122,23 @@ Ist eines dieser Abbruchkriterien erfüllt, wird überprüft, ob das Ensemble an
 Dann wird eine Subroutine find\_best\_planes() aufgerufen, welche innerhalb der gefunden Liste an zusammenhängenden Punkten zwei Landebahnen ermittelt. Zum einen wird die längste Bahn, die das Steigungskriterium erfüllt ermittelt und des weiteren die Landebahn, die die geringste Varianz aufweist uind trotzdem noch die geforderte Mindestlänge erreicht. 
 Beide Bahnen werden dann, so fern vorhanden, in eine Mongo DB geschrieben.
 
+\section{Klassen und Objekte}
+
+In der $plane\_library.a$ werden mehrere Klassenimplemntationen verwendet, um objektorientiert zu einer vereinfachten Problemlösung zu gelangen.
+Die zentrale Klasse ist dabei die $tile_worker$-Klasse. In ihr werden wichtige Membervariablen zu den parametroiesierten Rahmenbedingungen verwaltet und das Threading mittels p_thread abgehandelt. Die Klasse $landing_plane$ beschreibt ein Hilfsobjekt, in dem gefundene landebahnobjekte via Startpunkten, Steigung und Varianz beschrieben werden.
+Das threading selbst hat eine sehr schlanke $thread_data$-Klasse, welche in einer "firend"-Beziehung zum $tile_worker$ steht und sich ausschließlich mit der Parallelausführung beschäftigt.
+Der $tile-manager$ ist eine Klasse, die ausschließlich zu Debug- und Entwicklungszwecken zum Baum eines Stand-Alone Binaries benötigt wird.
+Für den produktiven Einsatz ist sie obsolet.
+
+
+\section{Verwendete Datenstrukturen}
+
+Die wichtigsten Datenstrukturen die während der Durchmusterung benötigt werden, sind das übergebene Kachelobjekt und ein Objekt 
+
+\subsection{Einfluss der Datenstrukturen auf die Performanz}
+
+\section{Profiling des Codes}
+
+\section{Speed-up Analysen in Abhängigkeit des Parallelisierunggrades}
 
 \end{document}
