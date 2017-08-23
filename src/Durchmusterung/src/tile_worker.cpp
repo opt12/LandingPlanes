@@ -372,9 +372,10 @@ void tile_worker::find_best_planes(vector< pair<int,int> > &coordlist)
       sum += fabs(access_single_element(coordlist[j].first,coordlist[j].second)-access_single_element(coordlist[j+1].first,coordlist[j+1].second));
       ++count;
        double length;
+       double slope;
        if ((length= sqrt(pow(((coordlist[i].first-coordlist[j+1].first)*resolution_x),2)+pow(((coordlist[i].second-coordlist[j+1].second)*resolution_y),2))) >= landing_plane_length) 
        { 
-         if (fabs(access_single_element(coordlist[i].first,coordlist[i].second)-access_single_element(coordlist[j+1].first,coordlist[j+1].second)) <= long_range_slope*length/100.0)
+         if ((slope = fabs(access_single_element(coordlist[i].first,coordlist[i].second)-access_single_element(coordlist[j+1].first,coordlist[j+1].second))) <= long_range_slope*length/100.0)
          {
          double varianz = 0;
          double mean = sum / (double) count;
@@ -386,18 +387,40 @@ void tile_worker::find_best_planes(vector< pair<int,int> > &coordlist)
          }
          varianz = varianz / count;
          if (plane_min_varianz == NULL)
-           plane_min_varianz=new landing_plane(length,varianz,make_pair(coordlist[i].first,coordlist[i].second),make_pair(coordlist[j-1].first, coordlist[j-1].second));
+           plane_min_varianz=new landing_plane(length,varianz,make_pair(coordlist[i].first,coordlist[i].second),make_pair(coordlist[j-1].first, coordlist[j-1].second),slope);
          else
-           plane_min_varianz->check_better_varianz(length,varianz,make_pair(coordlist[i].first,coordlist[i].second),make_pair(coordlist[j-1].first, coordlist[j-1].second));
+           plane_min_varianz->check_better_varianz(length,varianz,make_pair(coordlist[i].first,coordlist[i].second),make_pair(coordlist[j-1].first, coordlist[j-1].second),slope);
  if (plane_max_length == NULL)
-           plane_max_length=new landing_plane(length,varianz,make_pair(coordlist[i].first,coordlist[i].second),make_pair(coordlist[j-1].first, coordlist[j-1].second));
+           plane_max_length=new landing_plane(length,varianz,make_pair(coordlist[i].first,coordlist[i].second),make_pair(coordlist[j-1].first, coordlist[j-1].second),slope);
          else
-           plane_max_length->check_better_length(length,varianz,make_pair(coordlist[i].first,coordlist[i].second),make_pair(coordlist[j-1].first, coordlist[j-1].second));
+           plane_max_length->check_better_length(length,varianz,make_pair(coordlist[i].first,coordlist[i].second),make_pair(coordlist[j-1].first, coordlist[j-1].second),slope);
        }
        }
     }
   }
-    
+
+   
+    if (plane_max_length != NULL)
+    {
+      pixelPair startpoint,endpoint;
+      startpoint.x=plane_max_length->getstartpoint().first;
+      startpoint.y=plane_max_length->getstartpoint().second;
+      endpoint.x=plane_max_length->getendpoint().first;
+      endpoint.y=plane_max_length->getendpoint().second;
+
+ 
+      create_landebahn_coord(startpoint,endpoint,"true",plane_max_length->print_slope(),plane_max_length->print_varianz()); 
+    }
+     
+    if (plane_min_varianz != NULL)
+    {
+     pixelPair startpoint,endpoint;
+      startpoint.x=plane_min_varianz->getstartpoint().first;
+      startpoint.y=plane_min_varianz->getstartpoint().second;
+      endpoint.x=plane_min_varianz->getendpoint().first;
+      endpoint.y=plane_min_varianz->getendpoint().second;
+      create_landebahn_coord(startpoint,endpoint,"false",plane_min_varianz->print_slope(), plane_min_varianz->print_varianz());
+    }
     delete plane_max_length;
     plane_max_length = NULL;
     delete plane_min_varianz;
@@ -465,7 +488,7 @@ myGeoTiffHandler=master;
 
 }
 
-void tile_worker::create_landebahn_coord(pixelPair start_point,pixelPair end_point)
+void tile_worker::create_landebahn_coord(pixelPair start_point,pixelPair end_point,string type,double actualRise, double actualVariance)
 {
 
 cout << "start point "<<start_point.x<<" und " <<start_point.y<<endl;
@@ -497,9 +520,10 @@ float lengthFromJson=landing_plane_length;
        j["properties"] = (*taskDescription)["scanParameters"];
 
         j["properties"]["actualLength"] = lengthFromJson;
-        j["properties"]["actualRise"] = 666.666;
-        j["properties"]["actualVariance"] = 666.666;
+        j["properties"]["actualRise"] = actualRise;
+        j["properties"]["actualVariance"] = actualVariance;
         j["properties"]["actualHeading"] = current_angle;
+        j["properties"]["mergeable"]=type;
 //cout << j.dump(4) << endl;
 
         emitReceiptMsg(commSocket, "landingPlane", j);
@@ -611,6 +635,7 @@ int tile_worker::check_current_landebahn(int &current_in_a_row, const int &neede
 {
   if (coordlist.size() > 1)
   {
+/*
   if (sqrt(pow(((coordlist[0].first-coordlist.back().first)*resolution_x),2)+pow(((coordlist[0].second-coordlist.back().second)*resolution_y),2)) >= landing_plane_length) 
 //   if (current_in_a_row>needed_points_in_a_row)  
    {
@@ -624,7 +649,7 @@ int tile_worker::check_current_landebahn(int &current_in_a_row, const int &neede
      end_point.x=current_x;
      end_point.y=current_y;
     create_landebahn_coord(start_point,end_point); 
-   }
+   }*/
   find_best_planes(coordlist);
   }
 current_in_a_row=0;
