@@ -5,6 +5,8 @@ var HttpError = require('http-error-constructor');
 var R = require('ramda');
 
 var LandingPlanes = require('../models').LandingPlanes;
+var mergeableLandingPlanes = require('../models').mergeableLandingPlanes;
+
 
 var getDbEntriesWithHeading = require('../queries/qrsDataBase').getDbEntriesWithHeading;
 
@@ -116,7 +118,7 @@ function handleCreateLandingPlane(params) {
 
 
             //the test of the params passed
-            return LandingPlanes.create(newLandingPlane).then((landingPlane) => {
+            return mergeableLandingPlanes.create(newLandingPlane).then((landingPlane) => {
                 // console.log("created new newLandingPlane:\n", JSON.stringify(landingPlane.toObject().geoJSON, null, 2));
                 return {result: newLandingPlane, newPlane: true};
             }, (error) => {

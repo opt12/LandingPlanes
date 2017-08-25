@@ -3,7 +3,23 @@
 var HttpError = require('http-error-constructor');
 var R = require('ramda');
 
+var turfUnion = require('turf-union');
+var turf = require('turf');
+
 var LandingPlanes = require('../models').LandingPlanes;
+
+const mergeLandingPlanes = (planesToMerge) => {
+
+    if(planesToMerge.length < 2) return planesToMerge;
+
+    let [union, ...rest] = planesToMerge.map(p => p.geoJSON);
+
+    rest.forEach((plane, idx) => union = turfUnion(union, plane));
+
+    // union = turf.simplify(union, 0.0001, false);
+
+    return planesToMerge;
+}
 
 
 const getDbEntries = (geoPolygon) => {
@@ -25,7 +41,12 @@ const getDbEntries = (geoPolygon) => {
 
     //TODO hier jetzt schnell die Datenbank abfragen und dann geht's vielleicht schon...
 
-    return LandingPlanes.find(queryObject, excludeList);
+    return LandingPlanes.find(queryObject, excludeList).lean()
+        .then(landingPlanes =>{
+            //eliminiere Duplikate
+            let {mergedPlanes, planesToDelete} = mergeLandingPlanes(landingPlanes);
+            return landingPlanes;
+        });
 
 };
 
