@@ -129,9 +129,20 @@ Bei Winkeln, die ein vielfaches von 90\° betragen, sind alle Landebahnen gleich
 Bei Bahnen, die diagonal verlaufen, sind die ersten Bahnen kurz, nehmen dann in ihrer Länge zu, bis als Startpunkt die nächstliegende Ecke  erreicht ist, und nimmt dann in ihrer Länge wieder ab. Weiterhin ist zu beachten, dass je nach Topologie der Bahn unterschiedlich viele (im Grenzfall) gar keine geeigneten Flächen gefunden werden, die dann feingranular weiter untersucht werden müssen (längste und mit der kleinsten Varianz) so ist schwer vorhersagbar, wie lange die Einzellaufzeit eines Threads ist.
 Für die zur Verfügung gestellten kartendaten von Nordhein-Westfalen sind die Laufzeiten in Abhängigkeit von Winkel und Threadanzahl in Tabelle x dargestellt. Das verwendete System zur Analyse war eine virtualisierte VM (Centos 7.0, xx CPUs, xx GB RAM) 
 
+Eine weiterfhrende Analyse war aufgrund mangelnder hardware ressourcen nicht möglich.
 \section{Analyse mittels Profiler}
+
+Mittels gproof wurde analysiert, welche Programmteile beim Auffinden der Landebahn die meiste Rechenzeit benötigen. Hierdurch kann kontrolliert werden, ob die vom Scheduler zur Verfügung gestellten Zeitscheiben auch effektiv innerhalb des Threadings genutzt werden können. 
+Bei der Analyse zeigt sich, dass die Funktion, die die meiste Zeit in Anspruch nimmt, die Zugriffsfunktion auf die Geopunkte ist. Hier findet ein Random Memory access statt (2-Dimensionalität wird mittels Modulo auf ein eindmensionales Array abgebildet).
+Eine weitere zeitintensive Funktion stellt die Berechnung der Varianz sowie das Auffinden der längsten und der Varianzminimalen Landebahn dar.
+Diese Ergebnisse sind intuitiv zu erwarten.
+Da beide Funktionen innerhalb des Threading aufgerufen werden, ist aus Laufzeittechnischer Sicht eine optimale Lösung gefunden. 
 
 \section{Einfluss von Compiler Direktiven (speziell Optimizer)}
 
+Bevor Codeausführung mittels Parallelverarbeitung zur Beschleunigung gebacht werden soll, lohnt es sich meist, durch geeignete Compilerdirektiven die serielle Codeausführung zu beschleunigen.
+Der Code wurde mit einem gcc Version xx devtoolset yx compiliert. Die Standardübersetzung ist dabei ohne eingeschalteten Optimizer. 
+Durch die Benutzung des -O3 Optimizer Direktivs ist eine Codebeschleunigung von yx \% beobachtet worden. 
+Eine Übersicht über die verwendeten Optimierungsschritte sind unter https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html einzusehen.
 
 \end{document}
