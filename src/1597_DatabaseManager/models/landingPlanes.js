@@ -36,9 +36,17 @@ var propertiesSchema = new Schema({
         type: Number,
         required: true,
     },
-    mergeable: {
-        type: Boolean,
-        required: true,
+    mergeable: {    //darf diese Bahn mit anderen gemerged werden um weniger Geometrien zu bekommen
+        type: Boolean,  //true: Sie darf zusammengefasst werden
+        required: true, //false: es ist eine Minimum-Varianz Bahn innerhalb einer längeren möglichen Bahn. -->Nicht zusammenfassen
+    },
+    isMergeResult: {    //Wurde diese Bahn im Rahmen eines Merge erzeugt?
+        type: Boolean,  //true: ja, ist das Resultat eines Merge
+        required: true, //false: Nein, es ist eine originale Bahn
+    },
+    mergePass: {    //wurde die Bahn im Rahmen eines Merge schon betrachtet?
+        type: Boolean,  //true: ja, ist schon in einen Merge eingeflossen
+        required: true, //false: Nein, die habe ich zum ersten Mal
     },
 }, {_id: false});
 

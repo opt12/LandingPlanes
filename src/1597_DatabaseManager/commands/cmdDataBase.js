@@ -3,9 +3,10 @@
 
 var HttpError = require('http-error-constructor');
 var R = require('ramda');
+var turfDistance = require('@turf/distance');
+var turfHelpers = require('@turf/helpers');
 
 var LandingPlanes = require('../models').LandingPlanes;
-var mergeableLandingPlanes = require('../models').mergeableLandingPlanes;
 
 
 var getDbEntriesWithHeading = require('../queries/qrsDataBase').getDbEntriesWithHeading;
@@ -70,62 +71,49 @@ function handleCreateLandingPlane(params) {
         return (!R.isEmpty(params.feature) && !R.isEmpty(params.properties));
     }
 
+    function getActualLengthFromCoordinates(coords) {
+        var point1 = turfHelpers.point(coords[0]); //bottom_left
+        var point2 = turfHelpers.point(coords[3]); //top left
+        var units = "kilometers";
+
+        let distance = turfDistance(point1, point2, units);
+        return Math.round(distance * 1000);   //length in meters
+    }
+
     if (!checkCreateLandingPlaneParameter(params)) {
         return Promise.reject(new HttpError(400, `Landing Plane data invalid`));
     }
 
-    let dataAfterMerge; //Eine Promise, die entweder eine singlePlane oder eine mergedPlane mit planeIdsToDelete enthält
+    //TODO aktuell wird die Landebahnlönmge noch nicht korrekt gesetzt. Dann rechne ich die halt aus.
+    params.properties.actualLength = getActualLengthFromCoordinates(params.geometry.coordinates[0]);
+
 
     //standardmässig mergen wir. Die Bahnen mit der besten Varianz werden explizit mit
-    // 'mergeable': false, angeliefert
-    params.properties.mergeable = R.propOr('true', 'mergeable')(params.properties);
+    // 'mergeable': 'false', angeliefert
+    params.properties.mergeable = R.propOr('true', 'mergeable')(params.properties) === 'true' ? true : false; //Achtung: Wert mergeable als String
+    params.properties.mergePass = false;    //wurde die Bahn im Rahmen eines Merge schon betrachtet?
+    params.properties.isMergeResult = false;   //Wurde diese Bahn im Rahmen eines Merge erzeugt? Zunächst natürlich nicht!
 
-    //checke ob die neue Bahn gemerged werden darf, oder nicht
-    if (params.properties.mergeable) {
-        dataAfterMerge = getMergedLandingPlane(params)
-    } else {
-        //das ist eine Landebahn, die einzeln gespeichert werden muss
-        //aber vorher auf Dublette prüfen
-        dataAfterMerge = getSingleLandingPlane(params);
-    }
-
-    return dataAfterMerge
-        .then(([newPlane, planeIdsToDelete]) => {
-            if (newPlane == {}) {
-                return {
-                    result: {
-                        geoJSON: {
-                            type: "Feature",
-                            geometry: params.geometry,
-                            properties: params.properties,
-                        }
-                    },
-                    newPlane: false
-                }
-            }
-
-            //implicit else
-
-            //TODO und hier würde noch der Merge eingebaut werden.
-            let newLandingPlane = new LandingPlanes({
-                //TODO hier muss natürlich noch tiefer runter zugewiesen werden um keine falsch geformten Datensätze zu speichern
-                geoJSON: {
-                    type: "Feature",
-                    geometry: params.geometry,
-                    properties: params.properties,
-                }
-            });
+    let newLandingPlane = new LandingPlanes({
+        //TODO hier muss natürlich noch tiefer runter zugewiesen werden um keine falsch geformten Datensätze zu speichern
+        geoJSON: {
+            type: "Feature",
+            geometry: params.geometry,
+            properties: params.properties,
+        }
+    });
 
 
-            //the test of the params passed
-            return mergeableLandingPlanes.create(newLandingPlane).then((landingPlane) => {
+    //the test of the params passed
+    return LandingPlanes.create(newLandingPlane)
+        .then(
+            (landingPlane) => {
                 // console.log("created new newLandingPlane:\n", JSON.stringify(landingPlane.toObject().geoJSON, null, 2));
                 return {result: newLandingPlane, newPlane: true};
-            }, (error) => {
+            },
+            (error) => {
                 return Promise.reject(new HttpError(500, 'Unknown error while trying to store new landing plane\n' + error.message));
-            })
-
-        });
+            });
 }
 
 function handleDropDb(params) {
@@ -135,7 +123,39 @@ function handleDropDb(params) {
     });
 }
 
+const handleSetProperty = (planeId, propertyString, newValue) => {
+    let setData = {};
+    setData[propertyString] = newValue;
+    return LandingPlanes.findByIdAndUpdate(planeId, {$set: setData}, {new: true});
+};
+
+const handleAddMergedPlane = (newPlane) => {
+
+    newPlane.properties.isMergeResult = true;
+    newPlane.properties.mergeable = true;
+    newPlane.properties.mergePass = false;
+
+    // console.log("add merged plane: ", JSON.stringify(newPlane, null, 2));
+
+    return LandingPlanes.create({geoJSON: newPlane})
+        .then(
+            (landingPlane) => {
+                // console.log("created new newLandingPlane:\n", JSON.stringify(landingPlane.toObject().geoJSON, null, 2));
+                return landingPlane;
+            },
+            (error) => {
+                return Promise.reject(new HttpError(500, 'Unknown error while trying to store new merged landing plane\n' + error.message));
+            });
+};
+
+const handleDeletePlaneById = (planeId) => {
+    return LandingPlanes.findByIdAndRemove(planeId);
+};
+
 module.exports = {
     handleCreateLandingPlane: handleCreateLandingPlane,
     handleDropDb: handleDropDb,
+    handleSetProperty: handleSetProperty,
+    handleAddMergedPlane: handleAddMergedPlane,
+    handleDeletePlaneById: handleDeletePlaneById,
 };
