@@ -89,7 +89,37 @@ class MapOverview extends Component {
             botRightLng: mapBounds.getEast(),
         };
         this.setState(area);
-        this.queryLandingPlanesDB(this.getExtentGeoJSON())
+        this.queryLandingPlanesDB(this.getExtentGeoJSON(), this.state.showMergedPlanes, this.state.showMinVariance)
+    };
+
+    handleChangeChk = (e) => {
+        const chkboxes = {
+            showMergedPlanes: document.getElementById('showMergedPlanes').checked,
+            showMinVariance: document.getElementById('showMinVariance').checked,
+            planesFeatureCollectionKey: this.state.planesFeatureCollectionKey+1,
+        };
+        this.setState(chkboxes, () =>    //update landingPlanes after updating the state
+            this.queryLandingPlanesDB(this.getExtentGeoJSON(),
+                this.state.showMergedPlanes,
+                this.state.showMinVariance));
+    };
+
+    changeViewFilter = (e) => {
+        e.preventDefault();
+        // console.log("New Filter: ", e.target.value);
+        if (e.target.value.trim() === "") {
+            // console.log("empty filter");
+            this.setState({viewFilter: [], planesFeatureCollectionKey: this.state.planesFeatureCollectionKey+1});
+        }
+        try {
+            let filter = JSON.parse(e.target.value);
+            filter = filter.constructor === Array ? filter : [filter];
+            // console.log("Parsed filter Array = ", filter);
+            this.setState({viewFilter: filter, planesFeatureCollectionKey: this.state.planesFeatureCollectionKey+1});
+        } catch (e) {
+            //obviously there is no valid array in the entry field
+            //silently swallow the error and don't touch the current filter
+        }
     };
 
     startScan = (e, scanParameter, scanHeadings) => {
@@ -191,7 +221,6 @@ class MapOverview extends Component {
                              data={planesFeatureCollection}
                              onEachFeature={this.onEachFeature.bind(this)}
                     />}
-                    {/*{planesFeatureCollection.features.length!=0 && <GeoJsonCluster data={planesFeatureCollection}/>}*/}
                 </Map>
                 Map shows: NorthWest: Lat: {this.state.topLeftLat.toFixed(6)},
                 Lng: {this.state.topLeftLng.toFixed(6)};
