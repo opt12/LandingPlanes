@@ -24,6 +24,7 @@ class MapOverview extends Component {
         this.getExtentPolygon = this.getExtentPolygon.bind(this);
 
         this.queryLandingPlanesDB = props.queryLandingPlanesDB;
+        this.queryMinVarianceLandingPlanesDB = props.queryMinVarianceLandingPlanesDB;
         this.dropLandingPlanesDB = props.dropLandingPlanesDB;
 
 
@@ -95,9 +96,9 @@ class MapOverview extends Component {
         };
 
         console.log("sending Scan request to server;");
-        console.log("tiffinfo: ", JSON.stringify(this.props.tiffInfo, null,2));
-        console.log("mapExtent: ", JSON.stringify(mapExtent,null,2));
-        console.log("scanParameter: ", JSON.stringify(scanParameter,null,2));
+        console.log("tiffinfo: ", JSON.stringify(this.props.tiffInfo, null, 2));
+        console.log("mapExtent: ", JSON.stringify(mapExtent, null, 2));
+        console.log("scanParameter: ", JSON.stringify(scanParameter, null, 2));
         scanForLandingPlanes(this.props.tiffInfo, mapExtent, scanParameter, scanHeadings);
     };
 
@@ -106,6 +107,13 @@ class MapOverview extends Component {
         let requestArea = this.getExtentGeoJSON();
         console.log(JSON.stringify(requestArea));
         this.queryLandingPlanesDB(requestArea);
+    };
+
+    requestMinVarianceLandingPlanes = (e) => {
+        e.preventDefault();
+        let requestArea = this.getExtentGeoJSON();
+        console.log(JSON.stringify(requestArea));
+        this.queryMinVarianceLandingPlanesDB(requestArea);
     };
 
     dropDb = (e) => {
@@ -131,8 +139,20 @@ class MapOverview extends Component {
 
 
     onEachFeature(feature, layer) {
-
-        layer.bindPopup(`<span>Landing Strip:<br/>Heading: ${feature.properties.actualHeading}<br/>Length: ${feature.properties.actualLength.toFixed(0)}</span>`)
+        layer.setStyle({color: feature.properties.color});
+        if (feature.properties.mergeable) {
+            //these are merged planes
+            layer.bindPopup(`<span>Landing Plane:
+                <br/>Heading: ${feature.properties.actualHeading}
+                <br/>min. Length: ${feature.properties.actualLength.toFixed(0)}
+                <br/>max. Variance: ${feature.properties.actualVariance.toFixed(4)}</span>`)
+        } else {
+            //these are minimal Variance Runways
+            layer.bindPopup(`<span>min. Variance Strip:
+                <br/>Heading: ${feature.properties.actualHeading}
+                <br/>Length: ${feature.properties.actualLength.toFixed(0)}
+                <br/>max. Variance: ${feature.properties.actualVariance.toFixed(4)}</span>`)
+        }
     }
 
     render() {
@@ -145,8 +165,27 @@ class MapOverview extends Component {
             features: map(p => p.geoJSON, this.props.landingPlanes.landingPlanes)
         };
 
+        let minVariancePlanesFeatureCollection = {
+            type: "FeatureCollection",
+            features: map(p => p.geoJSON, this.props.landingPlanes.minVarianceLandingPlanes)
+        };
+
+        for (let i in planesFeatureCollection.features) {
+            planesFeatureCollection.features[i].properties.color = "blue";
+        }
+
+        for (let i in minVariancePlanesFeatureCollection.features) {
+            minVariancePlanesFeatureCollection.features[i].properties.color = "green";
+        }
+
+
+        let geoJSONFeaturesCollection = [planesFeatureCollection, minVariancePlanesFeatureCollection];
+
+
         console.log("planesFeaturecollection: ");
         console.log(planesFeatureCollection);
+        console.log("minVariancePlanesFeatureCollection: ");
+        console.log(minVariancePlanesFeatureCollection);
 
         return (
             <div>
@@ -161,10 +200,17 @@ class MapOverview extends Component {
                         </Popup>
                     </Marker>
                     <Polygon color="lime" positions={this.extentPolygon}/>
-                    {planesFeatureCollection.features.length !== 0 &&
-                    <GeoJSON key={this.props.landingPlanes.cnt} data={planesFeatureCollection}
+                    {(planesFeatureCollection.features.length !== 0 ||
+                    minVariancePlanesFeatureCollection.features.length !== 0) &&
+                    <GeoJSON key={this.props.landingPlanes.cnt} data={geoJSONFeaturesCollection}
                              onEachFeature={this.onEachFeature.bind(this)}
                     />}
+                    {/*
+                     {minVariancePlanesFeatureCollection.features.length !== 0 &&
+                     <GeoJSON color="red" key={this.props.landingPlanes.cnt} data={minVariancePlanesFeatureCollection}
+                     onEachFeature={this.onEachFeature.bind(this)}
+                     />}
+                     */}
                     {/*{planesFeatureCollection.features.length!=0 && <GeoJsonCluster data={planesFeatureCollection}/>}*/}
                 </Map>
                 Map shows: NorthWest: Lat: {this.state.topLeftLat.toFixed(6)},
@@ -191,15 +237,15 @@ class MapOverview extends Component {
                     <FormGroup>
                         <Col componentClass={ControlLabel} sm={2}>max. Steigung [%]:</Col>
                         <Col sm={2}>
-                            <FormControl id="maxRise" type="number" defaultValue="10.0" step="0.01"/>
+                            <FormControl id="maxRise" type="number" defaultValue="5.0" step="0.01"/>
                         </Col>
                         <Col componentClass={ControlLabel} sm={2}>max. Varianz: (längs)</Col>
                         <Col sm={1}>
-                            <FormControl id="maxVarianceLong" type="number" defaultValue="5.50" step="0.01"/>
+                            <FormControl id="maxVarianceLong" type="number" defaultValue="2.30" step="0.01"/>
                         </Col>
                         <Col componentClass={ControlLabel} sm={2}>max. Varianz: (quer)</Col>
                         <Col sm={1}>
-                            <FormControl id="maxVarianceCross" type="number" defaultValue="5.50" step="0.01"/>
+                            <FormControl id="maxVarianceCross" type="number" defaultValue="2.30" step="0.01"/>
                         </Col>
                         <Col sm={2}>
                             <button class="btn btn-primary"
@@ -224,10 +270,10 @@ class MapOverview extends Component {
                     </FormGroup>
                     <FormGroup>
                         <Col componentClass={ControlLabel} sm={2}>Matlab Filename:</Col>
-                        <Col sm={2}>
+                        <Col sm={1}>
                             <FormControl id="mfileName" type="text" defaultValue="test.m"/>
                         </Col>
-                        <Col sm={2}>
+                        <Col sm={1}>
                             <button class="col-sm-12 btn btn-primary"
                                     onClick={e => {
                                         mFileName = document.getElementById('mfileName').value.replace(/.*[\/\\]/, '');
@@ -257,6 +303,14 @@ class MapOverview extends Component {
                                         this.requestLandingPlanes(e);
                                     }}>
                                 request Results
+                            </button>
+                        </Col>
+                        <Col smOffset={0} sm={2}>
+                            <button class="col-sm-12 btn btn-success"
+                                    onClick={e => {
+                                        this.requestMinVarianceLandingPlanes(e);
+                                    }}>
+                                request min. Variance Results
                             </button>
                         </Col>
                     </FormGroup>

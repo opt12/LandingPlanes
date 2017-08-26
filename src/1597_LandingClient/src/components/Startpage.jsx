@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 
 import getFileinfo from '../actions/getFileinfo';
-import {queryLandingPlanesDB, dropLandingPlanesDB} from '../actions/getDBEntries';
+import {queryLandingPlanesDB, queryMinVarianceLandingPlanesDB, dropLandingPlanesDB} from '../actions/getDBEntries';
 
 
 import React, {Component,} from 'react';
@@ -20,7 +20,9 @@ const Startpage = (props) => {
                                     processingState={props.tiffinfo.processingState}/>
             </div>
             {(props.tiffinfo.processingState === "fetchedFileExtent") &&
-            <Map  dropLandingPlanesDB={props.dropLandingPlanesDB} queryLandingPlanesDB={props.queryLandingPlanesDB}/>
+            <Map dropLandingPlanesDB={props.dropLandingPlanesDB}
+                 queryMinVarianceLandingPlanesDB={props.queryMinVarianceLandingPlanesDB}
+                 queryLandingPlanesDB={props.queryLandingPlanesDB}/>
             }
         </div>
     );
@@ -39,6 +41,9 @@ const mapDispatchToProps = dispatch => ({
     queryLandingPlanesDB: (requestArea) => {
         dispatch(queryLandingPlanesDB(requestArea));
     },
+    queryMinVarianceLandingPlanesDB: (requestArea) => {
+        dispatch(queryMinVarianceLandingPlanesDB(requestArea));
+    },
     dropLandingPlanesDB: () => {
         dispatch(dropLandingPlanesDB());
     },
@@ -50,8 +55,8 @@ Startpage.propTypes = {
     landingPlanes: PropTypes.object.isRequired,
     getFileinfo: PropTypes.func.isRequired,
     queryLandingPlanesDB: PropTypes.func.isRequired,
+    queryMinVarianceLandingPlanesDB: PropTypes.func.isRequired,
     dropLandingPlanesDB: PropTypes.func.isRequired,
-
 };
 
 

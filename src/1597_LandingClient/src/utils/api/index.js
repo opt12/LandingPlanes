@@ -152,6 +152,19 @@ export const requestGetDbEntries = (geoPolygon) =>{
         });
 };
 
+export const requestGetMinVarianceDbEntries = (geoPolygon) =>{
+    const payload = geoPolygon;
+
+    return fetch(`${baseUrl}/${apiPrefix}/queries/bestPlanes`, createPostRequest(payload))
+        .then((response) => {
+            if (response.status === 200) return response.json();
+
+            if (response.status === 400) throw new InvalidArgumentsError('Could query bestPlanes database for ', geoPolygon);
+
+            throw new Error('Other server error');
+        });
+};
+
 export const requestDropDb= () => {
     return fetch(`${baseUrl}/${apiPrefix}/commands/drop`, createDeleteRequest())
         .then((response) => {
