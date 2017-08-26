@@ -1,10 +1,10 @@
 import {connect} from 'react-redux';
 
 import getFileinfo from '../actions/getFileinfo';
-import {queryLandingPlanesDB, queryMinVarianceLandingPlanesDB, dropLandingPlanesDB} from '../actions/getDBEntries';
+import {queryLandingPlanesDB, dropLandingPlanesDB} from '../actions/getDBEntries';
 
 
-import React, {Component,} from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 
@@ -38,11 +38,8 @@ const mapDispatchToProps = dispatch => ({
         e.preventDefault();
         dispatch(getFileinfo(filename));
     },
-    queryLandingPlanesDB: (requestArea) => {
-        dispatch(queryLandingPlanesDB(requestArea));
-    },
-    queryMinVarianceLandingPlanesDB: (requestArea) => {
-        dispatch(queryMinVarianceLandingPlanesDB(requestArea));
+    queryLandingPlanesDB: (requestArea, showMergedAreas, showMinVariancePlanes) => {
+        dispatch(queryLandingPlanesDB(requestArea,showMergedAreas, showMinVariancePlanes));
     },
     dropLandingPlanesDB: () => {
         dispatch(dropLandingPlanesDB());
@@ -55,7 +52,6 @@ Startpage.propTypes = {
     landingPlanes: PropTypes.object.isRequired,
     getFileinfo: PropTypes.func.isRequired,
     queryLandingPlanesDB: PropTypes.func.isRequired,
-    queryMinVarianceLandingPlanesDB: PropTypes.func.isRequired,
     dropLandingPlanesDB: PropTypes.func.isRequired,
 };
 

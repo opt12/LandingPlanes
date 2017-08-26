@@ -2,9 +2,9 @@ import {connect} from 'react-redux';
 import React, {Component} from 'react';
 import {Map, TileLayer, Marker, Popup, Polygon, GeoJSON} from 'react-leaflet';
 // import {GeoJsonCluster} from 'react-leaflet-geojson-cluster';
-import {Form, ControlLabel, FormControl, FormGroup, Col, Row} from 'react-bootstrap'
+import {Form, ControlLabel, FormControl, FormGroup, Col, Checkbox} from 'react-bootstrap'
 import {scanForLandingPlanes, save2MFileOnServer} from '../actions/sendTask2Server';
-import {map} from 'ramda';
+import {map, partition, filter} from 'ramda';
 
 
 const turfInv = require('turf-invariant');
@@ -24,7 +24,6 @@ class MapOverview extends Component {
         this.getExtentPolygon = this.getExtentPolygon.bind(this);
 
         this.queryLandingPlanesDB = props.queryLandingPlanesDB;
-        this.queryMinVarianceLandingPlanesDB = props.queryMinVarianceLandingPlanesDB;
         this.dropLandingPlanesDB = props.dropLandingPlanesDB;
 
 
@@ -33,9 +32,16 @@ class MapOverview extends Component {
             topLeftLng: this.boundingBox[0][1],
             botRightLat: this.boundingBox[0][0],
             botRightLng: this.boundingBox[1][1],
-
+            showMergedPlanes: true,
+            showMinVariance: false,
+            viewFilter: [],
+            planesFeatureCollectionKey: 0,
         };
+    }
 
+    componentDidMount() {
+        //fire one first data request after showing up
+        this.queryLandingPlanesDB(this.getExtentGeoJSON(), this.state.showMergedPlanes, this.state.showMinVariance)
     }
 
     getCenterOfMap(extent) {
@@ -70,7 +76,7 @@ class MapOverview extends Component {
                 [this.state.topLeftLng, this.state.topLeftLat],
             ]],
         }
-    )
+    );
 
     moveend = (e) => {
         const zoomText = e.target.getZoom();
@@ -83,7 +89,37 @@ class MapOverview extends Component {
             botRightLng: mapBounds.getEast(),
         };
         this.setState(area);
-        this.queryLandingPlanesDB(this.getExtentGeoJSON())
+        this.queryLandingPlanesDB(this.getExtentGeoJSON(), this.state.showMergedPlanes, this.state.showMinVariance)
+    };
+
+    handleChangeChk = (e) => {
+        const chkboxes = {
+            showMergedPlanes: document.getElementById('showMergedPlanes').checked,
+            showMinVariance: document.getElementById('showMinVariance').checked,
+            planesFeatureCollectionKey: this.state.planesFeatureCollectionKey+1,
+        };
+        this.setState(chkboxes, () =>    //update landingPlanes after updating the state
+            this.queryLandingPlanesDB(this.getExtentGeoJSON(),
+                this.state.showMergedPlanes,
+                this.state.showMinVariance));
+    };
+
+    changeViewFilter = (e) => {
+        e.preventDefault();
+        // console.log("New Filter: ", e.target.value);
+        if (e.target.value.trim() === "") {
+            // console.log("empty filter");
+            this.setState({viewFilter: [], planesFeatureCollectionKey: this.state.planesFeatureCollectionKey+1});
+        }
+        try {
+            let filter = JSON.parse(e.target.value);
+            filter = filter.constructor === Array ? filter : [filter];
+            // console.log("Parsed filter Array = ", filter);
+            this.setState({viewFilter: filter, planesFeatureCollectionKey: this.state.planesFeatureCollectionKey+1});
+        } catch (e) {
+            //obviously there is no valid array in the entry field
+            //silently swallow the error and don't touch the current filter
+        }
     };
 
     startScan = (e, scanParameter, scanHeadings) => {
@@ -102,18 +138,10 @@ class MapOverview extends Component {
         scanForLandingPlanes(this.props.tiffInfo, mapExtent, scanParameter, scanHeadings);
     };
 
-    requestLandingPlanes = (e) => {
-        e.preventDefault();
+    requestLandingPlanes = () => {
         let requestArea = this.getExtentGeoJSON();
         console.log(JSON.stringify(requestArea));
-        this.queryLandingPlanesDB(requestArea);
-    };
-
-    requestMinVarianceLandingPlanes = (e) => {
-        e.preventDefault();
-        let requestArea = this.getExtentGeoJSON();
-        console.log(JSON.stringify(requestArea));
-        this.queryMinVarianceLandingPlanesDB(requestArea);
+        this.queryLandingPlanesDB(requestArea, this.state.showMergedPlanes, this.state.showMinVariance);
     };
 
     dropDb = (e) => {
@@ -139,7 +167,7 @@ class MapOverview extends Component {
 
 
     onEachFeature(feature, layer) {
-        layer.setStyle({color: feature.properties.color});
+        layer.setStyle({color: feature.properties.mergeable ? "blue" : "green"});
         if (feature.properties.mergeable) {
             //these are merged planes
             layer.bindPopup(`<span>Landing Plane:
@@ -160,32 +188,20 @@ class MapOverview extends Component {
         const position = [this.centerLatLng.lat, this.centerLatLng.lng];
         let mFileName;
 
-        let planesFeatureCollection = {
-            type: "FeatureCollection",
-            features: map(p => p.geoJSON, this.props.landingPlanes.landingPlanes)
-        };
+        //partitioniere um erst die Merged Areas und oben drauf die minVarianz zu haben
+        let [mergedAreas, rawPlanes] = partition(el => el.geoJSON.properties.mergeable)(this.props.landingPlanes.landingPlanes);
 
-        let minVariancePlanesFeatureCollection = {
-            type: "FeatureCollection",
-            features: map(p => p.geoJSON, this.props.landingPlanes.minVarianceLandingPlanes)
-        };
+        let planesFeatureCollection = this.state.viewFilter.length > 0 ?
+            {
+                type: "FeatureCollection",
+                features: filter(el => this.state.viewFilter.indexOf(el.properties.actualHeading) != -1)(map(p => p.geoJSON)(mergedAreas.concat(rawPlanes))),
+            } : {
+                type: "FeatureCollection",
+                features: map(p => p.geoJSON)(mergedAreas.concat(rawPlanes)),
+            };
 
-        for (let i in planesFeatureCollection.features) {
-            planesFeatureCollection.features[i].properties.color = "blue";
-        }
-
-        for (let i in minVariancePlanesFeatureCollection.features) {
-            minVariancePlanesFeatureCollection.features[i].properties.color = "green";
-        }
-
-
-        let geoJSONFeaturesCollection = [planesFeatureCollection, minVariancePlanesFeatureCollection];
-
-
-        console.log("planesFeaturecollection: ");
-        console.log(planesFeatureCollection);
-        console.log("minVariancePlanesFeatureCollection: ");
-        console.log(minVariancePlanesFeatureCollection);
+        // console.log("planesFeaturecollection: ");
+        // console.log(planesFeatureCollection);
 
         return (
             <div>
@@ -200,24 +216,18 @@ class MapOverview extends Component {
                         </Popup>
                     </Marker>
                     <Polygon color="lime" positions={this.extentPolygon}/>
-                    {(planesFeatureCollection.features.length !== 0 ||
-                    minVariancePlanesFeatureCollection.features.length !== 0) &&
-                    <GeoJSON key={this.props.landingPlanes.cnt} data={geoJSONFeaturesCollection}
+                    {planesFeatureCollection.features.length !== 0 &&
+                    <GeoJSON key={this.state.planesFeatureCollectionKey + this.props.landingPlanes.cnt}
+                             data={planesFeatureCollection}
                              onEachFeature={this.onEachFeature.bind(this)}
                     />}
-                    {/*
-                     {minVariancePlanesFeatureCollection.features.length !== 0 &&
-                     <GeoJSON color="red" key={this.props.landingPlanes.cnt} data={minVariancePlanesFeatureCollection}
-                     onEachFeature={this.onEachFeature.bind(this)}
-                     />}
-                     */}
-                    {/*{planesFeatureCollection.features.length!=0 && <GeoJsonCluster data={planesFeatureCollection}/>}*/}
                 </Map>
                 Map shows: NorthWest: Lat: {this.state.topLeftLat.toFixed(6)},
                 Lng: {this.state.topLeftLng.toFixed(6)};
                 SouthEast: Lat: {this.state.botRightLat.toFixed(6)}, Lng: {this.state.botRightLng.toFixed(6)};
                 <span
-                    class="pull-right"> Amount of Landing Planes in viewport: {this.props.landingPlanes.landingPlanes.length} </span>
+                    class="pull-right"> Amount of Landing Planes in viewport:
+                    {planesFeatureCollection.features.length}/{this.props.landingPlanes.landingPlanes.length} </span>
 
                 <Form horizontal>
                     <FormGroup>
@@ -236,18 +246,23 @@ class MapOverview extends Component {
                     </FormGroup>
                     <FormGroup>
                         <Col componentClass={ControlLabel} sm={2}>max. Steigung [%]:</Col>
-                        <Col sm={2}>
+                        <Col sm={1}>
                             <FormControl id="maxRise" type="number" defaultValue="5.0" step="0.01"/>
                         </Col>
                         <Col componentClass={ControlLabel} sm={2}>max. Varianz: (längs)</Col>
                         <Col sm={1}>
-                            <FormControl id="maxVarianceLong" type="number" defaultValue="2.30" step="0.01"/>
+                            <FormControl id="maxVarianceLong" type="number" defaultValue="2.1" step="0.01"/>
                         </Col>
                         <Col componentClass={ControlLabel} sm={2}>max. Varianz: (quer)</Col>
                         <Col sm={1}>
                             <FormControl id="maxVarianceCross" type="number" defaultValue="2.30" step="0.01"/>
                         </Col>
-                        <Col sm={2}>
+                        <Col componentClass={ControlLabel} sm={1}>Threads</Col>
+                        <Col sm={1}>
+                            <FormControl id="numThreads" type="number" defaultValue="8" step="1"/>
+                        </Col>
+
+                        <Col sm={1}>
                             <button class="btn btn-primary"
                                     onClick={e => {
                                         let scanParameter = {
@@ -264,16 +279,55 @@ class MapOverview extends Component {
 
                                         this.startScan(e, scanParameter, scanHeadings);
                                     }}>
-                                Scan for Landing Planes
+                                Scan
+                            </button>
+                        </Col>
+                    </FormGroup>
+                    <FormGroup>
+                        <Col smOffset={0} sm={2}>
+                            <button class="col-sm-12 btn btn-danger"
+                                    onClick={e => {
+                                        this.dropDb(e);
+                                    }}>
+                                Drop DB
+                            </button>
+                        </Col>
+                        <Col smOffset={0} sm={3}>
+                            <Checkbox inline id="showMergedPlanes"
+                                      defaultChecked={this.state.showMergedPlanes}
+                                      onChange={this.handleChangeChk}>
+                                Zusammenfassung
+                            </Checkbox>
+                            {' '}
+                            <Checkbox inline id="showMinVariance" defaultChecked={this.state.showMinVariance}
+                                      onChange={this.handleChangeChk}>
+                                Beste Streifen
+                            </Checkbox>
+                        </Col>
+                        <Col componentClass={ControlLabel} sm={2}>Filter Ansicht [°, °, ]:</Col>
+                        <Col sm={3}>
+                            <FormControl id="headingsViewFilter" type="text"
+                                         onChange={e => this.changeViewFilter(e)}
+                                         onBlur={() => this.requestLandingPlanes()}
+                                         defaultValue=""/>
+                        </Col>
+
+                        <Col smOffset={0} sm={2}>
+                            <button class="col-sm-12 btn btn-success"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        this.requestLandingPlanes();
+                                    }}>
+                                request Results
                             </button>
                         </Col>
                     </FormGroup>
                     <FormGroup>
                         <Col componentClass={ControlLabel} sm={2}>Matlab Filename:</Col>
-                        <Col sm={1}>
+                        <Col sm={2}>
                             <FormControl id="mfileName" type="text" defaultValue="test.m"/>
                         </Col>
-                        <Col sm={1}>
+                        <Col sm={2}>
                             <button class="col-sm-12 btn btn-primary"
                                     onClick={e => {
                                         mFileName = document.getElementById('mfileName').value.replace(/.*[\/\\]/, '');
@@ -283,34 +337,6 @@ class MapOverview extends Component {
                                         this.saveToMFile(e, tiffFilePath + mFileName);
                                     }}>
                                 Save to M-File
-                            </button>
-                        </Col>
-                        <Col smOffset={0} sm={1}>
-                            <button class="col-sm-12 btn btn-danger"
-                                    onClick={e => {
-                                        this.dropDb(e);
-                                    }}>
-                                Drop DB
-                            </button>
-                        </Col>
-                        <Col componentClass={ControlLabel} sm={2}>Threads</Col>
-                        <Col sm={1}>
-                            <FormControl id="numThreads" type="number" defaultValue="8" step="1"/>
-                        </Col>
-                        <Col smOffset={0} sm={2}>
-                            <button class="col-sm-12 btn btn-success"
-                                    onClick={e => {
-                                        this.requestLandingPlanes(e);
-                                    }}>
-                                request Results
-                            </button>
-                        </Col>
-                        <Col smOffset={0} sm={2}>
-                            <button class="col-sm-12 btn btn-success"
-                                    onClick={e => {
-                                        this.requestMinVarianceLandingPlanes(e);
-                                    }}>
-                                request min. Variance Results
                             </button>
                         </Col>
                     </FormGroup>

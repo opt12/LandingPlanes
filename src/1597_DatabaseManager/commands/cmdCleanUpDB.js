@@ -17,7 +17,7 @@ const mergeLandingPlanes = (planesToMerge) => {
 
     rest.forEach((plane, idx) => union = turfUnion(union, plane));
 
-    union = turfSimplify(union, 0.00001, false);
+    union = turfSimplify(union, 0.0001, false);
 
     //now get the minimum length of all merged planes
     let minLength = Math.min.apply(Math, R.map(pl => pl.geoJSON.properties.actualLength)(planesToMerge));

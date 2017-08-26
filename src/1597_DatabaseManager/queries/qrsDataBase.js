@@ -5,7 +5,7 @@ var R = require('ramda');
 
 var LandingPlanes = require('../models').LandingPlanes;
 
-const getDbEntries = (geoPolygon) => {
+const getDbEntries = (geoPolygon, showMergedAreas, showMinVariancePlanes) => {
 
     let excludeList = {};  //add fields to include with name:0 ...
 
@@ -27,29 +27,9 @@ const getDbEntries = (geoPolygon) => {
         "geoJSON.properties.isMergeResult": true,   //und jetzt noch alle Bereiche, die durch Merge entstanden sind
     };
 
-
-    console.log("Database query for this region:");
-    console.log(JSON.stringify(geoPolygon, null, 2));
-
-    //TODO hier jetzt schnell die Datenbank abfragen und dann geht's vielleicht schon...
-
-    return LandingPlanes.find({$and:[queryObjectGeometry, {$or:[queryObjectMergedPlanes, queryObjectUntouchedRawPlanes]}]}, excludeList).lean()
-        .then(landingPlanes => {
-            return landingPlanes;
-        });
-
-};
-
-const getDbEntriesWithMinVariance = (geoPolygon) => {
-
-    let excludeList = {};  //add fields to include with name:0 ...
-
-    let queryObjectGeometry = {
-        "geoJSON.geometry": {
-            $geoIntersects: {
-                $geometry: geoPolygon
-            },
-        },
+    let queryObjectRawPlanes = {
+        "geoJSON.properties.mergeable": true,   //alle Bahnen, die keine MinVarianz Bahnen sind
+        "geoJSON.properties.isMergeResult": false,  //und nicht durch Merge entstanden sind
     };
 
     let queryObjectMinimumVarianceRawPlanes = {
@@ -57,18 +37,61 @@ const getDbEntriesWithMinVariance = (geoPolygon) => {
         "geoJSON.properties.isMergeResult": false,
     };
 
+    let queryOrArray=[];
+
+    if(showMergedAreas){
+        queryOrArray.push(queryObjectUntouchedRawPlanes, queryObjectMergedPlanes);
+    } else {
+        queryOrArray.push(queryObjectRawPlanes)
+    }
+
+    if(showMinVariancePlanes)
+        queryOrArray.push(queryObjectMinimumVarianceRawPlanes);
+
+
 
     console.log("Database query for this region:");
     console.log(JSON.stringify(geoPolygon, null, 2));
 
     //TODO hier jetzt schnell die Datenbank abfragen und dann geht's vielleicht schon...
 
-    return LandingPlanes.find({$and:[queryObjectGeometry, {$or:[queryObjectMinimumVarianceRawPlanes]}]}, excludeList).lean()
+    return LandingPlanes.find({$and:[queryObjectGeometry, {$or:queryOrArray}]}, excludeList).lean()
         .then(landingPlanes => {
             return landingPlanes;
         });
 
 };
+
+//TODO der Block für MinVariance Planes ist jetzt im normalen enthalten
+// const getDbEntriesWithMinVariance = (geoPolygon) => {
+//
+//     let excludeList = {};  //add fields to include with name:0 ...
+//
+//     let queryObjectGeometry = {
+//         "geoJSON.geometry": {
+//             $geoIntersects: {
+//                 $geometry: geoPolygon
+//             },
+//         },
+//     };
+//
+//     let queryObjectMinimumVarianceRawPlanes = {
+//         "geoJSON.properties.mergeable": false,   //die Bahnen, die nicht gemerged werden dürfen sind die minimum Varianz Bahnen
+//         "geoJSON.properties.isMergeResult": false,
+//     };
+//
+//
+//     console.log("Database query for this region:");
+//     console.log(JSON.stringify(geoPolygon, null, 2));
+//
+//     //TODO hier jetzt schnell die Datenbank abfragen und dann geht's vielleicht schon...
+//
+//     return LandingPlanes.find({$and:[queryObjectGeometry, {$or:[queryObjectMinimumVarianceRawPlanes]}]}, excludeList).lean()
+//         .then(landingPlanes => {
+//             return landingPlanes;
+//         });
+//
+// };
 
 const getUnmergedPlanesWithHeading = (geoPolygon, heading) => {
 
@@ -125,7 +148,6 @@ const getUnmergedPlane = () => {
 
 module.exports = {
     getDbEntries: getDbEntries,
-    getDbEntriesWithMinVariance: getDbEntriesWithMinVariance,
     getUnmergedPlanesWithHeading: getUnmergedPlanesWithHeading,
     getUnmergedPlane: getUnmergedPlane,
 };

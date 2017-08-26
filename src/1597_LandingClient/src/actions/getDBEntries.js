@@ -15,20 +15,6 @@ const getDbEntriesFailed = () => ({
     type: types.GET_DB_ENTRIES_FAILED,
 });
 
-const requestGetMinVarianceDbEntries = (geoPolygon) => ({
-    type: types.REQUEST_GET_MIN_VARIANCE_DB_ENTRIES,
-    geoPolygon: geoPolygon,
-});
-
-const getMinVarianceDbEntriesSucceeded = (landingPlanes) => ({
-    type: types.GET_MIN_VARIANCE_DB_ENTRIES_SUCCEEDED,
-    minVarianceLandingPlanes: landingPlanes,
-});
-
-const getMinVarianceDbEntriesFailed = () => ({
-    type: types.GET_MIN_VARIANCE_DB_ENTRIES_FAILED,
-});
-
 const requestDropDb = () => ({
     type: types.REQUEST_DROP_DB,
 });
@@ -42,11 +28,11 @@ const dropDbFailed = () => ({
 });
 
 
-const queryLandingPlanesDB = (geoPolygon) =>
+const queryLandingPlanesDB = (geoPolygon, showMergedAreas, showMinVariancePlanes) =>
     (dispatch) => {
         dispatch(requestGetDbEntries(geoPolygon));
 
-        return api.requestGetDbEntries(geoPolygon)
+        return api.requestGetDbEntries(geoPolygon, showMergedAreas, showMinVariancePlanes)
             .then(
                 landingPlanes => {
                     console.log("received landing planes from Database: ", landingPlanes);
@@ -59,27 +45,6 @@ const queryLandingPlanesDB = (geoPolygon) =>
             .catch((error) => {
                 dispatch(getDbEntriesFailed());
                 console.log(`Other error: Fetching landing Planes for \n${geoPolygon}\n failed. Try again.`);
-                console.log('error: ', error);
-            })
-    };
-
-const queryMinVarianceLandingPlanesDB = (geoPolygon) =>
-    (dispatch) => {
-        dispatch(requestGetMinVarianceDbEntries(geoPolygon));
-
-        return api.requestGetMinVarianceDbEntries(geoPolygon)
-            .then(
-                landingPlanesMinVariance => {
-                    console.log("received MinVariance landing planes from Database: ", landingPlanesMinVariance);
-                    dispatch(getMinVarianceDbEntriesSucceeded(landingPlanesMinVariance));
-                },
-                (errorResponse) => {
-                    console.log("getMinVarianceDbEntries failed: ", errorResponse);
-                    dispatch(getMinVarianceDbEntriesFailed())
-                })
-            .catch((error) => {
-                dispatch(getMinVarianceDbEntriesFailed());
-                console.log(`Other error: Fetching MinVariance landing Planes for \n${geoPolygon}\n failed. Try again.`);
                 console.log('error: ', error);
             })
     };
@@ -108,6 +73,5 @@ const dropLandingPlanesDB = () =>
 
 export {
     queryLandingPlanesDB,
-    queryMinVarianceLandingPlanesDB,
     dropLandingPlanesDB,
 };

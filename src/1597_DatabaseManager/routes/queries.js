@@ -7,10 +7,12 @@ var getDbEntriesWithMinVariance = require('../queries/qrsDataBase').getDbEntries
 
 /* POST database query. */
 router.post('/', function (req, res, next) {
-    let geoPolygon = req.body;
+    let geoPolygon = req.body.geoPolygon;
+    let showMergedAreas = req.body.showMergedAreas;
+    let showMinVariancePlanes = req.body.showMinVariancePlanes ;
     let result;
 
-    getDbEntries(geoPolygon)
+    getDbEntries(geoPolygon, showMergedAreas, showMinVariancePlanes)
         .then(result => {
             console.log("Query yielded "+result.length+" entries in this region.");
             res.json(result);
@@ -18,17 +20,18 @@ router.post('/', function (req, res, next) {
 
 });
 
-router.post('/bestPlanes', function (req, res, next) {
-    let geoPolygon = req.body;
-    let result;
-
-    getDbEntriesWithMinVariance(geoPolygon)
-        .then(result => {
-            console.log("Query yielded "+result.length+" minimum variance entries in this region.");
-            res.json(result);
-        });
-
-});
+//TODO Das wird nicht mehr benötigt. Das ist im normalen / enthalten über zusätzliche Parameter
+// router.post('/bestPlanes', function (req, res, next) {
+//     let geoPolygon = req.body;
+//     let result;
+//
+//     getDbEntriesWithMinVariance(geoPolygon)
+//         .then(result => {
+//             console.log("Query yielded "+result.length+" minimum variance entries in this region.");
+//             res.json(result);
+//         });
+//
+// });
 
 
 
