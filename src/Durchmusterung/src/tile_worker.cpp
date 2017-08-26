@@ -491,7 +491,7 @@ myGeoTiffHandler=master;
 void tile_worker::create_landebahn_coord(pixelPair start_point,pixelPair end_point,string type,double actualRise, double actualVariance)
 {
 
-cout << "start point "<<start_point.x<<" und " <<start_point.y<<endl;
+//cout << "start point "<<start_point.x<<" und " <<start_point.y<<endl;
 pixelCoord pixstart = { tile->offset.x+start_point.x, tile->offset.y+start_point.y};
  //geoCoord start = myGeoTiffHandler->pixel2Geo( pixstart);
 //cout <<"lb start"<<start<<endl;
@@ -499,7 +499,7 @@ pixelCoord pixend;
 pixend.x=tile->offset.x+end_point.x;
 pixend.y=tile->offset.y+end_point.y;
 
-cout << "end point "<<end_point.x<<" und " <<end_point.y<<endl;
+//cout << "end point "<<end_point.x<<" und " <<end_point.y<<endl;
 
 //geoCoord end = myGeoTiffHandler->pixel2Geo( pixend);
 
