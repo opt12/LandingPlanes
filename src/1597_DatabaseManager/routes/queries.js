@@ -20,19 +20,4 @@ router.post('/', function (req, res, next) {
 
 });
 
-//TODO Das wird nicht mehr benötigt. Das ist im normalen / enthalten über zusätzliche Parameter
-// router.post('/bestPlanes', function (req, res, next) {
-//     let geoPolygon = req.body;
-//     let result;
-//
-//     getDbEntriesWithMinVariance(geoPolygon)
-//         .then(result => {
-//             console.log("Query yielded "+result.length+" minimum variance entries in this region.");
-//             res.json(result);
-//         });
-//
-// });
-
-
-
 module.exports = router;

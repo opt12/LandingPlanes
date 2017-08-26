@@ -53,8 +53,6 @@ const getDbEntries = (geoPolygon, showMergedAreas, showMinVariancePlanes) => {
     console.log("Database query for this region:");
     console.log(JSON.stringify(geoPolygon, null, 2));
 
-    //TODO hier jetzt schnell die Datenbank abfragen und dann geht's vielleicht schon...
-
     return LandingPlanes.find({$and:[queryObjectGeometry, {$or:queryOrArray}]}, excludeList).lean()
         .then(landingPlanes => {
             return landingPlanes;
@@ -62,36 +60,6 @@ const getDbEntries = (geoPolygon, showMergedAreas, showMinVariancePlanes) => {
 
 };
 
-//TODO der Block für MinVariance Planes ist jetzt im normalen enthalten
-// const getDbEntriesWithMinVariance = (geoPolygon) => {
-//
-//     let excludeList = {};  //add fields to include with name:0 ...
-//
-//     let queryObjectGeometry = {
-//         "geoJSON.geometry": {
-//             $geoIntersects: {
-//                 $geometry: geoPolygon
-//             },
-//         },
-//     };
-//
-//     let queryObjectMinimumVarianceRawPlanes = {
-//         "geoJSON.properties.mergeable": false,   //die Bahnen, die nicht gemerged werden dürfen sind die minimum Varianz Bahnen
-//         "geoJSON.properties.isMergeResult": false,
-//     };
-//
-//
-//     console.log("Database query for this region:");
-//     console.log(JSON.stringify(geoPolygon, null, 2));
-//
-//     //TODO hier jetzt schnell die Datenbank abfragen und dann geht's vielleicht schon...
-//
-//     return LandingPlanes.find({$and:[queryObjectGeometry, {$or:[queryObjectMinimumVarianceRawPlanes]}]}, excludeList).lean()
-//         .then(landingPlanes => {
-//             return landingPlanes;
-//         });
-//
-// };
 
 const getUnmergedPlanesWithHeading = (geoPolygon, heading) => {
 
@@ -123,8 +91,6 @@ const getUnmergedPlanesWithHeading = (geoPolygon, heading) => {
 
     // console.log("Database query for Heading " + heading + " intersecting this region:");
     // console.log(JSON.stringify(geoPolygon, null, 2));
-
-    //TODO hier jetzt schnell die Datenbank abfragen und dann geht's vielleicht schon...
 
     return LandingPlanes.find({$and:[queryObjectGeometry, {$or:[queryObjectMergedPlanes, queryObjectBasePlanes]}]}, excludeList).lean();
 
