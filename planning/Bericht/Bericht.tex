@@ -5,6 +5,18 @@
 \usepackage{amssymb}
 \usepackage{listings}
 \usepackage{struktex}
+
+\usepackage{tikz}
+%%%%<
+%\usepackage{verbatim}
+%\usepackage[active,tightpage]{preview}
+%\PreviewEnvironment{tikzpicture}
+%\setlength\PreviewBorder{5pt}%
+%%%%>
+
+\usetikzlibrary{arrows,%
+                shapes,positioning}
+
 \begin{document}
 \chapter{Durchmusterung der Geotiff Daten und Auffinden der Landebahnen}
 Die Durchmusterung der Geodaten wurden in einer eigenen statischen Library gekapselt ($plane\_library.a$). Innerhalb dieser Library finden sich alle Algorithmen, die zum Auffinden der Landebahnen benötigt werden. Für den Aufrufer ist die Implementation komplett unsichtbar und gekapselt. Alle funktionalen Requirements werden von dieser Library übernommen.
@@ -106,7 +118,51 @@ Für Winkel, die ein vielfaches von 90 betragen, wird einfach eine Seite des Qua
 Bei Winkeln, die nicht einem Vielfachen von 90 entsprechen, werden sukzessiv sowohl Abszisse als auch Ordinate abgeschritten und das Terrain in Diagonaler Richtung durchmustert. 
 Einige grafische Beispiele sind in Diagramm ... angegeben.
 
-\clearpage
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\draw[help lines, color=gray!30, dashed] (0,0) grid (4.9,4.9);
+\draw[->,ultra thick] (0,5)--(5,5) node[right]{$x$};
+\draw[->,ultra thick] (0,5)--(0,0) node[left]{$y$};
+
+\draw[-,ultra thick] (5,5)--(5,0) node[left]{};
+\draw[-,ultra thick] (0,0)--(5,0) node[right]{};
+
+\draw[->,ultra thick,dashed,red] (4,5)--(5,4) node[left]{$1$};
+\draw[->,ultra thick,dashed,red] (3,5)--(5,3) node[left]{$2$};
+\draw[->,ultra thick,dashed,red] (0,5)--(5,0) node[right]{$3$};
+
+\draw[->,ultra thick,dashed,red] (0,3)--(3,0) node[below]{$4$};
+
+\draw[->,ultra thick,dashed,red] (0,1)--(1,0) node[below]{$5$};
+
+\draw[-,ultra thick,dashed,blue] (5,5.5)--(-0.5,5.5) node[left]{};
+\draw[->,ultra thick,dashed,blue] (-0.5,5.5)--(-0.5,0) node[left]{};
+\end{tikzpicture}
+\caption{Verschiebung des Startpunkts der Landebahndurchmusterung in diagonaler Richtung. Hier NNO nach SSW.}
+\end{figure}
+
+
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\draw[help lines, color=gray!30, dashed] (0,0) grid (4.9,4.9);
+\draw[->,ultra thick] (0,5)--(5,5) node[right]{$x$};
+\draw[->,ultra thick] (0,5)--(0,0) node[left]{$y$};
+
+\draw[-,ultra thick] (5,5)--(5,0) node[left]{};
+\draw[-,ultra thick] (0,0)--(5,0) node[right]{};
+
+\draw[->,ultra thick,dashed,red] (0,5)--(0,0) node[below]{$1$};
+\draw[->,ultra thick,dashed,red] (1,5)--(1,0) node[below]{$2$};
+\draw[->,ultra thick,dashed,red] (3,5)--(3,0) node[below]{$3$};
+\draw[->,ultra thick,dashed,red] (5,5)--(5,0) node[below]{$4$};
+
+
+\draw[->,ultra thick,dashed,blue] (-0,5.5)--(5,5.5) node[left]{};
+\end{tikzpicture}
+\caption{Verschiebung des Startpunkts der Landebahndurchmusterung in diagonaler Richtung. Hier N nach S.}
+\end{figure}
 \section{Parallelverarbeitung mittels pthreads zum Finden der Landebahnen}
 
 Die Parallelverarbeitung arbeitet nach einem Task-Workermodell, welches mit einem Semaphor gesteuert wird. Jeder Startpunkt, der auf einem Kartenrand liegt, ist hier als ein Task anzusehen. Das Semaphor dient dazu, die gleichzeitige Anzahl der Threads zu steuern und zu kontrollieren. Dies dient zum einen Untersuchungszwecken, um festzustellen, die der Speedup bei Variation der Threads ist. Weiterhin würde eine zu hohe Zahl an an Threads die ausführende Maschine in extreme Ressourcenknappheit bringen können.
@@ -184,5 +240,36 @@ Bevor Codeausführung mittels Parallelverarbeitung zur Beschleunigung gebacht we
 Der Code wurde mit einem gcc Version xx devtoolset yx compiliert. Die Standardübersetzung ist dabei ohne eingeschalteten Optimizer. 
 Durch die Benutzung des -O3 Optimizer Direktivs ist eine Codebeschleunigung von yx \% beobachtet worden. 
 Eine Übersicht über die verwendeten Optimierungsschritte sind unter https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html einzusehen.
+
+
+%\begin{tikzpicture}[node distance   = 4 cm]
+%  \useasboundingbox (-1,-1) rectangle (11,11); 
+%  \tikzset{VertexStyle/.style = {shape          = circle,
+%                                 ball color     = orange,
+%                                 text           = black,
+%                                 inner sep      = 2pt,
+%                                 outer sep      = 0pt,
+%                                 minimum size   = 24 pt}}
+%  \tikzset{EdgeStyle/.style   = {thick,
+%                                 double          = orange,
+%                                 double distance = 1pt}}
+%  \tikzset{LabelStyle/.style =   {draw,
+%                                  fill           = yellow,
+%                                  text           = red}}
+%     \node[VertexStyle](A){A};
+%     \node[VertexStyle,right=of A](B){B};
+%     \node[VertexStyle,right=of B](C){C};
+%     \node[VertexStyle,above= 8 cm of B](D){D};     
+%     \draw[EdgeStyle](B) to node[LabelStyle]{1} (D) ;
+%     \tikzset{EdgeStyle/.append style = {bend left}}
+%     \draw[EdgeStyle](A) to node[LabelStyle]{2} (B);
+%     \draw[EdgeStyle](B) to node[LabelStyle]{3} (A);
+%     \draw[EdgeStyle](B) to node[LabelStyle]{4} (C);
+%     \draw[EdgeStyle](C) to node[LabelStyle]{5} (B);
+%     \draw[EdgeStyle](A) to node[LabelStyle]{6} (D);
+%     \draw[EdgeStyle](D) to node[LabelStyle]{7} (C);
+
+%  \end{tikzpicture}
+  
 
 \end{document}
