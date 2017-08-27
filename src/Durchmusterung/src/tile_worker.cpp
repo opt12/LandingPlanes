@@ -409,7 +409,7 @@ void tile_worker::find_best_planes(vector< pair<int,int> > &coordlist)
       endpoint.y=plane_max_length->getendpoint().second;
 
  
-      create_landebahn_coord(startpoint,endpoint,"true",plane_max_length->print_slope(),plane_max_length->print_varianz()); 
+      create_landebahn_coord(startpoint,endpoint,"true",plane_max_length->print_slope(),plane_max_length->print_varianz(),plane_max_length->print_length()); 
     }
      
     if (plane_min_varianz != NULL)
@@ -419,7 +419,7 @@ void tile_worker::find_best_planes(vector< pair<int,int> > &coordlist)
       startpoint.y=plane_min_varianz->getstartpoint().second;
       endpoint.x=plane_min_varianz->getendpoint().first;
       endpoint.y=plane_min_varianz->getendpoint().second;
-      create_landebahn_coord(startpoint,endpoint,"false",plane_min_varianz->print_slope(), plane_min_varianz->print_varianz());
+      create_landebahn_coord(startpoint,endpoint,"false",plane_min_varianz->print_slope(), plane_min_varianz->print_varianz(),plane_min_varianz->print_length());
     }
     delete plane_max_length;
     plane_max_length = NULL;
@@ -488,7 +488,7 @@ myGeoTiffHandler=master;
 
 }
 
-void tile_worker::create_landebahn_coord(pixelPair start_point,pixelPair end_point,string type,double actualRise, double actualVariance)
+void tile_worker::create_landebahn_coord(pixelPair start_point,pixelPair end_point,string type,double actualRise, double actualVariance, double length_of_plane)
 {
 
 //cout << "start point "<<start_point.x<<" und " <<start_point.y<<endl;
@@ -513,13 +513,12 @@ std::ofstream outfile;
   outfile << j.dump(4)<<endl;
   outfile.close();
 
-float lengthFromJson=landing_plane_length;
 //float lengthFromJson = j["properties"]["actualLength"];
 
 //        j["properties"] = (*p.taskDescription)["scanParameters"];
        j["properties"] = (*taskDescription)["scanParameters"];
 
-        j["properties"]["actualLength"] = lengthFromJson;
+        j["properties"]["actualLength"] = length_of_plane;
         j["properties"]["actualRise"] = actualRise;
         j["properties"]["actualVariance"] = actualVariance;
         j["properties"]["actualHeading"] = current_angle;
