@@ -8,7 +8,7 @@ geotiff: readInTiff.o GeoTiffHandler.o GeoTiffHandlerTest
 readInTiff.o: readInTiff.c
 	$(CC) -c readInTiff.c -ltiff -I../../gdal/gdal-2.2.1/gcore -I../../gdal/gdal-2.2.1/port -I../../gdal/gdal-2.2.1/ogr 
 
-GeoTiffHandler.o: GeoTiffHandler.cpp
+GeoTiffHandler.o: GeoTiffHandler.cpp gdal
 	$(CC) -c GeoTiffHandler.cpp -I../../gdal/gdal-2.2.1/gcore -I../../gdal/gdal-2.2.1/port -I../../gdal/gdal-2.2.1/ogr
 
 GeoTiffHandlerTest: GeoTiffHandlerTest.cpp readInTiff.o pcs.csv gdal
