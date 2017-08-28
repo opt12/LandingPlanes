@@ -20,6 +20,21 @@
                 shapes,positioning}
 
 \begin{document}
+
+\chapter{Aufgabenstellung}
+
+\chapter{Architektur}
+
+\section{Überblick}
+\section{Grobgranulare Parallelität}
+\section{Feingranulare Parallelität}
+
+\chapter{Datenformate und Verarbeitung}
+\section{GeoTIFF}
+\subsection{Datenextraktion}
+\subsection{Koordinatensysteme}
+\section{Speicherformat: GeoJSON}
+
 \chapter{Durchmusterung der Geotiff Daten und Auffinden der Landebahnen}
 Die Durchmusterung der Geodaten wurden in einer eigenen statischen Library gekapselt ($plane\_library.a$). Innerhalb dieser Library finden sich alle Algorithmen, die zum Auffinden der Landebahnen benötigt werden. Für den Aufrufer ist die Implementation komplett gekapselt. Alle funktionalen Requirements werden von dieser Library übernommen.
 
@@ -267,7 +282,20 @@ Der Code wurde mit einem gcc Version xx devtoolset yx compiliert. Die Standardü
 Durch die Benutzung des -O3 Optimizer Direktivs ist eine Codebeschleunigung von yx \% beobachtet worden. 
 Eine Übersicht über die verwendeten Optimierungsschritte sind unter https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html einzusehen.
 
+\chapter{Datenbank Manager}
+\section{Datenbankauswahl}
+\section{Express-Server App}
+\section{Postprocessing - Merge}
 
+\chapter{Webclient als GUI}
+\section{Überblick}
+\section{Features und Bedienung}
   
+\chapter{Ausblick und weitere Ideen}
+\section{Richtungskorrektur des GeoTIFF}
+\section{Push für Webclient}
+\section{Merge als nachgeschalteter Prozess aus dem Speicher}
+\section{Kollisionsabfrage mit Objekten aus OSM}
+\section{Parallele Bearbeitung mehrerer Kacheln per MPI}
 
 \end{document}
