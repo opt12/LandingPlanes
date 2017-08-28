@@ -19,6 +19,8 @@
 
 #include "tile_worker.h"
 
+#include <sys/time.h>
+
 // for convenience
 using json = nlohmann::json;
 
@@ -96,6 +98,13 @@ eResult fakeScan(const tileData *actualTile, GeoTiffHandler *myGeoTiffHandler,
 //	const int NUM_THREADS = sysconf(_SC_NPROCESSORS_ONLN);
 	const int NUM_THREADS = 1;
 
+struct timeval diff, startTV, endTV;
+
+gettimeofday(&startTV, NULL); 
+
+
+
+
 	std::vector<pthread_t> scanThreads(NUM_THREADS);
 
 	std::vector<tcreateFakePlaneStarterParam> createFakePlaneStarterParams(
@@ -122,7 +131,11 @@ eResult fakeScan(const tileData *actualTile, GeoTiffHandler *myGeoTiffHandler,
 		cout << "Fake Scan thread "<< t <<" just returned"<< endl;
 	}
 
+gettimeofday(&endTV, NULL);
 
+timersub(&endTV, &startTV, &diff);
+
+printf("**time taken = %ld %ld\n", diff.tv_sec, diff.tv_usec);
 	return NORMAL_EXIT;
 }
 
