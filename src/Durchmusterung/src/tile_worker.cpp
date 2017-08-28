@@ -372,9 +372,10 @@ void tile_worker::find_best_planes(vector< pair<int,int> > &coordlist)
       sum += fabs(access_single_element(coordlist[j].first,coordlist[j].second)-access_single_element(coordlist[j+1].first,coordlist[j+1].second));
       ++count;
        double length;
+       double slope;
        if ((length= sqrt(pow(((coordlist[i].first-coordlist[j+1].first)*resolution_x),2)+pow(((coordlist[i].second-coordlist[j+1].second)*resolution_y),2))) >= landing_plane_length) 
        { 
-         if (fabs(access_single_element(coordlist[i].first,coordlist[i].second)-access_single_element(coordlist[j+1].first,coordlist[j+1].second)) <= long_range_slope*length/100.0)
+         if ((slope = fabs(access_single_element(coordlist[i].first,coordlist[i].second)-access_single_element(coordlist[j+1].first,coordlist[j+1].second))) <= long_range_slope*length/100.0)
          {
          double varianz = 0;
          double mean = sum / (double) count;
@@ -386,18 +387,40 @@ void tile_worker::find_best_planes(vector< pair<int,int> > &coordlist)
          }
          varianz = varianz / count;
          if (plane_min_varianz == NULL)
-           plane_min_varianz=new landing_plane(length,varianz,make_pair(coordlist[i].first,coordlist[i].second),make_pair(coordlist[j-1].first, coordlist[j-1].second));
+           plane_min_varianz=new landing_plane(length,varianz,make_pair(coordlist[i].first,coordlist[i].second),make_pair(coordlist[j-1].first, coordlist[j-1].second),slope);
          else
-           plane_min_varianz->check_better_varianz(length,varianz,make_pair(coordlist[i].first,coordlist[i].second),make_pair(coordlist[j-1].first, coordlist[j-1].second));
+           plane_min_varianz->check_better_varianz(length,varianz,make_pair(coordlist[i].first,coordlist[i].second),make_pair(coordlist[j-1].first, coordlist[j-1].second),slope);
  if (plane_max_length == NULL)
-           plane_max_length=new landing_plane(length,varianz,make_pair(coordlist[i].first,coordlist[i].second),make_pair(coordlist[j-1].first, coordlist[j-1].second));
+           plane_max_length=new landing_plane(length,varianz,make_pair(coordlist[i].first,coordlist[i].second),make_pair(coordlist[j-1].first, coordlist[j-1].second),slope);
          else
-           plane_max_length->check_better_length(length,varianz,make_pair(coordlist[i].first,coordlist[i].second),make_pair(coordlist[j-1].first, coordlist[j-1].second));
+           plane_max_length->check_better_length(length,varianz,make_pair(coordlist[i].first,coordlist[i].second),make_pair(coordlist[j-1].first, coordlist[j-1].second),slope);
        }
        }
     }
   }
-    
+
+   
+    if (plane_max_length != NULL)
+    {
+      pixelPair startpoint,endpoint;
+      startpoint.x=plane_max_length->getstartpoint().first;
+      startpoint.y=plane_max_length->getstartpoint().second;
+      endpoint.x=plane_max_length->getendpoint().first;
+      endpoint.y=plane_max_length->getendpoint().second;
+
+ 
+      create_landebahn_coord(startpoint,endpoint,"true",plane_max_length->print_slope(),plane_max_length->print_varianz(),plane_max_length->print_length()); 
+    }
+     
+    if (plane_min_varianz != NULL)
+    {
+     pixelPair startpoint,endpoint;
+      startpoint.x=plane_min_varianz->getstartpoint().first;
+      startpoint.y=plane_min_varianz->getstartpoint().second;
+      endpoint.x=plane_min_varianz->getendpoint().first;
+      endpoint.y=plane_min_varianz->getendpoint().second;
+      create_landebahn_coord(startpoint,endpoint,"false",plane_min_varianz->print_slope(), plane_min_varianz->print_varianz(),plane_min_varianz->print_length());
+    }
     delete plane_max_length;
     plane_max_length = NULL;
     delete plane_min_varianz;
@@ -436,12 +459,11 @@ tile_worker::tile_worker(const tileData* tile_in, double landing_plane_length, d
 {
 own_tile=0;
  set_param_and_tile(tile_in);
-  cout << "before call to worker"<<endl;
-report("init worker with angle "+floattostring(angle));
+ // cout << "before call to worker"<<endl;
  set_x_resolution(pixelSize.x);
  set_y_resolution(pixelSize.y); // ask Felix how to retrieve this information from tiff
  set_landing_plane_length(landing_plane_length);
- cout << "hier ist slope "<<short_range_slope<<endl;
+// cout << "hier ist slope "<<short_range_slope<<endl;
  set_short_range_slope(short_range_slope);
  set_long_range_slope(long_range_slope);
  set_not_defined(not_defined);
@@ -452,7 +474,7 @@ report("init worker with angle "+floattostring(angle));
  set_commSocket(commSocket);
   set_taskDescription(taskDescription);
  set_semaphore(count_sem); 
-  report("size is "+floattostring(tile_in->width.x)+" uind " +floattostring(tile_in->width.y));
+ // report("size is "+floattostring(tile_in->width.x)+" uind " +floattostring(tile_in->width.y));
 mutex_start_value= PTHREAD_MUTEX_INITIALIZER;
   current_x=0;
   current_y=0;
@@ -465,10 +487,10 @@ myGeoTiffHandler=master;
 
 }
 
-void tile_worker::create_landebahn_coord(pixelPair start_point,pixelPair end_point)
+void tile_worker::create_landebahn_coord(pixelPair start_point,pixelPair end_point,string type,double actualRise, double actualVariance, double length_of_plane)
 {
 
-cout << "start point "<<start_point.x<<" und " <<start_point.y<<endl;
+//cout << "start point "<<start_point.x<<" und " <<start_point.y<<endl;
 pixelCoord pixstart = { tile->offset.x+start_point.x, tile->offset.y+start_point.y};
  //geoCoord start = myGeoTiffHandler->pixel2Geo( pixstart);
 //cout <<"lb start"<<start<<endl;
@@ -476,31 +498,21 @@ pixelCoord pixend;
 pixend.x=tile->offset.x+end_point.x;
 pixend.y=tile->offset.y+end_point.y;
 
-cout << "end point "<<end_point.x<<" und " <<end_point.y<<endl;
+//cout << "end point "<<end_point.x<<" und " <<end_point.y<<endl;
 
 //geoCoord end = myGeoTiffHandler->pixel2Geo( pixend);
 
 //cout << "lb end "<<end<<endl;
-report("width of plane is "+floattostring(width_of_plane));
+//report("width of plane is "+floattostring(width_of_plane));
 json j = myGeoTiffHandler->getGeoJsonPolygon(pixstart, pixend, width_of_plane/2.0);
 
-std::ofstream outfile;
-
-  outfile.open("/tmp/landingreport.txt", std::ios_base::app);
-  outfile << j.dump(4)<<endl;
-  outfile.close();
-
-float lengthFromJson=landing_plane_length;
-//float lengthFromJson = j["properties"]["actualLength"];
-
-//        j["properties"] = (*p.taskDescription)["scanParameters"];
        j["properties"] = (*taskDescription)["scanParameters"];
 
-        j["properties"]["actualLength"] = lengthFromJson;
-        j["properties"]["actualRise"] = 666.666;
-        j["properties"]["actualVariance"] = 666.666;
+        j["properties"]["actualLength"] = length_of_plane;
+        j["properties"]["actualRise"] = actualRise;
+        j["properties"]["actualVariance"] = actualVariance;
         j["properties"]["actualHeading"] = current_angle;
-//cout << j.dump(4) << endl;
+        j["properties"]["mergeable"]=type;
 
         emitReceiptMsg(commSocket, "landingPlane", j);
 
@@ -523,12 +535,12 @@ void tile_worker::set_angle(double angle)
   double shift = 0;
   double newangle= angle + ceil( (-angle+shift) / 360.0 ) * 360.0;
   current_angle=newangle;
-  report("Angle is "+floattostring(current_angle));
+ // report("Angle is "+floattostring(current_angle));
 }
 
 void tile_worker::calc_optimal_vector()
 {
-  cout << "Current angle is "<<current_angle<<endl;
+ // cout << "Current angle is "<<current_angle<<endl;
 
   inc_x=-sin(current_angle*PI/180);
   inc_y=cos(current_angle*PI/180);
@@ -537,11 +549,11 @@ void tile_worker::calc_optimal_vector()
     inc_x=0.0;
   if (fabs(inc_y) < IMPRECISION)
     inc_y=0.0;
-  cout << "inc x is "<<inc_x<<endl;
-  cout << "inc y is "<<inc_y<<endl; 
+//  cout << "inc x is "<<inc_x<<endl;
+//  cout << "inc y is "<<inc_y<<endl; 
 
-  report("inc x is "+floattostring(inc_x));
-  report("inc y is "+floattostring(inc_y)); 
+ // report("inc x is "+floattostring(inc_x));
+  //report("inc y is "+floattostring(inc_y)); 
   orth_x=-sin((current_angle+90.0)*PI/180.0);
   orth_y= cos((current_angle+90.0)*PI/180.0);
   if (fabs(orth_x) < IMPRECISION)
@@ -551,14 +563,14 @@ void tile_worker::calc_optimal_vector()
   needed_points_in_a_row=ceil((double) landing_plane_length/sqrt(pow(((double) resolution_x*inc_x),2)+pow(((double) resolution_y*inc_y),2)));
   allowed_diff=short_range_slope*sqrt(pow(resolution_x*inc_x,2)+pow(resolution_y*inc_y,2))/100.0;
   allowed_orthogonal_diff=orthogonal_slope*sqrt(pow(resolution_x*orth_x,2)+pow(resolution_y*orth_y,2))/100.0;
-  cout << "allowed from "<<short_range_slope << " and " <<resolution_x<< " and incx " <<inc_x<<" and res y" <<resolution_y <<" and inc_y 2"<<inc_y<<endl;
+ // cout << "allowed from "<<short_range_slope << " and " <<resolution_x<< " and incx " <<inc_x<<" and res y" <<resolution_y <<" and inc_y 2"<<inc_y<<endl;
   needed_orthogonal_points_in_a_row=ceil(0.5 *(double) width_of_plane/sqrt(pow(((double) resolution_x*orth_x),2)+pow(((double) resolution_y*orth_y),2)));
-  report("orthogonal points in a row are "+floattostring(needed_orthogonal_points_in_a_row));
+  //report("orthogonal points in a row are "+floattostring(needed_orthogonal_points_in_a_row));
 }
 
 void tile_worker::calc_start_coordinates()
 {
-  report("calc coord with angle "+floattostring(current_angle));
+  //report("calc coord with angle "+floattostring(current_angle));
   if (current_angle >= 0.0 && current_angle < 90.0)  
   {
     startx=0;
@@ -611,6 +623,7 @@ int tile_worker::check_current_landebahn(int &current_in_a_row, const int &neede
 {
   if (coordlist.size() > 1)
   {
+/*
   if (sqrt(pow(((coordlist[0].first-coordlist.back().first)*resolution_x),2)+pow(((coordlist[0].second-coordlist.back().second)*resolution_y),2)) >= landing_plane_length) 
 //   if (current_in_a_row>needed_points_in_a_row)  
    {
@@ -624,7 +637,7 @@ int tile_worker::check_current_landebahn(int &current_in_a_row, const int &neede
      end_point.x=current_x;
      end_point.y=current_y;
     create_landebahn_coord(start_point,end_point); 
-   }
+   }*/
   find_best_planes(coordlist);
   }
 current_in_a_row=0;
@@ -751,7 +764,7 @@ float tile_worker::access_single_element(int x, int y)
 void tile_worker::durchmustere_kachel()
 {
 
-report("durchmustere kacheln\n");
+//report("durchmustere kacheln\n");
                          //  set_angle(0);
                            check_steigungen(/*1*/);
                            /*set_angle(45);
@@ -818,9 +831,9 @@ current_y=starty;
 
 while (still_needed())
 {
-cout << "before sem"<<endl;
+//cout << "before sem"<<endl;
 sem_wait (count_sem);
-cout << "after sem"<<endl;
+//cout << "after sem"<<endl;
 pthread_t newthread;
 
 thread_data *thread_data_temp = new thread_data(this);
@@ -846,7 +859,8 @@ return;
 
 
 
-  cout << "slope "<<short_range_slope<<" and reso " << resolution_y<<endl;
+  //cout << "slope "<<short_range_slope<<" and reso " << resolution_y<<endl;
 
   return;
 }
+
