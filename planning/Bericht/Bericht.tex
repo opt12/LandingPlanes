@@ -24,6 +24,19 @@
 
 \chapter{Aufgabenstellung}
 
+Im Rahmen des Praktikums sind aus Geoterraindaten mögliche Notlandebahnen für Notfallsituationen im Luftverkehr zu ermitteln. Im Falle eines vollständigen Turbinenausfalls kann es z.B. vorkommen, dass der nächstgelegene Flughafen auf Grund aktueller Flughöhe und Windrichtung nicht mehr erreicht werden kann.
+Innerhalb der zur Verfügung gestellten Geländedaten, die im GeoTiff Format vorliegen, soll ein Algorithmus entwickelt werden, der plane Flächen darin ermittelt, die sich zum Landen des Flugzeugs eigenen.
+Die Eignung einer Landebahn ergibt sich aus Parametern wie Länge, Breite, Winkel, Steigung, Holprigkeit und Querneigung der Bahn.
+Diese werden der Software zur Ermittlung mitgegeben und die Software findet dann Landebahnen, die diesen Kriterien entsprechen.
+Insbesondere Breite und Länge der Landebahn müssen konfigurierbar sein, da ein Ultraleichtflugzeug und eine Verkehrsmaschine wie ein Airbus A380 oder eine Boeing 767 völlig unterschiedliche Vorgaben benötigen.
+Weiterhin ist der Winkel der Bahn im Zusammenspiel mit den aktuellen vorherrschenden Windverhältnissen von großer Bedeutung. 
+Ein weiterer Fokus dieses Praktikums liegt in der Anwendung von Parallelverarbeitung.
+Im speziellen soll eine Parallelisierung mit p\_threads durchgeführt werden, also klassische Shared Memory Architektur.
+Es soll untersucht werden, wie sich der Speed-up mit zunehmender Anzahl an Threads verhält und mit der seriellen Abarbeitung verglichen werden.
+Die gefundenen Landebahnen sind dann in einem UI zu visualisieren.
+Die Software soll dem Piloten eine Entscheidungshilfe sein und mögliche Optionen anbieten. Insbesondere die Kombination von Notfall und der teilweise stark eingeschränkten Sicht im Cockpit soll durch technische Unterstützung die Entscheidungsfindung erleichtern.
+Die Landung wird nach wie vor von einem Menschen durchgeführt. Fragestellungen wie Fahrwerk ein- oder ausklappen bleiben hier außen vor.     
+
 \chapter{Architektur}
 
 Zur Lösung der Aufgabenstellung muss zunächst eine Systemarchitektur festgelegt werden.
@@ -520,10 +533,22 @@ Eine Übersicht über die verwendeten Optimierungsschritte sind unter https://gc
 \section{Features und Bedienung}
   
 \chapter{Ausblick und weitere Ideen}
+
+Im Rahmen der Untersuchungen mit der im Praktikum erarbeiteten Softwarelösung sind einige verblüffende und interessante Artefakte sichtbar geworden.
+Unabhängig von dem Winkel der Landebahn zeigte sich, dass der südöstliche Teil von NRW keine geeigneten Landebahnen bietet. Dies ist der Tatsache geschuldet, dass dort Gebirgszüge wie das Süderbergland und das Sauerland zu findet sind.
+Entlang der niederländischen Grenze und an der Grenze zu Niedersachsen ist das Gebiet flacher.
+Weiterhin ist überraschend, dass die ca 100 Mio Datenpunkte in so kurzer Zeit und mit so wenig Speicherbedarf bearbeitet werden können. Selbst auf einer kleinen virtuellen Maschine lief die Durchmusterung sehr zügig.
+Weiterhin war überraschend, dass die Programmübersetzung mit optimiertem Code eine extreme Beschleunigung brachte.
+Diese konnte durch das Threading noch weiter gesteigert werden.
+Allerdings zeigt sich auch, dass vermutlich schon bei recht kleiner Parallelität (4-fach parallel) der Speed-up nicht mehr linear mit Anzahl der Prozessoren korreliert.
+Die Berechnung der Varianz der Landebahn bzw. das Auffinden der optimalen Landebahnen aus einer Fläche benötigt in sich schon relativ viele Rechenoperationen. Hier könnte nochmals eine feingranularere eine Parallelisierung vorgenommen werden.
+Es könnten weitere Parameter eingeführt werden, um noch mehr Randbedingungen an die Qualität einer Landebahn zu stellen. Dieses benötigt aber sicherlich noch mehr fachspezifischen Input.
+Interessant wäre es, Datensets mit mehr Datenpunkten zu untersuchen und die Laufzeit dort zu untersuchen. Insbesondere, wenn die Fläche in eine größere Anzahl ein Subkacheln gesplittet wird.
+ 
 \section{Richtungskorrektur des GeoTIFF}
 \section{Push für Webclient}
 \section{Merge als nachgeschalteter Prozess aus dem Speicher}
 \section{Kollisionsabfrage mit Objekten aus OSM}
 \section{Parallele Bearbeitung mehrerer Kacheln per MPI}
-
+Besonders bei größeren Datensätzen wäre es interessant, die Laufzeiteigenschaften der Software zu untersuchen. Bei sehr großen Datensätze wäre ein embedding in eine MPI Lösung vielleicht interessant, die Daten innerhalb eines Clusters verteilt. Pro Knoten könnte dann mit Threading eine feingranulare Parallelisierung durchgeführt werden.
 \end{document}
