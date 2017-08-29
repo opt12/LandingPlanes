@@ -459,12 +459,11 @@ tile_worker::tile_worker(const tileData* tile_in, double landing_plane_length, d
 {
 own_tile=0;
  set_param_and_tile(tile_in);
-  cout << "before call to worker"<<endl;
-report("init worker with angle "+floattostring(angle));
+ // cout << "before call to worker"<<endl;
  set_x_resolution(pixelSize.x);
  set_y_resolution(pixelSize.y); // ask Felix how to retrieve this information from tiff
  set_landing_plane_length(landing_plane_length);
- cout << "hier ist slope "<<short_range_slope<<endl;
+// cout << "hier ist slope "<<short_range_slope<<endl;
  set_short_range_slope(short_range_slope);
  set_long_range_slope(long_range_slope);
  set_not_defined(not_defined);
@@ -475,7 +474,7 @@ report("init worker with angle "+floattostring(angle));
  set_commSocket(commSocket);
   set_taskDescription(taskDescription);
  set_semaphore(count_sem); 
-  report("size is "+floattostring(tile_in->width.x)+" uind " +floattostring(tile_in->width.y));
+ // report("size is "+floattostring(tile_in->width.x)+" uind " +floattostring(tile_in->width.y));
 mutex_start_value= PTHREAD_MUTEX_INITIALIZER;
   current_x=0;
   current_y=0;
@@ -504,18 +503,9 @@ pixend.y=tile->offset.y+end_point.y;
 //geoCoord end = myGeoTiffHandler->pixel2Geo( pixend);
 
 //cout << "lb end "<<end<<endl;
-report("width of plane is "+floattostring(width_of_plane));
+//report("width of plane is "+floattostring(width_of_plane));
 json j = myGeoTiffHandler->getGeoJsonPolygon(pixstart, pixend, width_of_plane/2.0);
 
-std::ofstream outfile;
-
-  outfile.open("/tmp/landingreport.txt", std::ios_base::app);
-  outfile << j.dump(4)<<endl;
-  outfile.close();
-
-//float lengthFromJson = j["properties"]["actualLength"];
-
-//        j["properties"] = (*p.taskDescription)["scanParameters"];
        j["properties"] = (*taskDescription)["scanParameters"];
 
         j["properties"]["actualLength"] = length_of_plane;
@@ -523,7 +513,6 @@ std::ofstream outfile;
         j["properties"]["actualVariance"] = actualVariance;
         j["properties"]["actualHeading"] = current_angle;
         j["properties"]["mergeable"]=type;
-//cout << j.dump(4) << endl;
 
         emitReceiptMsg(commSocket, "landingPlane", j);
 
@@ -546,12 +535,12 @@ void tile_worker::set_angle(double angle)
   double shift = 0;
   double newangle= angle + ceil( (-angle+shift) / 360.0 ) * 360.0;
   current_angle=newangle;
-  report("Angle is "+floattostring(current_angle));
+ // report("Angle is "+floattostring(current_angle));
 }
 
 void tile_worker::calc_optimal_vector()
 {
-  cout << "Current angle is "<<current_angle<<endl;
+ // cout << "Current angle is "<<current_angle<<endl;
 
   inc_x=-sin(current_angle*PI/180);
   inc_y=cos(current_angle*PI/180);
@@ -560,11 +549,11 @@ void tile_worker::calc_optimal_vector()
     inc_x=0.0;
   if (fabs(inc_y) < IMPRECISION)
     inc_y=0.0;
-  cout << "inc x is "<<inc_x<<endl;
-  cout << "inc y is "<<inc_y<<endl; 
+//  cout << "inc x is "<<inc_x<<endl;
+//  cout << "inc y is "<<inc_y<<endl; 
 
-  report("inc x is "+floattostring(inc_x));
-  report("inc y is "+floattostring(inc_y)); 
+ // report("inc x is "+floattostring(inc_x));
+  //report("inc y is "+floattostring(inc_y)); 
   orth_x=-sin((current_angle+90.0)*PI/180.0);
   orth_y= cos((current_angle+90.0)*PI/180.0);
   if (fabs(orth_x) < IMPRECISION)
@@ -574,14 +563,14 @@ void tile_worker::calc_optimal_vector()
   needed_points_in_a_row=ceil((double) landing_plane_length/sqrt(pow(((double) resolution_x*inc_x),2)+pow(((double) resolution_y*inc_y),2)));
   allowed_diff=short_range_slope*sqrt(pow(resolution_x*inc_x,2)+pow(resolution_y*inc_y,2))/100.0;
   allowed_orthogonal_diff=orthogonal_slope*sqrt(pow(resolution_x*orth_x,2)+pow(resolution_y*orth_y,2))/100.0;
-  cout << "allowed from "<<short_range_slope << " and " <<resolution_x<< " and incx " <<inc_x<<" and res y" <<resolution_y <<" and inc_y 2"<<inc_y<<endl;
+ // cout << "allowed from "<<short_range_slope << " and " <<resolution_x<< " and incx " <<inc_x<<" and res y" <<resolution_y <<" and inc_y 2"<<inc_y<<endl;
   needed_orthogonal_points_in_a_row=ceil(0.5 *(double) width_of_plane/sqrt(pow(((double) resolution_x*orth_x),2)+pow(((double) resolution_y*orth_y),2)));
-  report("orthogonal points in a row are "+floattostring(needed_orthogonal_points_in_a_row));
+  //report("orthogonal points in a row are "+floattostring(needed_orthogonal_points_in_a_row));
 }
 
 void tile_worker::calc_start_coordinates()
 {
-  report("calc coord with angle "+floattostring(current_angle));
+  //report("calc coord with angle "+floattostring(current_angle));
   if (current_angle >= 0.0 && current_angle < 90.0)  
   {
     startx=0;
@@ -775,7 +764,7 @@ float tile_worker::access_single_element(int x, int y)
 void tile_worker::durchmustere_kachel()
 {
 
-report("durchmustere kacheln\n");
+//report("durchmustere kacheln\n");
                          //  set_angle(0);
                            check_steigungen(/*1*/);
                            /*set_angle(45);
@@ -842,9 +831,9 @@ current_y=starty;
 
 while (still_needed())
 {
-cout << "before sem"<<endl;
+//cout << "before sem"<<endl;
 sem_wait (count_sem);
-cout << "after sem"<<endl;
+//cout << "after sem"<<endl;
 pthread_t newthread;
 
 thread_data *thread_data_temp = new thread_data(this);
@@ -870,7 +859,7 @@ return;
 
 
 
-  cout << "slope "<<short_range_slope<<" and reso " << resolution_y<<endl;
+  //cout << "slope "<<short_range_slope<<" and reso " << resolution_y<<endl;
 
   return;
 }

@@ -9,7 +9,7 @@
 
 \usepackage[ngerman]{babel}
 
-\usepackage{tikz}
+\usepackage{tikz,pgfplots}
 %%%%<
 %\usepackage{verbatim}
 %\usepackage[active,tightpage]{preview}
@@ -346,8 +346,149 @@ Bei Winkeln, die ein vielfaches von $90$ betragen, sind alle Landebahnen gleich 
 
 Bei Bahnen, die diagonal verlaufen, sind die ersten Bahnen kurz, nehmen dann in ihrer Länge zu, bis als Startpunkt die nächstliegende Ecke erreicht ist, und nimmt dann in ihrer Länge wieder ab (siehe Abbildung~\ref{scandiagonal}). 
 Weiterhin ist zu beachten, dass je nach Topologie der Bahn unterschiedlich viele (im Grenzfall gar keine) geeigneten Flächen gefunden werden, die dann fein granular weiter untersucht werden müssen (längste Bahn und die mit der kleinsten Varianz). So ist schwer vorhersagbar, wie lange die Einzellaufzeit eines Threads ist.
-Für die zur Verfügung gestellten Kartendaten von Nordrhein-Westfalen sind die Laufzeiten in Abhängigkeit von Winkel und Threadanzahl in Tabelle x dargestellt. Das verwendete System zur Analyse war eine virtualisierte VM (Centos 7.0, xx CPUs, xx GB RAM) 
+Für die zur Verfügung gestellten Kartendaten von Nordrhein-Westfalen sind die Laufzeiten in Abhängigkeit von Winkel und Threadanzahl in Tabelle x dargestellt.
 
+\subsection{Erläuterung des Messverfahren}
+
+Die Messung wurde in einer virtualisierten Umgebung durchgeführt. Als Host-System diente ein Windows 7 64 bit System, welches hardwaretechnisch auf einem Intel i7-4770K , 3.5 Ghz, 16 GB RAM System lokalisiert ist. Die Virtualisierung wurde mit Virtualbox mit einem Linux Guest System (Centos Linux 7.0, 6 GB RAM) durchgeführt. 
+Die Anzahl der virtuellen CPUs wurde von 1-8 variiert.
+Pro vorgegebener Parametrisierung wurden 4 unabhängige identische Messungen gemacht. In der Tabelle angegeben ist der Mittelwert mit Standardabweichung.
+ 
+
+\subsection{Messergebnisse}
+
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline 
+Richtung & Bahnen & Threads & v CPUs & Zeitbedarf [ms] & Standardabweichung [ms] \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 & 1 & 1 & 11409 & 510 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 & 2 & 1 & 11049& 216 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 & 4 & 1 & 11586 & 220 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 & 8 & 1 & 11230 & 240 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 & 64 & 1 & 10886 & 621 \\ 
+\hline 
+W$\rightarrow$O (90$^\circ$) & 1606 & 1 & 1 & 10442 & 239 \\ 
+\hline 
+W$\rightarrow$O (90$^\circ$) & 1606 & 64 & 1 & 10094 & 284 \\ 
+\hline 
+NNO$\rightarrow$SSW (45$^\circ$) & 704 & 1 & 1 & 18147 & 327 \\ 
+\hline 
+NNO$\rightarrow$SSW (45$^\circ$) & 704 & 64 & 1 & 18423 & 701 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 & 1 & 2 & 8488 & 46 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 & 2 & 2 & 5397 & 178 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 & 4 & 2 & 5545 & 161 \\ 
+\hline 
+W$\rightarrow$O (90$^\circ$) & 1606 & 1 & 2 & 8668 & 453 \\ 
+\hline 
+W$\rightarrow$O (90$^\circ$) & 1606 & 2 & 2 & 5778 & 292 \\ 
+\hline 
+NNO$\rightarrow$SSW (45$^\circ$) & 704 & 1 & 2 & 15208 & 216 \\ 
+\hline 
+NNO$\rightarrow$SSW (45$^\circ$) & 704 & 64 & 2 & 8976 & 327 \\ 
+\hline
+N$\rightarrow$S (0$^\circ$) & 734 & 1 & 4 & 8823 & 83 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 & 2 & 4 & 4642 & 77 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 & 4 & 4 & 2973 & 17 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 & 8 & 4 & 3571 & 432 \\ 
+\hline 
+W$\rightarrow$O (90$^\circ$) & 1606 & 8 & 4 & 3335 & 72 \\ 
+\hline 
+NNO$\rightarrow$SSW (45$^\circ$) & 704 & 8 & 4 & 5406 & 442 \\ 
+\hline
+N$\rightarrow$S (0$^\circ$) & 734 & 16 & 8 & 2733 & 56 \\ 
+\hline 
+\end{tabular} 
+
+\subsection{Diskussion der Messergebnisse}
+
+Als Landebahneigenschaften wurden eine Länge von 4000m, eine Holprigkeit in Längs- und Querrichtung von 3\%, sowie eine maximale Steigung von 10 \% gefordert. Dieses Parameterset wurde so gewählt, dass nicht zu viele Landebahnen in die Datenbank geschrieben werden mussten, da dies auch einen signifikanten CPU Anteil benötigt. Weiterhin ist das Rendering im Browser bei sehr vielen bahnen CPU intensiv. Daher erschien das oben gewählte Parameterset als schlüssig.
+Auffällig ist, dass selbst im Singlethreadbetrieb bei der Erhöhung der CPUs ein Speedup entsteht. Dies ist dem Umstand geschuldet, dass auf derselben VM noch der Browser und die Datenbankengine gehostet sind.
+Trotzdem wird das Parameterset 1 CPU, 1 Thread als Referenz für den Speedup betrachtet.
+
+\begin{figure}
+\begin{tabular}{|c|c|}
+ \hline 
+ Anzahl CPU & Speedup \\ 
+ \hline 
+ 1 & 1 \\ 
+ \hline 
+ 2 & 2,11 \\ 
+ \hline 
+ 4 & 3,84 \\ 
+ \hline 
+  8 & 4,2 \\ 
+ \hline 
+ \end{tabular}  
+ \caption{Speedup am Beispiel der Messergebnisse in Nord / Südausrichtung.}
+\end{figure}
+
+\begin{figure}
+\begin{tabular}{|c|c|}
+ \hline 
+ Anzahl CPU & Speedup \\ 
+ \hline 
+ 1 & 1 \\ 
+ \hline 
+ 2 & 1,8 \\ 
+ \hline 
+ 4 & 3,13 \\ 
+ \hline 
+ \end{tabular}  
+ \caption{Speedup am Beispiel der Messergebnisse in Ost / Westausrichtung.}
+\end{figure}
+
+\begin{figure}
+\begin{tabular}{|c|c|}
+ \hline 
+ Anzahl CPU & Speedup \\ 
+ \hline 
+ 1 & 1 \\ 
+ \hline 
+ 2 & 2,02 \\ 
+ \hline 
+ 4 & 3,35 \\ 
+ \hline 
+ \end{tabular}  
+ \caption{Speedup am Beispiel der Messergebnisse in Nord / Südausrichtung.}
+\end{figure}
+
+Weiterhin zeigt sich, dass eine weitere Erhöhung der Threadanzahl über die tatsächlich verfügbaren CPUs ab einem gewissen Punkt schädlich wird.
+im Falle von 8 CPUs sind die Ergebnisse unter Umständen nicht aussagekräftig, da die Virtualisierungssoftware eine ungültige Konfiguration anzeigte. Zudem braucht auch das Host Betriebssystem Ressourcen, die natürlich nicht der VM und der Software zur Verfügung stehen.
+
+\begin{tikzpicture} 
+\begin{axis}[ 
+  xlabel=Anzahl CPU, ylabel=Speedup] 
+  \addplot[color=red,mark=x] coordinates { 
+  (1,1) 
+  (2,2.11) 
+  (4,3.84) 
+  (8,4.2)   
+  }; 
+    \addplot[color=blue,mark=x] coordinates { 
+  (1,1) 
+  (2,1.8) 
+  (4,3.13)    
+  }; 
+    \addplot[color=green,mark=x] coordinates { 
+  (1,1) 
+  (2,2.02) 
+  (4,3.35)    
+  }; 
+  
+  \end{axis} 
+  
+  \end{tikzpicture}
+  
 Eine weiterführende Analyse war aufgrund mangelnder Hardwareressourcen nicht möglich.
 
 
