@@ -440,8 +440,8 @@ Da beide Funktionen innerhalb des Threading aufgerufen werden, ist aus laufzeitt
 
 Bevor Codeausführung mittels Parallelverarbeitung zur Beschleunigung gebracht werden soll, lohnt es sich meist, durch geeignete Compilerdirektiven die serielle Codeausführung zu beschleunigen.
 
-Der Code wurde mit einem gcc Version xx devtoolset yx compiliert. Die Standardübersetzung ist dabei ohne eingeschalteten Optimizer. 
-Durch die Benutzung des -O3 Optimizer Direktivs ist eine Codebeschleunigung von yx \% beobachtet worden. 
+Der Code wurde mit einem gcc Version 4.8.5 devtoolset version 4 compiliert. Die Standardübersetzung ist dabei ohne eingeschalteten Optimizer. 
+Durch die Benutzung des -O3 Optimizer Direktivs ist eine Codebeschleunigung von 1300 \% (11 sec vs. 147 sec) beobachtet worden. 
 Eine Übersicht über die verwendeten Optimierungsschritte sind unter https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html einzusehen.
 
 \chapter{Datenbank Manager}
@@ -456,20 +456,20 @@ Eine Übersicht über die verwendeten Optimierungsschritte sind unter https://gc
 \chapter{Ausblick und weitere Ideen}
 
 Im Rahmen der Untersuchungen mit der im Praktikum erarbeiteten Softwarelösung sind einige verblüffende und interessante Artefakte sichtbar geworden.
-Unabhängig von dem Winkel der Landebahn zeigte sich, dass der südöstliche Teil von NRW keine geeigneten Landebahnen bietet. Dies ist der Tatsache geschuldet, dass dort Gebirgszüge wie das Süderbergland und das Sauerland zu findet sind.
+Unabhängig von dem Winkel der Landebahn zeigte sich, dass der südöstliche Teil von NRW keine geeigneten Landebahnen bietet. Dies ist der Tatsache geschuldet, dass dort Gebirgszüge wie das Süderbergland und das Sauerland zu finden sind.
 Entlang der niederländischen Grenze und an der Grenze zu Niedersachsen ist das Gebiet flacher.
 Weiterhin ist überraschend, dass die ca 100 Mio Datenpunkte in so kurzer Zeit und mit so wenig Speicherbedarf bearbeitet werden können. Selbst auf einer kleinen virtuellen Maschine lief die Durchmusterung sehr zügig.
 Weiterhin war überraschend, dass die Programmübersetzung mit optimiertem Code eine extreme Beschleunigung brachte.
 Diese konnte durch das Threading noch weiter gesteigert werden.
 Allerdings zeigt sich auch, dass vermutlich schon bei recht kleiner Parallelität (4-fach parallel) der Speed-up nicht mehr linear mit Anzahl der Prozessoren korreliert.
-Die Berechnung der Varianz der Landebahn bzw. das Auffinden der optimalen Landebahnen aus einer Fläche benötigt in sich schon relativ viele Rechenoperationen. Hier könnte nochmals eine feingranularere eine Parallelisierung vorgenommen werden.
-Es könnten weitere Parameter eingeführt werden, um noch mehr Randbedingungen an die Qualität einer Landebahn zu stellen. Dieses benötigt aber sicherlich noch mehr fachspezifischen Input.
-Interessant wäre es, Datensets mit mehr Datenpunkten zu untersuchen und die Laufzeit dort zu untersuchen. Insbesondere, wenn die Fläche in eine größere Anzahl ein Subkacheln gesplittet wird.
+Die Berechnung der Varianz der Landebahn bzw. das Auffinden der optimalen Landebahnen aus einer Fläche benötigt in sich schon relativ viele Rechenoperationen. Hier könnte nochmals eine feingranulare eine Parallelisierung vorgenommen werden.
+Es könnten weitere Parameter eingeführt werden, um noch mehr Randbedingungen an die Qualität einer Landebahn zu stellen. Dieses benötigt aber sicherlich noch mehr domänenpezifischen Input.
+Interessant wäre es, Datensets mit mehr Datenpunkten und die Laufzeit bei diesen Randbedingungen zu untersuchen. Insbesondere, wenn die Fläche in eine größere Anzahl von Subkacheln gesplittet wird.
  
 \section{Richtungskorrektur des GeoTIFF}
 \section{Push für Webclient}
 \section{Merge als nachgeschalteter Prozess aus dem Speicher}
 \section{Kollisionsabfrage mit Objekten aus OSM}
 \section{Parallele Bearbeitung mehrerer Kacheln per MPI}
-Besonders bei größeren Datensätzen wäre es interessant, die Laufzeiteigenschaften der Software zu untersuchen. Bei sehr großen Datensätze wäre ein embedding in eine MPI Lösung vielleicht interessant, die Daten innerhalb eines Clusters verteilt. Pro Knoten könnte dann mit Threading eine feingranulare Parallelisierung durchgeführt werden.
+Besonders bei größeren Datensätzen wäre es interessant, die Laufzeiteigenschaften der Software zu untersuchen. Bei sehr großen Datensätze wäre ein embedding in eine MPI Lösung vielleicht interessant, das die Daten innerhalb eines Clusters verteilt. Pro Knoten könnte dann mit Threading eine feingranulare Parallelisierung durchgeführt werden.
 \end{document}
