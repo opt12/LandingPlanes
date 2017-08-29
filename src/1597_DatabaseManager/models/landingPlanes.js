@@ -80,11 +80,9 @@ schema.index({"geoJSON.geometry": '2dsphere'});
 //we need to create a model using it
 // var LandingPlanes = condnection.model('LandingPlanes', planesSchema);
 var LandingPlanes = connection.model('LandingPlanes', schema);
-var mergeableLandingPlanes = connection.model('mergeableLandingPlanes', schema);
 
 
 //make this available to our Node aplication
 module.exports = {
     LandingPlanes: LandingPlanes,
-    mergeableLandingPlanes: mergeableLandingPlanes,
 };
