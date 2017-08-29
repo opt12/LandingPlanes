@@ -3,9 +3,15 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www --tiffpath=/home/bjoern/Downloads --wrapper=/home/bjoern/gitproject/LandingPlanes/src/1597_searchEngineWrapper/Debug/1597_searchEngineWrapper --clientpath='../1597_LandingClient'"
+    "start": "node ./bin/www --tiffpath=/home/eckstein/dev/LandingPlanes/terrain --wrapper=/home/eckstein/git/LandingPlanes/src/1597_searchEngineWrapper/Debug/1597_searchEngineWrapper --clientpath='../1597_LandingClient'",
+    "cleanup": "node ./bin/cleanUpDbRunner.js"
   },
   "dependencies": {
+    "@turf/convex": "^4.6.0",
+    "@turf/distance": "^4.6.0",
+    "@turf/helpers": "^4.6.0",
+    "@turf/simplify": "^4.6.0",
+    "@turf/union": "^4.6.0",
     "body-parser": "~1.17.1",
     "cookie-parser": "~1.4.3",
     "cors": "^2.8.3",
@@ -19,7 +25,6 @@
     "node-ipc": "^9.0.1",
     "ramda": "^0.24.1",
     "serve-favicon": "~2.4.2",
-    "turf": "^3.0.14",
     "yargs": "^8.0.2"
   }
 }

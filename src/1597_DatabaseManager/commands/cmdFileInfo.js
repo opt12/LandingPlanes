@@ -1,7 +1,9 @@
 var exec = require('child_process').exec;
 var HttpError = require('http-error-constructor');
 var R = require('ramda');
-var turf = require('turf');
+
+var turfHelpers = require('@turf/helpers');
+var turfConvex = require('@turf/convex');
 
 
 const getGDALInfo = function (fileName) {
@@ -32,8 +34,8 @@ const getWGS84ExtentPolygon = function (filename) {
                 throw new HttpError(400, 'problem with wgs84Extent.coordinates; (supposed to contain 4 points):\n',fourPoints);
             }
             fourPoints = fourPoints.splice(0,4);    //get the non closed polygon;
-            var turfPoints = fourPoints.map(p => turf.point(p));
-            var hull = turf.convex(turf.featureCollection(turfPoints));
+            var points = fourPoints.map(p => turfHelpers.point(p));
+            var hull = turfConvex(turfHelpers.featureCollection(points));
 
             return hull;
         })
