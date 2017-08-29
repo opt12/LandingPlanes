@@ -27,17 +27,23 @@
 \chapter{Aufgabenstellung}
 
 Im Rahmen des Praktikums sind aus Geoterraindaten mögliche Notlandebahnen für Notfallsituationen im Luftverkehr zu ermitteln. Im Falle eines vollständigen Turbinenausfalls kann es z.B. vorkommen, dass der nächstgelegene Flughafen auf Grund aktueller Flughöhe und Windrichtung nicht mehr erreicht werden kann.
-Innerhalb der zur Verfügung gestellten Geländedaten, die im GeoTiff Format vorliegen, soll ein Algorithmus entwickelt werden, der plane Flächen darin ermittelt, die sich zum Landen des Flugzeugs eigenen.
+
+Innerhalb der zur Verfügung gestellten Geländedaten, die im GeoTiff Format vorliegen, soll ein Algorithmus entwickelt werden, der plane Flächen darin ermittelt, die sich zum Landen eines Flugzeugs eigenen.
+
 Die Eignung einer Landebahn ergibt sich aus Parametern wie Länge, Breite, Winkel, Steigung, Holprigkeit und Querneigung der Bahn.
 Diese werden der Software zur Ermittlung mitgegeben und die Software findet dann Landebahnen, die diesen Kriterien entsprechen.
 Insbesondere Breite und Länge der Landebahn müssen konfigurierbar sein, da ein Ultraleichtflugzeug und eine Verkehrsmaschine wie ein Airbus A380 oder eine Boeing 767 völlig unterschiedliche Vorgaben benötigen.
+
 Weiterhin ist der Winkel der Bahn im Zusammenspiel mit den aktuellen vorherrschenden Windverhältnissen von großer Bedeutung. 
 Ein weiterer Fokus dieses Praktikums liegt in der Anwendung von Parallelverarbeitung.
-Im speziellen soll eine Parallelisierung mit p\_threads durchgeführt werden, also klassische Shared Memory Architektur.
+
+Im speziellen soll eine Parallelisierung mit p\_threads durchgeführt werden, also eine klassische Shared Memory Architektur.
 Es soll untersucht werden, wie sich der Speed-up mit zunehmender Anzahl an Threads verhält und mit der seriellen Abarbeitung verglichen werden.
+
 Die gefundenen Landebahnen sind dann in einem UI zu visualisieren.
-Die Software soll dem Piloten eine Entscheidungshilfe sein und mögliche Optionen anbieten. Insbesondere die Kombination von Notfall und der teilweise stark eingeschränkten Sicht im Cockpit soll durch technische Unterstützung die Entscheidungsfindung erleichtern.
-Die Landung wird nach wie vor von einem Menschen durchgeführt. Fragestellungen wie Fahrwerk ein- oder ausklappen bleiben hier außen vor.     
+
+Die Software soll dem Piloten eine Entscheidungshilfe sein und mögliche Optionen anbieten. Insbesondere die Kombination von Notfall und der teilweise stark eingeschränkten Sicht im Cockpit soll durch eine technische Unterstützung die Entscheidungsfindung erleichtern.
+Die Landung selbst soll nach wie vor von einem Menschen durchgeführt werden. Fragestellungen wie Fahrwerk ein- oder ausfahren bleiben hier außen vor.     
 
 \chapter{Architektur}
 
@@ -289,15 +295,15 @@ Die einzelnen Aufrufparameter und deren funktionale Eigenschaft sind in Tabelle~
 *myGeoTiffHandler & Zeiger auf eine Instanz eines GeoTiffHandler Objekts, 
 welches diverse Funktionen zur Umrechnung, Konvertierung etc. im GeoTiff Format unterstützt \\ 
 \hline 
-heading & Durchmusterungswinkel für die Landebahnen $0^\circ$ => Nord-Süd Achse \\ 
+heading & Durchmusterungswinkel für die Landebahnen $0^\circ =>$ Nord-Süd Achse \\ 
 \hline 
-minLength & minimale geforderte Länge der Landebahn \\ 
+minLength & minimale geforderte Länge der Landebahn in [m] \\ 
 \hline 
-width & Breite der geforderten Landebahn \\ 
+width & Breite der geforderten Landebahn in [m] \\ 
 \hline 
 commSocket & Socket für das abspeichern gefundener Landebahnen in der Mongo DB\\ 
 \hline 
-*taskDescription & Taskbeschreibung, um die gefundene Bahn korrekt in Mongo abzulegen \\ 
+*taskDescription & Taskbeschreibung, um die gefundene Bahn korrekt in der Mongo DB abzulegen \\ 
 \hline 
 noDataValue & Zahlenwert für undefinierte Kartenpunkte \\ 
 \hline 
@@ -412,13 +418,13 @@ Eine schematische Abbildung hierzu findet sich in Abbildung~\ref{scandiagonal}. 
 \end{tikzpicture}
 \caption{Verschiebung des Startpunkts der Landebahndurchmusterung in diagonaler Richtung. Hier N nach S. Der Startpunkt der einzelnen Bahnen folgt dem blauen Pfeil.}
 \end{figure}
-\section{Parallelverarbeitung mittels pthreads zum Finden der Landebahnen}
+\section{Parallelverarbeitung mittels p\_threads zum Finden der Landebahnen}
 
 Die Parallelverarbeitung arbeitet nach einem Task-Workermodell, welches mit einem Semaphor gesteuert wird. Jeder Startpunkt, der auf einem Kartenrand liegt, ist hier als ein Task anzusehen. Das Semaphor dient dazu, die gleichzeitige Anzahl der Threads zu steuern und zu kontrollieren. Dies dient zum einen Untersuchungszwecken, um festzustellen, die der Speedup bei Variation der Threads ist. Weiterhin würde eine zu hohe Zahl an an Threads die ausführende Maschine in extreme Ressourcenknappheit bringen können.
 
 Das Workerobjekt kontrolliert mit einem mutex die Herausgabe von Startwerten. In einem kritischen Bereich wird durch Inkrementierung des Startpunktes ein neuer Startpunkt generiert, der an einen Worker als Form eines abzuarbeitenden Task herausgegeben wird. Dieser kritische Bereich, der dafür sorgt, dass jeder Startpunkt auch nur wirklich einmal herausgeben wird, stellt somit auch das Bottleneck der Parallelverarbeitung dar. So lange die Anzahl der Punkte pro Bahn und die Berechnungszeit, die ein Thread benötigt, um die Bahn in der vorgegebenen Richtung abzuscannen und die zur Bahn gehörigen Parameter wie Varianz etc. zu berechnen größer ist als die Zeit, die vergeht, bis der Thread wieder in der Warteschlange zum Erhalt eines neuen Startwert aufläuft, sollte dieses Bottleneck gering sein.
 
-Zudem ist zu beachten, dass natürlich nicht alle Landebahnen gleich lang sind. So lange der Startpunkt in der Nähe einer Kartenecke ist und die Durchmusterungsrichtung nur wenige Punkte bis zum Kartenrand umfasst, wird die Durchmusterung schnell vorbei sein und ein neuer Startwert benötigt werden. Dies wird in Abbildung~\ref{scandiagonal} deutlich. Mit der potentiellen Landebahn 3 hat der Thread die meisten Punkte abzuarbeiten während die Bahnen 1 und 5 relativ schnell abgearbeitet sind. 
+Zudem ist zu beachten, dass natürlich nicht alle Landebahnen gleich lang sind. So lange der Startpunkt in der Nähe einer Kartenecke ist und die Durchmusterungsrichtung nur wenige Punkte bis zum Kartenrand umfasst, wird die Durchmusterung schnell vorbei sein und ein neuer Startwert benötigt werden. Dies wird in Abbildung~\ref{scandiagonal} deutlich. Mit der potentiellen Landebahn 3 hat der Thread die meisten Punkte abzuarbeiten während die Bahnen 1 und 5 relativ schnell abgearbeitet seien werden. 
 
 \section{Detaillierte Beschreibung des Suchalgorithmus}
 
@@ -446,7 +452,7 @@ Für den produktiven Einsatz ist sie obsolet.
 
 \section{Verwendete Datenstrukturen}
 
-Die wichtigsten Datenstrukturen, die während der Durchmusterung benötigt werden, sind das übergebene Kachelobjekt, ein Objekt zur Verwaltung der aktuell gefundenen zusammenhängenden Punkte, sowie den $tile\_worker$, der die Threads kontrolliert und Durchmusterungsparameter kapselt. 
+Die wichtigsten Datenstrukturen, die während der Durchmusterung benötigt werden, sind das übergebene Kachelobjekt, ein Objekt zur Verwaltung der aktuell gefundenen zusammenhängenden Punkte, sowie der $tile\_worker$, der die Threads kontrolliert und Durchmusterungsparameter kapselt. 
 
 \subsection{Einfluss der Datenstrukturen auf die Performanz}
 
@@ -484,18 +490,18 @@ Um den Speedup zu bestimmen, wurde analysiert, wie sich die Laufzeit mit zunehme
 Bei Winkeln, die ein vielfaches von $90$ betragen, sind alle Landebahnen gleich lang --- also sind gleich viele Punkte zu analysieren (siehe Abbildung~\ref{scanortho}).
 
 Bei Bahnen, die diagonal verlaufen, sind die ersten Bahnen kurz, nehmen dann in ihrer Länge zu, bis als Startpunkt die nächstliegende Ecke erreicht ist, und nimmt dann in ihrer Länge wieder ab (siehe Abbildung~\ref{scandiagonal}). 
-Weiterhin ist zu beachten, dass je nach Topologie der Bahn unterschiedlich viele (im Grenzfall gar keine) geeigneten Flächen gefunden werden, die dann fein granular weiter untersucht werden müssen (längste Bahn und die mit der kleinsten Varianz). So ist schwer vorhersagbar, wie lange die Einzellaufzeit eines Threads ist.
-Für die zur Verfügung gestellten Kartendaten von Nordrhein-Westfalen sind die Laufzeiten in Abhängigkeit von Winkel und Threadanzahl in Tabelle x dargestellt.
+Weiterhin ist zu beachten, dass je nach Topologie der Bahn unterschiedlich viele (im Grenzfall gar keine) geeignete Flächen gefunden werden, die dann fein granular weiter untersucht werden müssen (längste Bahn und die mit der kleinsten Varianz). So ist schwer vorhersagbar, wie lange die Einzellaufzeit eines Threads ist.
+Für die zur Verfügung gestellten Kartendaten von Nordrhein-Westfalen sind die Laufzeiten in Abhängigkeit von Winkel und Threadanzahl in Tabelle~\ref{laufzeiten} dargestellt.
 
 \subsection{Erläuterung des Messverfahren}
 
 Die Messung wurde in einer virtualisierten Umgebung durchgeführt. Als Host-System diente ein Windows 7 64 bit System, welches hardwaretechnisch auf einem Intel i7-4770K , 3.5 Ghz, 16 GB RAM System lokalisiert ist. Die Virtualisierung wurde mit Virtualbox mit einem Linux Guest System (Centos Linux 7.0, 6 GB RAM) durchgeführt. 
 Die Anzahl der virtuellen CPUs wurde von 1-8 variiert.
-Pro vorgegebener Parametrisierung wurden 4 unabhängige identische Messungen gemacht. In der Tabelle angegeben ist der Mittelwert mit Standardabweichung.
+Pro vorgegebener Parametrisierung wurden 4 unabhängige identische Messungen gemacht. In Tabelle~\ref{laufzeiten} angegeben ist der Mittelwert mit Standardabweichung dieser Läufe.
  
 
 \subsection{Messergebnisse}
-
+\begin{figure} 
 \begin{tabular}{|c|c|c|c|c|c|}
 \hline 
 Richtung & Bahnen & Threads & v CPUs & Zeitbedarf [ms] & Standardabweichung [ms] \\ 
@@ -546,11 +552,13 @@ NNO$\rightarrow$SSW (45$^\circ$) & 704 & 8 & 4 & 5406 & 442 \\
 \hline
 N$\rightarrow$S (0$^\circ$) & 734 & 16 & 8 & 2733 & 56 \\ 
 \hline 
-\end{tabular} 
+\end{tabular}
+\caption{Laufzeiten verschiedener Durchmusterungen in Abhängigkeit der Threads und virtuellen CPUs}\label{laufzeiten}
+\end{figure} 
 
 \subsection{Diskussion der Messergebnisse}
 
-Als Landebahneigenschaften wurden eine Länge von 4000m, eine Holprigkeit in Längs- und Querrichtung von 3\%, sowie eine maximale Steigung von 10 \% gefordert. Dieses Parameterset wurde so gewählt, dass nicht zu viele Landebahnen in die Datenbank geschrieben werden mussten, da dies auch einen signifikanten CPU Anteil benötigt. Weiterhin ist das Rendering im Browser bei sehr vielen bahnen CPU intensiv. Daher erschien das oben gewählte Parameterset als schlüssig.
+Als Landebahneigenschaften wurden eine Länge von 4000~m, eine Holprigkeit in Längs- und Querrichtung von 3~\%, sowie eine maximale Steigung von 10~\% gefordert. Dieses Parameterset wurde so gewählt, dass nicht zu viele Landebahnen in die Datenbank geschrieben werden müssen, da dies auch einen signifikanten CPU Anteil benötigt. Weiterhin ist das Rendering im Browser bei sehr vielen bahnen CPU intensiv. Daher erschien das oben gewählte Parameterset als schlüssig.
 Auffällig ist, dass selbst im Singlethreadbetrieb bei der Erhöhung der CPUs ein Speedup entsteht. Dies ist dem Umstand geschuldet, dass auf derselben VM noch der Browser und die Datenbankengine gehostet sind.
 Trotzdem wird das Parameterset 1 CPU, 1 Thread als Referenz für den Speedup betrachtet.
 
@@ -598,11 +606,11 @@ Trotzdem wird das Parameterset 1 CPU, 1 Thread als Referenz für den Speedup bet
  4 & 3,35 \\ 
  \hline 
  \end{tabular}  
- \caption{Speedup am Beispiel der Messergebnisse in Nord / Südausrichtung.}
+ \caption{Speedup am Beispiel der Messergebnisse in Nordnordwest / Südsüdostausrichtung.}
 \end{figure}
 
-Weiterhin zeigt sich, dass eine weitere Erhöhung der Threadanzahl über die tatsächlich verfügbaren CPUs ab einem gewissen Punkt schädlich wird.
-im Falle von 8 CPUs sind die Ergebnisse unter Umständen nicht aussagekräftig, da die Virtualisierungssoftware eine ungültige Konfiguration anzeigte. Zudem braucht auch das Host Betriebssystem Ressourcen, die natürlich nicht der VM und der Software zur Verfügung stehen.
+Weiterhin zeigt sich, dass eine weitere Erhöhung der Threadanzahl über die tatsächlich verfügbaren CPUs ab einem gewissen Punkt schädlich ist.
+Im Falle von 8 CPUs sind die Ergebnisse unter Umständen nicht aussagekräftig, da die Virtualisierungssoftware eine ungültige Konfiguration anzeigte. Zudem braucht auch das Host Betriebssystem Ressourcen, die natürlich nicht der VM und der Software zur Verfügung stehen.
 
 \begin{tikzpicture} 
 \begin{axis}[ 
@@ -645,8 +653,8 @@ Da beide Funktionen innerhalb des Threading aufgerufen werden, ist aus laufzeitt
 
 Bevor Codeausführung mittels Parallelverarbeitung zur Beschleunigung gebracht werden soll, lohnt es sich meist, durch geeignete Compilerdirektiven die serielle Codeausführung zu beschleunigen.
 
-Der Code wurde mit einem gcc Version xx devtoolset yx compiliert. Die Standardübersetzung ist dabei ohne eingeschalteten Optimizer. 
-Durch die Benutzung des -O3 Optimizer Direktivs ist eine Codebeschleunigung von yx \% beobachtet worden. 
+Der Code wurde mit einem gcc Version 4.8.5 devtoolset version 4 compiliert. Die Standardübersetzung ist dabei ohne eingeschalteten Optimizer. 
+Durch die Benutzung des -O3 Optimizer Direktivs ist eine Codebeschleunigung von 1300 \% (11 sec vs. 147 sec) beobachtet worden. 
 Eine Übersicht über die verwendeten Optimierungsschritte sind unter https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html einzusehen.
 
 \chapter{Komponente "`databaseManager"'}
@@ -663,20 +671,20 @@ Eine Übersicht über die verwendeten Optimierungsschritte sind unter https://gc
 \chapter{Ausblick und weitere Ideen}
 
 Im Rahmen der Untersuchungen mit der im Praktikum erarbeiteten Softwarelösung sind einige verblüffende und interessante Artefakte sichtbar geworden.
-Unabhängig von dem Winkel der Landebahn zeigte sich, dass der südöstliche Teil von NRW keine geeigneten Landebahnen bietet. Dies ist der Tatsache geschuldet, dass dort Gebirgszüge wie das Süderbergland und das Sauerland zu findet sind.
+Unabhängig von dem Winkel der Landebahn zeigte sich, dass der südöstliche Teil von NRW keine geeigneten Landebahnen bietet. Dies ist der Tatsache geschuldet, dass dort Gebirgszüge wie das Süderbergland und das Sauerland zu finden sind.
 Entlang der niederländischen Grenze und an der Grenze zu Niedersachsen ist das Gebiet flacher.
 Weiterhin ist überraschend, dass die ca 100 Mio Datenpunkte in so kurzer Zeit und mit so wenig Speicherbedarf bearbeitet werden können. Selbst auf einer kleinen virtuellen Maschine lief die Durchmusterung sehr zügig.
 Weiterhin war überraschend, dass die Programmübersetzung mit optimiertem Code eine extreme Beschleunigung brachte.
 Diese konnte durch das Threading noch weiter gesteigert werden.
 Allerdings zeigt sich auch, dass vermutlich schon bei recht kleiner Parallelität (4-fach parallel) der Speed-up nicht mehr linear mit Anzahl der Prozessoren korreliert.
-Die Berechnung der Varianz der Landebahn bzw. das Auffinden der optimalen Landebahnen aus einer Fläche benötigt in sich schon relativ viele Rechenoperationen. Hier könnte nochmals eine feingranularere eine Parallelisierung vorgenommen werden.
-Es könnten weitere Parameter eingeführt werden, um noch mehr Randbedingungen an die Qualität einer Landebahn zu stellen. Dieses benötigt aber sicherlich noch mehr fachspezifischen Input.
-Interessant wäre es, Datensets mit mehr Datenpunkten zu untersuchen und die Laufzeit dort zu untersuchen. Insbesondere, wenn die Fläche in eine größere Anzahl ein Subkacheln gesplittet wird.
+Die Berechnung der Varianz der Landebahn bzw. das Auffinden der optimalen Landebahnen aus einer Fläche benötigt in sich schon relativ viele Rechenoperationen. Hier könnte nochmals eine feingranulare eine Parallelisierung vorgenommen werden.
+Es könnten weitere Parameter eingeführt werden, um noch mehr Randbedingungen an die Qualität einer Landebahn zu stellen. Dieses benötigt aber sicherlich noch mehr domänenpezifischen Input.
+Interessant wäre es, Datensets mit mehr Datenpunkten und die Laufzeit bei diesen Randbedingungen zu untersuchen. Insbesondere, wenn die Fläche in eine größere Anzahl von Subkacheln gesplittet wird.
  
 \section{Richtungskorrektur des GeoTIFF}
 \section{Push für Webclient}
 \section{Merge als nachgeschalteter Prozess aus dem Speicher}
 \section{Kollisionsabfrage mit Objekten aus OSM}
 \section{Parallele Bearbeitung mehrerer Kacheln per MPI}
-Besonders bei größeren Datensätzen wäre es interessant, die Laufzeiteigenschaften der Software zu untersuchen. Bei sehr großen Datensätze wäre ein embedding in eine MPI Lösung vielleicht interessant, die Daten innerhalb eines Clusters verteilt. Pro Knoten könnte dann mit Threading eine feingranulare Parallelisierung durchgeführt werden.
+Besonders bei größeren Datensätzen wäre es interessant, die Laufzeiteigenschaften der Software zu untersuchen. Bei sehr großen Datensätze wäre ein embedding in eine MPI Lösung vielleicht interessant, das die Daten innerhalb eines Clusters verteilt. Pro Knoten könnte dann mit Threading eine feingranulare Parallelisierung durchgeführt werden.
 \end{document}
