@@ -4,7 +4,7 @@ import getFileinfo from '../actions/getFileinfo';
 import {queryLandingPlanesDB, dropLandingPlanesDB} from '../actions/getDBEntries';
 
 
-import React, {Component,} from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 
@@ -20,7 +20,9 @@ const Startpage = (props) => {
                                     processingState={props.tiffinfo.processingState}/>
             </div>
             {(props.tiffinfo.processingState === "fetchedFileExtent") &&
-            <Map  dropLandingPlanesDB={props.dropLandingPlanesDB} queryLandingPlanesDB={props.queryLandingPlanesDB}/>
+            <Map dropLandingPlanesDB={props.dropLandingPlanesDB}
+                 queryMinVarianceLandingPlanesDB={props.queryMinVarianceLandingPlanesDB}
+                 queryLandingPlanesDB={props.queryLandingPlanesDB}/>
             }
         </div>
     );
@@ -36,8 +38,8 @@ const mapDispatchToProps = dispatch => ({
         e.preventDefault();
         dispatch(getFileinfo(filename));
     },
-    queryLandingPlanesDB: (requestArea) => {
-        dispatch(queryLandingPlanesDB(requestArea));
+    queryLandingPlanesDB: (requestArea, showMergedAreas, showMinVariancePlanes) => {
+        dispatch(queryLandingPlanesDB(requestArea,showMergedAreas, showMinVariancePlanes));
     },
     dropLandingPlanesDB: () => {
         dispatch(dropLandingPlanesDB());
@@ -51,7 +53,6 @@ Startpage.propTypes = {
     getFileinfo: PropTypes.func.isRequired,
     queryLandingPlanesDB: PropTypes.func.isRequired,
     dropLandingPlanesDB: PropTypes.func.isRequired,
-
 };
 
 

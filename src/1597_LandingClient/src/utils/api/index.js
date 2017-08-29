@@ -4,8 +4,8 @@
 // const baseUrl = 'http://10.52.248.92:3000';
 // const baseUrl = 'http://localhost:3000';
 //TODO: Das klappt hier noch gar nicht. Das muss irgendwie im now-build eingetragen werden...
-const baseUrl=( process.env.NOW || process.env.npm_config_NOW || process.argv.indexOf('--NOW') != -1)?
-    'https://umlageserver.now.sh':
+const baseUrl = ( process.env.NOW || process.env.npm_config_NOW || process.argv.indexOf('--NOW') != -1) ?
+    'https://umlageserver.now.sh' :
     'http://localhost:3000';
 
 const apiPrefix = 'api';
@@ -105,7 +105,7 @@ export const getFileInfo = (filename) => {
         .then((response) => {
             if (response.status === 200) return response.json();
 
-            if (response.status === 400) throw new InvalidArgumentsError('Could not get file info for "'+filename+'"');
+            if (response.status === 400) throw new InvalidArgumentsError('Could not get file info for "' + filename + '"');
 
             throw new Error('Other server error');
         });
@@ -120,13 +120,13 @@ export const getFileExtent = (filename) => {
         .then((response) => {
             if (response.status === 200) return response.json();
 
-            if (response.status === 400) throw new InvalidArgumentsError('Could not get file extents for "'+filename+'"');
+            if (response.status === 400) throw new InvalidArgumentsError('Could not get file extents for "' + filename + '"');
 
             throw new Error('Other server error');
         });
 };
 
-export const sendTask2Server = (scanTask) =>{
+export const sendTask2Server = (scanTask) => {
     const payload = scanTask;
 
     return fetch(`${baseUrl}/${apiPrefix}/commands`, createPostRequest(payload))
@@ -139,8 +139,12 @@ export const sendTask2Server = (scanTask) =>{
         });
 };
 
-export const requestGetDbEntries = (geoPolygon) =>{
-    const payload = geoPolygon;
+export const requestGetDbEntries = (geoPolygon, showMergedAreas, showMinVariancePlanes) => {
+    const payload = {
+        geoPolygon,
+        showMergedAreas,
+        showMinVariancePlanes
+    };
 
     return fetch(`${baseUrl}/${apiPrefix}/queries`, createPostRequest(payload))
         .then((response) => {
@@ -152,7 +156,20 @@ export const requestGetDbEntries = (geoPolygon) =>{
         });
 };
 
-export const requestDropDb= () => {
+export const requestGetMinVarianceDbEntries = (geoPolygon) => {
+    const payload = geoPolygon;
+
+    return fetch(`${baseUrl}/${apiPrefix}/queries/bestPlanes`, createPostRequest(payload))
+        .then((response) => {
+            if (response.status === 200) return response.json();
+
+            if (response.status === 400) throw new InvalidArgumentsError('Could query bestPlanes database for ', geoPolygon);
+
+            throw new Error('Other server error');
+        });
+};
+
+export const requestDropDb = () => {
     return fetch(`${baseUrl}/${apiPrefix}/commands/drop`, createDeleteRequest())
         .then((response) => {
             if (response.status === 200) return response.json();
