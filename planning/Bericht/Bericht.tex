@@ -23,6 +23,14 @@
 
 \chapter{Aufgabenstellung}
 
+Im Rahmen des Praktikums sind aus Geoterraindaten mögliche Notlandebahnen für Notfallsituationen im Luftverkehr zu ermitteln. Im Falle eines vollständigen Turbinenschadens kann es z.B. vorkommen, dass der nächstgelegene Flughafen auf Grund aktueller Flughöhe und Windrichtung nicht mehr erreicht werden kann.
+Innerhalb der zur Verfügung gestellten Geländedaten, die im GeoTiff Format vorliegen, soll ein Algorithmus entwickelt werden, der plane Flächen darin ermittelt, die sich zum Landen des Flugzeugs eigenen.
+Die Eignung einer Landebahn ergibt sich aus Parametern wie Länge, Breite, Winkel, Steigung, Holprigkeit und Querneigung der Bahn. Diese werden der Software zur Ermittlung mitgegeben und die Software findet dann Landebahnen, die diesen Kriterien entsprechen.
+Ein weiterer Fokus dieses Praktikums liegt in der Anwendung von Parallelverarbeitung.
+Im speziellen soll eine Parallelisierung mit p_threads durchgeführt werden, also klassische Shared Memory Architektur.
+Es soll untersucht werden, wie sich der Speed-up mit zunehmender Anzahl an Threads verhält und mit der seriellen Abarbeitung verglichen werden.
+Die gefundenen Landebahnen sind dann in einem UI zu visualisieren.
+
 \chapter{Architektur}
 
 \section{Überblick}
