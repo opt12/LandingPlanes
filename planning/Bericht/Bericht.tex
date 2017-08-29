@@ -25,21 +25,21 @@
 
 Im Rahmen des Praktikums sind aus Geoterraindaten mögliche Notlandebahnen für Notfallsituationen im Luftverkehr zu ermitteln. Im Falle eines vollständigen Turbinenausfalls kann es z.B. vorkommen, dass der nächstgelegene Flughafen auf Grund aktueller Flughöhe und Windrichtung nicht mehr erreicht werden kann.
 
-Innerhalb der zur Verfügung gestellten Geländedaten, die im GeoTiff Format vorliegen, soll ein Algorithmus entwickelt werden, der plane Flächen darin ermittelt, die sich zum Landen eines Flugzeugs eigenen.
+Innerhalb der zur Verfügung gestellten Geländedaten, die im GeoTiff Format vorliegen, soll ein Algorithmus entwickelt werden, der plane Flächen darin ermittelt, die sich zum Landen eines Flugzeugs eignen.
 
 Die Eignung einer Landebahn ergibt sich aus Parametern wie Länge, Breite, Winkel, Steigung, Holprigkeit und Querneigung der Bahn.
-Diese werden der Software zur Ermittlung mitgegeben und die Software findet dann Landebahnen, die diesen Kriterien entsprechen.
+Diese werden der Software zur Ermittlung mitgegeben, welche den Kriterien entsprechende Landebahnen findet.
 Insbesondere Breite und Länge der Landebahn müssen konfigurierbar sein, da ein Ultraleichtflugzeug und eine Verkehrsmaschine wie ein Airbus A380 oder eine Boeing 767 völlig unterschiedliche Vorgaben benötigen.
 
-Weiterhin ist der Winkel der Bahn im Zusammenspiel mit den aktuellen vorherrschenden Windverhältnissen von großer Bedeutung. 
+Weiterhin ist der Winkel der Bahn im Zusammenspiel mit den aktuell vorherrschenden Windverhältnissen von großer Bedeutung. 
 Ein weiterer Fokus dieses Praktikums liegt in der Anwendung von Parallelverarbeitung.
 
-Im speziellen soll eine Parallelisierung mit p\_threads durchgeführt werden, also eine klassische Shared Memory Architektur.
+Im Speziellen soll eine Parallelisierung mit p\_threads durchgeführt werden, also eine klassische Shared Memory Architektur.
 Es soll untersucht werden, wie sich der Speed-up mit zunehmender Anzahl an Threads verhält und mit der seriellen Abarbeitung verglichen werden.
 
-Die gefundenen Landebahnen sind dann in einem UI zu visualisieren.
+Die gefundenen Landebahnen sind anschließend in einem UI zu visualisieren.
 
-Die Software soll dem Piloten eine Entscheidungshilfe sein und mögliche Optionen anbieten. Insbesondere die Kombination von Notfall und der teilweise stark eingeschränkten Sicht im Cockpit soll durch eine technische Unterstützung die Entscheidungsfindung erleichtern.
+Die Software soll dem Piloten eine Entscheidungshilfe sein und mögliche Optionen anbieten. Insbesondere die Kombination von Notfall und der teilweise stark eingeschränkten Sicht im Cockpit soll in solch einem Fall eine technische Unterstützung die Entscheidungsfindung erleichtert werden.
 Die Landung selbst soll nach wie vor von einem Menschen durchgeführt werden. Fragestellungen wie Fahrwerk ein- oder ausfahren bleiben hier außen vor.     
 
 \chapter{Architektur}
@@ -88,7 +88,7 @@ minLength & minimale geforderte Länge der Landebahn in [m] \\
 \hline 
 width & Breite der geforderten Landebahn in [m] \\ 
 \hline 
-commSocket & Socket für das abspeichern gefundener Landebahnen in der Mongo DB\\ 
+commSocket & Socket für das Abspeichern gefundener Landebahnen in der Mongo DB\\ 
 \hline 
 *taskDescription & Taskbeschreibung, um die gefundene Bahn korrekt in der Mongo DB abzulegen \\ 
 \hline 
@@ -101,41 +101,41 @@ pixelSize & Auflösung der Rasterpunkte in [m]\\
 \caption{Beschreibung der Aufrufparameter Funktionalität}\label{beschreibungparameter}
 \end{table}
 
-\section{logischer Ablauf innerhalb der Landebahn Erkennung}
+\section{logischer Ablauf innerhalb der Landebahn-Erkennung}
 
 Der logische Ablauf ist schematisch im Nassi-Shneiderman-Diagramm~\ref{nasshnlogisch} dargestellt.
 
 \clearpage
 \begin{figure}
 \begin{struktogramm}(100,200)
-  \assign{Initialisisierung $tile\_worker$ Objekt}
-  \assign{Berechne winkel-, steigungs- und holprigkeitsabhängige Parameter}
-\forallin{Für alle Startpunkte einer Landebahn in gegebener Richtung (Thread Pool)}
+  \assign{Initialisierung $tile\_worker$ Objekt}
+  \assign{berechne winkel-, steigungs- und holprigkeitsabhängige Parameter}
+\forallin{für alle Startpunkte einer Landebahn in gegebener Richtung (Thread Pool)}
 \assign{wähle den nächsten Punkt}
 \ifthenelse[15]{1}{1}
 {kurzreichweitige Steigung zum Vorgänger OK?}{\sTrue}{\sFalse}
 \ifthenelse[17]{1}{6}
 {checke Holprigkeit in Querrichtung}{\sTrue}{\sFalse}
 \change
-\ifthenelse[25]{1}{1}
+\ifthenelse[40]{1}{1}
 {ist die aktuelle Landebahn länger als die Mindestlänge}{\sTrue}{\sFalse}
-\assign{Suche die beste Landebahn mit Mindestlänge}
-\assign{Speichere beide Landebahnen in der Mongo DB}
-\assign{starte eine neue Landbahn mit aktuellem Punkt}
+\assign{suche die beste Landebahn mit Mindestlänge}
+\assign{speichere beide Landebahnen in der Mongo DB}
+\assign{starte eine neue Landebahn mit aktuellem Punkt}
 \change
-\assign{starte eine neue Landbahn mit aktuellem Punkt}
+\assign{starte eine neue Landebahn mit aktuellem Punkt}
 \ifend
 \ifend
 \change
 \ifthenelse[30]{1}{1}
 {ist die aktuelle Landebahn länger als die Mindestlänge}{\sTrue}{\sFalse}
-\assign{Suche die beste Landebahn mit Mindestlänge}
-\assign{Speichere beide Landebahnen in der Mongo DB}
-\assign{starte eine neue Landbahn mit aktuellem Punkt}
+\assign{suche die beste Landebahn mit Mindestlänge}
+\assign{speichere beide Landebahnen in der Mongo DB}
+\assign{starte eine neue Landebahn mit aktuellem Punkt}
 \change
-\assign{starte eine neue Landbahn mit aktuellem Punkt}
+\assign{starte eine neue Landebahn mit aktuellem Punkt}
 \ifend
-\assign{starte eine neue Landbahn mit aktuellem Punkt}
+\assign{starte eine neue Landebahn mit aktuellem Punkt}
 \ifend
 \forallinend
 \end{struktogramm}
@@ -144,18 +144,18 @@ Der logische Ablauf ist schematisch im Nassi-Shneiderman-Diagramm~\ref{nasshnlog
 \clearpage
 \section{Initialisierung}
 
-Die Initialisierung erzeugt zunächst ein $tile\_worker$ Objekt und initialisiert die Instanzvariablen mit den bei der Objekterzeugung angegebenen Durchmusterungscharakteriska wie maximal erlaubte Steigung, Varianz und minimale Landebahnlänge.
+Die Initialisierung erzeugt zunächst ein $tile\_worker$ Objekt und initialisiert die Instanzvariablen mit den bei der Objekterzeugung angegebenen Durchmusterungscharakteristika wie maximal erlaubte Steigung, Varianz und minimale Landebahnlänge.
 Mit dem Aufruf von $check\_steigungen()$ werden dann die optimalen Schrittvektoren und die Startkoordinaten des Durchmusterungsvorgangs bestimmt.
 
 Die optimalen Durchmusterungsvektoren sind winkelabhängig. Die Idee hierbei ist, dass in Abhängigkeit der Auflösung diese Vektoren so initialisiert werden, dass alle möglichen Landebahnen gefunden werden. Dies führt dazu, dass bestimmte Winkel beim Durchmustern dichtere Landebahnen abtasten können. Somit wird sichergestellt, dass jede Landebahn mindestens einmal untersucht wird.
 Zusätzlich dazu werden dann orthogonale Vektoren aus den Schrittvektoren abgeleitet, die zum Durchmustern in orthogonaler Richtung (Landebahnbreite) benutzt werden.
 
-Anhand der gegebenen Kartenauflösung und Schrittvektoren kann dann bestimmt werden, wie viele aufeinander folgende Punkte mindestens benötigt werden, damit die Landebahn die Mindestlängenvoraussetzung erfüllt.
+Anhand der gegebenen Kartenauflösung und Schrittvektoren kann im Anschluss bestimmt werden, wie viele aufeinander folgende Punkte mindestens benötigt werden, damit die Landebahn die Mindestlängenvoraussetzung erfüllt.
 Entsprechendes gilt natürlich auch für die Breite der Bahn.
 
-Anschließend werden dann die Startpunkte der Durchmusterung bestimmt.
+Anschließend werden die Startpunkte der Durchmusterung bestimmt.
 Diese sind abhängig vom Durchmusterungswinkel. 
-Für Winkel, die ein vielfaches von 90 betragen, wird einfach eine Seite des Quadranten abgeschritten. Wird eine Bahn z.B. in $y$-Richtung abgetastet, wird der Abzissenwert inkrementiert / dekrementiert und erneut in $y$-Richtung abgeschritten, bis der Rand der Kachel erreicht wird. Eine schematische Abbildung findet sich in Abbildung~\ref{scanortho}.
+Für Winkel, die ein Vielfaches von 90 betragen, wird einfach eine Seite des Quadranten abgeschritten. Wird eine Bahn z.B. in $y$-Richtung abgetastet, wird der Abszissenwert inkrementiert / dekrementiert und erneut in $y$-Richtung abgeschritten, bis der Rand der Kachel erreicht wird. Eine schematische Darstellung findet sich in Abbildung~\ref{scanortho}.
 
 Bei Winkeln, die nicht einem Vielfachen von 90 entsprechen, werden sukzessiv sowohl Abszisse als auch Ordinate abgeschritten und das Terrain in Diagonaler Richtung durchmustert. 
 Eine schematische Abbildung hierzu findet sich in Abbildung~\ref{scandiagonal}. Hier wird zunächst die Abszisse bis zum Ursprung abgeschritten, bevor der Ordinatenwert inkrementiert wird.
@@ -209,21 +209,21 @@ Eine schematische Abbildung hierzu findet sich in Abbildung~\ref{scandiagonal}. 
 
 Die Parallelverarbeitung arbeitet nach einem Task-Workermodell, welches mit einem Semaphor gesteuert wird. Jeder Startpunkt, der auf einem Kartenrand liegt, ist hier als ein Task anzusehen. Das Semaphor dient dazu, die gleichzeitige Anzahl der Threads zu steuern und zu kontrollieren. Dies dient zum einen Untersuchungszwecken, um festzustellen, die der Speedup bei Variation der Threads ist. Weiterhin würde eine zu hohe Zahl an an Threads die ausführende Maschine in extreme Ressourcenknappheit bringen können.
 
-Das Workerobjekt kontrolliert mit einem mutex die Herausgabe von Startwerten. In einem kritischen Bereich wird durch Inkrementierung des Startpunktes ein neuer Startpunkt generiert, der an einen Worker als Form eines abzuarbeitenden Task herausgegeben wird. Dieser kritische Bereich, der dafür sorgt, dass jeder Startpunkt auch nur wirklich einmal herausgeben wird, stellt somit auch das Bottleneck der Parallelverarbeitung dar. So lange die Anzahl der Punkte pro Bahn und die Berechnungszeit, die ein Thread benötigt, um die Bahn in der vorgegebenen Richtung abzuscannen und die zur Bahn gehörigen Parameter wie Varianz etc. zu berechnen größer ist als die Zeit, die vergeht, bis der Thread wieder in der Warteschlange zum Erhalt eines neuen Startwert aufläuft, sollte dieses Bottleneck gering sein.
+Das Workerobjekt kontrolliert mit einem mutex die Herausgabe von Startwerten. In einem kritischen Bereich wird durch Inkrementierung des Startpunktes ein neuer Startpunkt generiert, der an einen Worker als Form eines abzuarbeitenden Task herausgegeben wird. Dieser kritische Bereich, der dafür sorgt, dass jeder Startpunkt auch nur wirklich einmal herausgeben wird, stellt somit auch das Bottleneck der Parallelverarbeitung dar. So lange die Anzahl der Punkte pro Bahn und die Berechnungszeit, die ein Thread benötigt, um die Bahn in der vorgegebenen Richtung abzuscannen und die zur Bahn gehörigen Parameter wie Varianz etc. zu berechnen größer ist als die Zeit, die vergeht, bis der Thread wieder in der Warteschlange zum Erhalt eines neuen Startwertes aufläuft, sollte dieses Bottleneck gering sein.
 
-Zudem ist zu beachten, dass natürlich nicht alle Landebahnen gleich lang sind. So lange der Startpunkt in der Nähe einer Kartenecke ist und die Durchmusterungsrichtung nur wenige Punkte bis zum Kartenrand umfasst, wird die Durchmusterung schnell vorbei sein und ein neuer Startwert benötigt werden. Dies wird in Abbildung~\ref{scandiagonal} deutlich. Mit der potentiellen Landebahn 3 hat der Thread die meisten Punkte abzuarbeiten während die Bahnen 1 und 5 relativ schnell abgearbeitet seien werden. 
+Zudem ist zu beachten, dass natürlich nicht alle Landebahnen gleich lang sind. So lange der Startpunkt in der Nähe einer Kartenecke ist und die Durchmusterungsrichtung nur wenige Punkte bis zum Kartenrand umfasst, wird die Durchmusterung schnell vorbei sein und ein neuer Startwert benötigt werden. Dies wird in Abbildung~\ref{scandiagonal} deutlich. Mit der potentiellen Landebahn 3 hat der Thread die meisten Punkte abzuarbeiten während die Bahnen 1 und 5 relativ schnell abgearbeitet sein werden. 
 
 \section{Detaillierte Beschreibung des Suchalgorithmus}
 
 Ausgehend vom jeweiligen Startpunkt wird mittels $p\_thread\_create$ ein neuer Thread erzeugt und die Funktion $void *thread\_data::check\_single\_plane(void *x\_void\_ptr)$ als Startroutine mitgegeben. Innerhalb dieses erzeugten Threads existiert eine while Schleife, die solange true returniert, wie noch nicht alle Startpunkte an Threads ausgeben wurden.
 
-Innerhalb einiger verschachtelten Bedingungen wird überprüft, ob der betrachtete Geopunkt tatsächlich Höheninformationen hat und ob die Steigung zu seinem unmittelbaren Vorgänger innerhalb des erlaubten Bereiches liegt.
+Innerhalb einiger verschachtelter Bedingungen wird überprüft, ob der betrachtete Geopunkt tatsächlich Höheninformationen hat und ob die Steigung zu seinem unmittelbaren Vorgänger innerhalb des erlaubten Bereiches liegt.
 
-Trifft dies zu, so ist noch die Steigung benachbarter Punkte in orthogonaler Richtung zu betrachten. Sind all diese Kriterien erfüllt, wird der betrachtete Geopunkt in eine Liste an gültigen Punkten aufgenommen. Diese Prozedur wird so lange wiederholt, bis ein Kriterium nicht mehr erfüllt ist oder der Kartenrand erreicht ist.
+Trifft dies zu, so ist noch die Steigung benachbarter Punkte in orthogonaler Richtung zu betrachten. Sind all diese Kriterien erfüllt, wird der betrachtete Geopunkt in eine Liste gültiger Punkte aufgenommen. Diese Prozedur wird so lange wiederholt, bis ein Kriterium nicht mehr erfüllt oder der Kartenrand erreicht ist.
 
 Ist eines dieser Abbruchkriterien erfüllt, wird überprüft, ob das Ensemble aneinanderhängender Punkte die Mindestlänge der geforderten Landebahn erfüllt.
 
-Dann wird eine Subroutine $find\_best\_planes()$ aufgerufen, welche innerhalb der gefunden Liste an zusammenhängenden Punkten zwei Landebahnen ermittelt. Zum einen wird die längste Bahn, die das Steigungskriterium erfüllt ermittelt und des weiteren die Landebahn, die die geringste Varianz aufweist und trotzdem noch die geforderte Mindestlänge erreicht. 
+Dann wird eine Subroutine $find\_best\_planes()$ aufgerufen, welche innerhalb der gefunden Liste zusammenhängender Punkte zwei Landebahnen ermittelt. Zum einen wird die längste Bahn, die das Steigungskriterium erfüllt ermittelt und zum Anderen die Landebahn, welche die geringste Varianz aufweist und trotzdem noch die geforderte Mindestlänge erreicht. 
 Beide Bahnen werden dann in einer Mongo DB abgelegt.
 
 \section{Klassen und Objekte}
@@ -248,12 +248,12 @@ Die Container-Klasse des $tile\_worker$ hat in seiner endgültigen Form keine ko
 Innerhalb der Thread-Klasse findet sich eine lokale Variable $coordlist$, welche vom Typ $vector< pair<int,int> >$ ist.
 Hier werden temporär aneinanderhängende Ketten von Landebahnpunktkoordinaten vorgehalten. Die gespeicherten Punkte sind dabei lediglich Referenzen auf das statische Kartenobjekt. Ohne dieses wären die Informationen bedeutungslos.
 
-Der Vorteil des vector templates in C++ ist der optimierte random access, welcher in der Komplexizitätsklasse O(1) einzugruppieren ist und die Verwaltung sehr komfortabel mittels Member-Funktionen vorgegeben ist.
+Der Vorteil des vector templates in C++ ist der optimierte random access, welcher in der Komplexizitätsklasse O(1) einzugruppieren ist und die Verwaltung sehr komfortabel mittels Member-Funktionen bereitstellt.
 
-Das Kachelobjekt selbst stellt die Höheninformationen eines 2-dimensionalen Kartenausschnitts in einem linearen Array dar. Der Durchmusterungsalgorithmus benötigt allerdings einen Mappingmechanisumus eines 2-dimensionalen Punktes auf das eindimensionales Array.
+Das Kachelobjekt selbst stellt die Höheninformationen eines 2-dimensionalen Kartenausschnitts in einem linearen Array dar. Der Durchmusterungsalgorithmus benötigt allerdings einen Mappingmechanisumus eines 2-dimensionalen Punktes auf das eindimensionale Array.
 
 Dies wird von der Funktion $access\_single\_element(int\ x, int\ y)$ bereitgestellt. Anhand der Information, wie viele Datenpunkte der Kartenausschnitt in $x$-Richtung beinhaltet, wird das Mapping auf das eindimensionale Array dargestellt. Im Falle einer Bereichsüberschreitung, wird $numeric\_limits<float>::min()$ zurückgegeben.
-Auch dieser Zugriff ist der Komplexitätsklasse O(1) zuzuordnen und unabhängig von Datengröße.
+Auch dieser Zugriff ist der Komplexitätsklasse O(1) zuzuordnen und unabhängig von der Datengröße.
 
 \begin{lstlisting}
 float tile_worker::access_single_element(int x, int y)
@@ -270,13 +270,13 @@ Dies führt dazu, dass der Speicherbedarf ausschließlich von der Anzahl der Dat
  
 
 
-\section{Bestimmung des Speedups in Abhängigkeit des Parallelisierunggrades}
+\section{Bestimmung des Speedups in Abhängigkeit des Parallelisierungsgrades}
 
 Um den Speedup zu bestimmen, wurde analysiert, wie sich die Laufzeit mit zunehmender Anzahl an Threads verändert. So lange die Bearbeitung einer einzelnen Bahn viel länger dauert als die in der kritischen Sektion benötigte Zeit, um einen neuen Startpunkt zu bestimmen, sollten die Threads nicht blockiert sein.
 
-Bei Winkeln, die ein vielfaches von $90$ betragen, sind alle Landebahnen gleich lang --- also sind gleich viele Punkte zu analysieren (siehe Abbildung~\ref{scanortho}).
+Bei Winkeln, die ein Vielfaches von $90$ betragen, sind alle Landebahnen gleich lang --- also sind gleich viele Punkte zu analysieren (siehe Abbildung~\ref{scanortho}).
 
-Bei Bahnen, die diagonal verlaufen, sind die ersten Bahnen kurz, nehmen dann in ihrer Länge zu, bis als Startpunkt die nächstliegende Ecke erreicht ist, und nimmt dann in ihrer Länge wieder ab (siehe Abbildung~\ref{scandiagonal}). 
+Bei Bahnen, die diagonal verlaufen, sind die ersten Bahnen kurz, nehmen dann in ihrer Länge zu, bis als Startpunkt die nächstliegende Ecke erreicht ist, und nehmen dann in ihrer Länge wieder ab (siehe Abbildung~\ref{scandiagonal}). 
 Weiterhin ist zu beachten, dass je nach Topologie der Bahn unterschiedlich viele (im Grenzfall gar keine) geeignete Flächen gefunden werden, die dann fein granular weiter untersucht werden müssen (längste Bahn und die mit der kleinsten Varianz). So ist schwer vorhersagbar, wie lange die Einzellaufzeit eines Threads ist.
 Für die zur Verfügung gestellten Kartendaten von Nordrhein-Westfalen sind die Laufzeiten in Abhängigkeit von Winkel und Threadanzahl in Tabelle~\ref{laufzeiten} dargestellt.
 
@@ -345,7 +345,7 @@ N$\rightarrow$S (0$^\circ$) & 734 & 16 & 8 & 2733 & 56 \\
 
 \subsection{Diskussion der Messergebnisse}
 
-Als Landebahneigenschaften wurden eine Länge von 4000~m, eine Holprigkeit in Längs- und Querrichtung von 3~\%, sowie eine maximale Steigung von 10~\% gefordert. Dieses Parameterset wurde so gewählt, dass nicht zu viele Landebahnen in die Datenbank geschrieben werden müssen, da dies auch einen signifikanten CPU Anteil benötigt. Weiterhin ist das Rendering im Browser bei sehr vielen bahnen CPU intensiv. Daher erschien das oben gewählte Parameterset als schlüssig.
+Als Landebahneigenschaften wurden eine Länge von 4000~m, eine Holprigkeit in Längs- und Querrichtung von 3~\%, sowie eine maximale Steigung von 10~\% gefordert. Dieses Parameterset wurde so gewählt, dass nicht zu viele Landebahnen in die Datenbank geschrieben werden müssen, da dies auch einen signifikanten CPU Anteil benötigt. Weiterhin ist das Rendering im Browser bei sehr vielen Bahnen CPU-intensiv. Daher erschien das oben gewählte Parameterset als schlüssig.
 Auffällig ist, dass selbst im Singlethreadbetrieb bei der Erhöhung der CPUs ein Speedup entsteht. Dies ist dem Umstand geschuldet, dass auf derselben VM noch der Browser und die Datenbankengine gehostet sind.
 Trotzdem wird das Parameterset 1 CPU, 1 Thread als Referenz für den Speedup betrachtet.
 
@@ -363,7 +363,7 @@ Trotzdem wird das Parameterset 1 CPU, 1 Thread als Referenz für den Speedup bet
   8 & 4,2 \\ 
  \hline 
  \end{tabular}  
- \caption{Speedup am Beispiel der Messergebnisse in Nord / Südausrichtung.}
+ \caption{Speedup am Beispiel der Messergebnisse in Nord- / Südausrichtung.}
 \end{figure}
 
 \begin{figure}
@@ -378,7 +378,7 @@ Trotzdem wird das Parameterset 1 CPU, 1 Thread als Referenz für den Speedup bet
  4 & 3,13 \\ 
  \hline 
  \end{tabular}  
- \caption{Speedup am Beispiel der Messergebnisse in Ost / Westausrichtung.}
+ \caption{Speedup am Beispiel der Messergebnisse in Ost- / Westausrichtung.}
 \end{figure}
 
 \begin{figure}
@@ -393,7 +393,7 @@ Trotzdem wird das Parameterset 1 CPU, 1 Thread als Referenz für den Speedup bet
  4 & 3,35 \\ 
  \hline 
  \end{tabular}  
- \caption{Speedup am Beispiel der Messergebnisse in Nordnordwest / Südsüdostausrichtung.}
+ \caption{Speedup am Beispiel der Messergebnisse in Nordnordwest- / Südsüdostausrichtung.}
 \end{figure}
 
 Weiterhin zeigt sich, dass eine weitere Erhöhung der Threadanzahl über die tatsächlich verfügbaren CPUs ab einem gewissen Punkt schädlich ist.
@@ -440,8 +440,8 @@ Da beide Funktionen innerhalb des Threading aufgerufen werden, ist aus laufzeitt
 
 Bevor Codeausführung mittels Parallelverarbeitung zur Beschleunigung gebracht werden soll, lohnt es sich meist, durch geeignete Compilerdirektiven die serielle Codeausführung zu beschleunigen.
 
-Der Code wurde mit einem gcc Version 4.8.5 devtoolset version 4 compiliert. Die Standardübersetzung ist dabei ohne eingeschalteten Optimizer. 
-Durch die Benutzung des -O3 Optimizer Direktivs ist eine Codebeschleunigung von 1300 \% (11 sec vs. 147 sec) beobachtet worden. 
+Der Code wurde mit einem gcc Version 4.8.5 devtoolset version 4 compiliert. Per default findet dabei eine Übersetzung ohne eingeschalteten Optimizer statt. 
+Durch die Benutzung des -O3 Optimizer Direktivs ist eine Codebeschleunigung von 1300~\% (11 sec vs. 147 sec) beobachtet worden. 
 Eine Übersicht über die verwendeten Optimierungsschritte sind unter https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html einzusehen.
 
 \chapter{Datenbank Manager}
@@ -458,11 +458,11 @@ Eine Übersicht über die verwendeten Optimierungsschritte sind unter https://gc
 Im Rahmen der Untersuchungen mit der im Praktikum erarbeiteten Softwarelösung sind einige verblüffende und interessante Artefakte sichtbar geworden.
 Unabhängig von dem Winkel der Landebahn zeigte sich, dass der südöstliche Teil von NRW keine geeigneten Landebahnen bietet. Dies ist der Tatsache geschuldet, dass dort Gebirgszüge wie das Süderbergland und das Sauerland zu finden sind.
 Entlang der niederländischen Grenze und an der Grenze zu Niedersachsen ist das Gebiet flacher.
-Weiterhin ist überraschend, dass die ca 100 Mio Datenpunkte in so kurzer Zeit und mit so wenig Speicherbedarf bearbeitet werden können. Selbst auf einer kleinen virtuellen Maschine lief die Durchmusterung sehr zügig.
+Weiterhin ist überraschend, dass die ca. 100 Mio Datenpunkte in so kurzer Zeit und mit so wenig Speicherbedarf bearbeitet werden können. Selbst auf einer kleinen virtuellen Maschine lief die Durchmusterung sehr zügig.
 Weiterhin war überraschend, dass die Programmübersetzung mit optimiertem Code eine extreme Beschleunigung brachte.
 Diese konnte durch das Threading noch weiter gesteigert werden.
-Allerdings zeigt sich auch, dass vermutlich schon bei recht kleiner Parallelität (4-fach parallel) der Speed-up nicht mehr linear mit Anzahl der Prozessoren korreliert.
-Die Berechnung der Varianz der Landebahn bzw. das Auffinden der optimalen Landebahnen aus einer Fläche benötigt in sich schon relativ viele Rechenoperationen. Hier könnte nochmals eine feingranulare eine Parallelisierung vorgenommen werden.
+Allerdings zeigt sich auch, dass vermutlich schon bei recht kleiner Parallelität (4-fach parallel) der Speed-up nicht mehr linear mit der Anzahl der Prozessoren korreliert.
+Die Berechnung der Varianz der Landebahn bzw. das Auffinden der optimalen Landebahnen aus einer Fläche benötigt in sich schon relativ viele Rechenoperationen. Hier könnte nochmals eine feingranulare Parallelisierung vorgenommen werden.
 Es könnten weitere Parameter eingeführt werden, um noch mehr Randbedingungen an die Qualität einer Landebahn zu stellen. Dieses benötigt aber sicherlich noch mehr domänenpezifischen Input.
 Interessant wäre es, Datensets mit mehr Datenpunkten und die Laufzeit bei diesen Randbedingungen zu untersuchen. Insbesondere, wenn die Fläche in eine größere Anzahl von Subkacheln gesplittet wird.
  
