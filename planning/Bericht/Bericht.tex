@@ -211,7 +211,7 @@ Die Parallelverarbeitung arbeitet nach einem Task-Workermodell, welches mit eine
 
 Das Workerobjekt kontrolliert mit einem mutex die Herausgabe von Startwerten. In einem kritischen Bereich wird durch Inkrementierung des Startpunktes ein neuer Startpunkt generiert, der an einen Worker als Form eines abzuarbeitenden Task herausgegeben wird. Dieser kritische Bereich, der dafür sorgt, dass jeder Startpunkt auch nur wirklich einmal herausgeben wird, stellt somit auch das Bottleneck der Parallelverarbeitung dar. So lange die Anzahl der Punkte pro Bahn und die Berechnungszeit, die ein Thread benötigt, um die Bahn in der vorgegebenen Richtung abzuscannen und die zur Bahn gehörigen Parameter wie Varianz etc. zu berechnen größer ist als die Zeit, die vergeht, bis der Thread wieder in der Warteschlange zum Erhalt eines neuen Startwert aufläuft, sollte dieses Bottleneck gering sein.
 
-Zudem ist zu beachten, dass natürlich nicht alle Landebahnen gleich lang sind. So lange der Startpunkt in der Nähe einer Kartenecke ist und die Durchmusterungsrichtung nur wenige Punkte bis zum Kartenrand umfasst, wird die Durchmusterung schnell vorbei sein und ein neuer Startwert benötigt werden. Dies wird in Abbildung~\ref{scandiagonal} deutlich. Mit der potentiellen Landebahn 3 hat der Thread die meisten Punkte abzuarbeiten während die Bahnen 1 und 5 relativ schnell abgearbeitet sind. 
+Zudem ist zu beachten, dass natürlich nicht alle Landebahnen gleich lang sind. So lange der Startpunkt in der Nähe einer Kartenecke ist und die Durchmusterungsrichtung nur wenige Punkte bis zum Kartenrand umfasst, wird die Durchmusterung schnell vorbei sein und ein neuer Startwert benötigt werden. Dies wird in Abbildung~\ref{scandiagonal} deutlich. Mit der potentiellen Landebahn 3 hat der Thread die meisten Punkte abzuarbeiten während die Bahnen 1 und 5 relativ schnell abgearbeitet seien werden. 
 
 \section{Detaillierte Beschreibung des Suchalgorithmus}
 
@@ -239,7 +239,7 @@ Für den produktiven Einsatz ist sie obsolet.
 
 \section{Verwendete Datenstrukturen}
 
-Die wichtigsten Datenstrukturen, die während der Durchmusterung benötigt werden, sind das übergebene Kachelobjekt, ein Objekt zur Verwaltung der aktuell gefundenen zusammenhängenden Punkte, sowie den $tile\_worker$, der die Threads kontrolliert und Durchmusterungsparameter kapselt. 
+Die wichtigsten Datenstrukturen, die während der Durchmusterung benötigt werden, sind das übergebene Kachelobjekt, ein Objekt zur Verwaltung der aktuell gefundenen zusammenhängenden Punkte, sowie der $tile\_worker$, der die Threads kontrolliert und Durchmusterungsparameter kapselt. 
 
 \subsection{Einfluss der Datenstrukturen auf die Performanz}
 
@@ -248,7 +248,7 @@ Die Container-Klasse des $tile\_worker$ hat in seiner endgültigen Form keine ko
 Innerhalb der Thread-Klasse findet sich eine lokale Variable $coordlist$, welche vom Typ $vector< pair<int,int> >$ ist.
 Hier werden temporär aneinanderhängende Ketten von Landebahnpunktkoordinaten vorgehalten. Die gespeicherten Punkte sind dabei lediglich Referenzen auf das statische Kartenobjekt. Ohne dieses wären die Informationen bedeutungslos.
 
-Der Vorteil des vector templates in C++ ist der optimierte random access, welcher in der Komplexizitätsklasse O(1) zu finden ist und die Verwaltung sehr komfortabel mittels Member-Funktionen vorgegeben ist.
+Der Vorteil des vector templates in C++ ist der optimierte random access, welcher in der Komplexizitätsklasse O(1) einzugruppieren ist und die Verwaltung sehr komfortabel mittels Member-Funktionen vorgegeben ist.
 
 Das Kachelobjekt selbst stellt die Höheninformationen eines 2-dimensionalen Kartenausschnitts in einem linearen Array dar. Der Durchmusterungsalgorithmus benötigt allerdings einen Mappingmechanisumus eines 2-dimensionalen Punktes auf das eindimensionales Array.
 
@@ -277,18 +277,18 @@ Um den Speedup zu bestimmen, wurde analysiert, wie sich die Laufzeit mit zunehme
 Bei Winkeln, die ein vielfaches von $90$ betragen, sind alle Landebahnen gleich lang --- also sind gleich viele Punkte zu analysieren (siehe Abbildung~\ref{scanortho}).
 
 Bei Bahnen, die diagonal verlaufen, sind die ersten Bahnen kurz, nehmen dann in ihrer Länge zu, bis als Startpunkt die nächstliegende Ecke erreicht ist, und nimmt dann in ihrer Länge wieder ab (siehe Abbildung~\ref{scandiagonal}). 
-Weiterhin ist zu beachten, dass je nach Topologie der Bahn unterschiedlich viele (im Grenzfall gar keine) geeigneten Flächen gefunden werden, die dann fein granular weiter untersucht werden müssen (längste Bahn und die mit der kleinsten Varianz). So ist schwer vorhersagbar, wie lange die Einzellaufzeit eines Threads ist.
-Für die zur Verfügung gestellten Kartendaten von Nordrhein-Westfalen sind die Laufzeiten in Abhängigkeit von Winkel und Threadanzahl in Tabelle x dargestellt.
+Weiterhin ist zu beachten, dass je nach Topologie der Bahn unterschiedlich viele (im Grenzfall gar keine) geeignete Flächen gefunden werden, die dann fein granular weiter untersucht werden müssen (längste Bahn und die mit der kleinsten Varianz). So ist schwer vorhersagbar, wie lange die Einzellaufzeit eines Threads ist.
+Für die zur Verfügung gestellten Kartendaten von Nordrhein-Westfalen sind die Laufzeiten in Abhängigkeit von Winkel und Threadanzahl in Tabelle~\ref{laufzeiten} dargestellt.
 
 \subsection{Erläuterung des Messverfahren}
 
 Die Messung wurde in einer virtualisierten Umgebung durchgeführt. Als Host-System diente ein Windows 7 64 bit System, welches hardwaretechnisch auf einem Intel i7-4770K , 3.5 Ghz, 16 GB RAM System lokalisiert ist. Die Virtualisierung wurde mit Virtualbox mit einem Linux Guest System (Centos Linux 7.0, 6 GB RAM) durchgeführt. 
 Die Anzahl der virtuellen CPUs wurde von 1-8 variiert.
-Pro vorgegebener Parametrisierung wurden 4 unabhängige identische Messungen gemacht. In der Tabelle angegeben ist der Mittelwert mit Standardabweichung.
+Pro vorgegebener Parametrisierung wurden 4 unabhängige identische Messungen gemacht. In Tabelle~\ref{laufzeiten} angegeben ist der Mittelwert mit Standardabweichung dieser Läufe.
  
 
 \subsection{Messergebnisse}
-
+\begin{figure} 
 \begin{tabular}{|c|c|c|c|c|c|}
 \hline 
 Richtung & Bahnen & Threads & v CPUs & Zeitbedarf [ms] & Standardabweichung [ms] \\ 
@@ -339,11 +339,13 @@ NNO$\rightarrow$SSW (45$^\circ$) & 704 & 8 & 4 & 5406 & 442 \\
 \hline
 N$\rightarrow$S (0$^\circ$) & 734 & 16 & 8 & 2733 & 56 \\ 
 \hline 
-\end{tabular} 
+\end{tabular}
+\caption{Laufzeiten verschiedener Durchmusterungen in Abhängigkeit der Threads und virtuellen CPUs}\label{laufzeiten}
+\end{figure} 
 
 \subsection{Diskussion der Messergebnisse}
 
-Als Landebahneigenschaften wurden eine Länge von 4000m, eine Holprigkeit in Längs- und Querrichtung von 3\%, sowie eine maximale Steigung von 10 \% gefordert. Dieses Parameterset wurde so gewählt, dass nicht zu viele Landebahnen in die Datenbank geschrieben werden mussten, da dies auch einen signifikanten CPU Anteil benötigt. Weiterhin ist das Rendering im Browser bei sehr vielen bahnen CPU intensiv. Daher erschien das oben gewählte Parameterset als schlüssig.
+Als Landebahneigenschaften wurden eine Länge von 4000~m, eine Holprigkeit in Längs- und Querrichtung von 3~\%, sowie eine maximale Steigung von 10~\% gefordert. Dieses Parameterset wurde so gewählt, dass nicht zu viele Landebahnen in die Datenbank geschrieben werden müssen, da dies auch einen signifikanten CPU Anteil benötigt. Weiterhin ist das Rendering im Browser bei sehr vielen bahnen CPU intensiv. Daher erschien das oben gewählte Parameterset als schlüssig.
 Auffällig ist, dass selbst im Singlethreadbetrieb bei der Erhöhung der CPUs ein Speedup entsteht. Dies ist dem Umstand geschuldet, dass auf derselben VM noch der Browser und die Datenbankengine gehostet sind.
 Trotzdem wird das Parameterset 1 CPU, 1 Thread als Referenz für den Speedup betrachtet.
 
@@ -391,11 +393,11 @@ Trotzdem wird das Parameterset 1 CPU, 1 Thread als Referenz für den Speedup bet
  4 & 3,35 \\ 
  \hline 
  \end{tabular}  
- \caption{Speedup am Beispiel der Messergebnisse in Nord / Südausrichtung.}
+ \caption{Speedup am Beispiel der Messergebnisse in Nordnordwest / Südsüdostausrichtung.}
 \end{figure}
 
-Weiterhin zeigt sich, dass eine weitere Erhöhung der Threadanzahl über die tatsächlich verfügbaren CPUs ab einem gewissen Punkt schädlich wird.
-im Falle von 8 CPUs sind die Ergebnisse unter Umständen nicht aussagekräftig, da die Virtualisierungssoftware eine ungültige Konfiguration anzeigte. Zudem braucht auch das Host Betriebssystem Ressourcen, die natürlich nicht der VM und der Software zur Verfügung stehen.
+Weiterhin zeigt sich, dass eine weitere Erhöhung der Threadanzahl über die tatsächlich verfügbaren CPUs ab einem gewissen Punkt schädlich ist.
+Im Falle von 8 CPUs sind die Ergebnisse unter Umständen nicht aussagekräftig, da die Virtualisierungssoftware eine ungültige Konfiguration anzeigte. Zudem braucht auch das Host Betriebssystem Ressourcen, die natürlich nicht der VM und der Software zur Verfügung stehen.
 
 \begin{tikzpicture} 
 \begin{axis}[ 
