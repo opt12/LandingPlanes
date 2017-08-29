@@ -614,7 +614,7 @@ Im Falle von 8 CPUs sind die Ergebnisse unter Umständen nicht aussagekräftig, 
 
 \begin{tikzpicture} 
 \begin{axis}[ 
-  xlabel=Anzahl CPU, ylabel=Speedup] 
+  xlabel=Anzahl CPU, ylabel=Speedup, legend style={at={(axis cs:8.3,1)},anchor=south east}] 
   \addplot[color=red,mark=x] coordinates { 
   (1,1) 
   (2,2.11) 
@@ -631,9 +631,11 @@ Im Falle von 8 CPUs sind die Ergebnisse unter Umständen nicht aussagekräftig, 
   (2,2.02) 
   (4,3.35)    
   }; 
-  
+    \addlegendentry{Nord-Süd}
+  \addlegendentry{Ost-West}
+    \addlegendentry{Nordnordwest-Südsüdost}
   \end{axis} 
-  
+
   \end{tikzpicture}
   
 Eine weiterführende Analyse war aufgrund mangelnder Hardwareressourcen nicht möglich.
