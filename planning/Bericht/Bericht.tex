@@ -1,10 +1,13 @@
 \documentclass[10pt,a4paper]{report}
+\usepackage{hyperref}	%Muss ganz am Anfang geladen werden: https://tex.stackexchange.com/a/126454
+\usepackage{url}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{listings}
 \usepackage{struktex}
+\usepackage{gensymb}
 
 \usepackage[ngerman]{babel}
 
@@ -44,17 +47,227 @@ Die Landung selbst soll nach wie vor von einem Menschen durchgeführt werden. Fr
 
 \chapter{Architektur}
 
+Zur Lösung der Aufgabenstellung muss zunächst eine Systemarchitektur festgelegt werden.
+
 \section{Überblick}
-\section{Grobgranulare Parallelität}
+Zum Einlesen der Rohdaten, Steuern der Applikation und zum Auffinden, Persisitieren und Anzeigen der potentiellen Notlandefelder sind vielfältige Schritte notwendig. Diese haben jeweils ihre eigenen spezifischen Herausforderungen und sind bei näherer Betrachtung sogar relativ unabhängig voneinander lösbar.
+
+Daraus ergibt sich die Möglichkeit das System aus relativ lose gekoppelten Komponenten aufzubauen, welche jeweils in einer Programmiersprache entwickelt werden, die auf die jeweilige Aufgabe abgestimmt ihre Stärken ausspielen kann. In der vorliegenden Aufgabenstellung wurde entschieden die Aufgaben, welche vornehmlich große Datenmengen bewegen und "`Number Crunching"' betreiben in C/C++ zu implementieren, während Datenbankzugriffe und das User-Interface in Javascript realisiert wurden.
+
+Eine grobe Übersicht über di einzelnen Systemkomponenten bietet Abbildung \ref{architektur}.
+
+\begin{figure}[h]
+	\includegraphics[width=\textwidth]{../Architektur/Architektur.png}
+	\caption{Architekturüberblick} \label{architektur}
+\end{figure}
+
+Hier sind vier unabhängige Komponenten zu erkennen:
+\begin{itemize}
+	\item das UserInterface
+	\item der DatabaseManager
+	\item die SearchEngine
+	\item die Datenbank
+\end{itemize}
+
+Abgebildet auf eine Model-View-Controller-Architektur (MVC) würde das User Interface der View entsprechen, der Database Manager dem Controller, die Datenbank dem Model. Die Search Engine ist der Geschäftslogik zuzuordnen und liegt kommuniziert ausschließlich über den Controller.
+In der gezeigten Architektur fällt der mergeTask innerhalb des Database Managers etwas aus der Reihe. Dieser Task wurde erst relativ spät hinzugefügt um überlappende potentielle Landebahnen zu größeren Landefeldern zusammenzufassen. Dies ist ein Task, der grundsätzlich vollkommen unabhängig von allen anderen Aufgaben im Hintergrund ablaufen könnte und damit Teil der Geschäftslogik wäre. In der aktuellen Ausbaustufe wurde dieser Task jedoch aus Praktikabilitätsgründen zusammen mit dem Database Manager realisiert. Details dazu folgen in einem eigenen Abschnitt weiter unten.
+
+In der Abbildung \ref{architektur} ist eingezeichnet in welcher Sprache/Programmiersystem die einzelnen Komponenten realisiert wurden. zusätzlich sind wichtige Komponenten und Bibliotheken in grün angegeben.
+
+Die Kommunikation der Komponenten untereinander erfolgt über verschiedene Standard-Mechanismen:
+\begin{itemize}
+	\item lokale Unix Sockets zur Kommunikation des Database Managers mit der Search Engine.
+	\item REST (Representational State Transfer) -API zur Kommunikation des User Interface mit dem Controller
+	\item TCP/IP zur Kommunikation des Database Managers mit der Datenbank
+\end{itemize}
+
+
+\section{Grobkörnige Parallelität}
+Aus der Abbildung ist ersichtlich, dass die vier Hauptkomponenten des Systems nur sehr lose gekoppelt sind. Die eingesetzten Kommunikationsprotokolle zwischen den Komponenten sind allesamt unabhängig von der konkreten physikalischen Verbindung. Die ausgetauschten Datenmengen zwischen den einzelnen Komponenten sind relativ klein. Daraus ergibt sich die Möglichkeit alle vier Komponenten auf unterschiedlichen Rechnern zu instantiieren und ablaufen zu lassen.
+
+Damit ergibt sich schon eine gewisse, sehr grobkörnige Parallelität, welche bei Engpässen der Rechenleistung oder des Speichers für bestimmte Tasks ausgenutzt werden kann um die Gesamtperformance des Systems zu steigern. auch können für die einzelnen Aufgaben unterschiedliche, heterogene Maschinen eingesetzt werden. So stellt eine Datenbank andere Anforderungen an die Maschine als das Durchsuchen großer Datenmengen mit der Search Engine.
+
+Ein weiterer Vorteil der konsequenten Trennung der View vom Rest der Software liegt darin, dass die Ergebnisse der Durchmusterung auch auf relativ schwachbrüstigen Geräten angezeigt werden können, welche lediglich über einen Javascript fähigen Browser und eine Netzwerkverbindung verfügen.
+
 \section{Feingranulare Parallelität}
 
-\chapter{Datenformate und Verarbeitung}
-\section{GeoTIFF}
-\subsection{Datenextraktion}
-\subsection{Koordinatensysteme}
-\section{Speicherformat: GeoJSON}
+Während die grobkörnige Parallelität sich direkt aus der gewählten Architektur ergibt und quasi gratis kommt, so ergeben sich für die rechenintensive Aufgabe des Durchmusterns der Ausgangsdaten weitere Anforderungen, die über eine solche lose Kopplung hinausgehen.
 
-\chapter{Durchmusterung der Geotiff Daten und Auffinden der Landebahnen}
+Da inzwischen jeder halbwegs moderne Rechner über Mehrkernprozessoren und relativ viel gemeinsamen Speicher verfügt lag es nahe die rechenintensive Aufgabe der Datenanalyse explizit zu parallelisieren und dazu shared Memory Techniken zu nutzen. Genutzt wurden dafür im vorliegenden Lösungsvorschlag POSIX Threads, die mittels der \emph{pthreads}-Routinen eingebunden werden können.
+
+Zusätzlich zu den Number-Crunching-threads, welche in der Bilbiothek "`Durchmusterung"' zur Performance-Steigerung eingesetzt werden, ist die gesamte Komponente searchEngine auf mehrere Threads aufgeteilt um eine reaktive Applikation zu realisieren. Details dazu werden im nächsten Kapitel erläutert.
+
+
+\chapter{Komponente "`searchEngineWrapper"'}
+
+Die Komponente "`searchEngineWrapper"' ist in C/C++ realisiert und dient dazu vom Controller Aufgaben entgegen zunehmen und auszuführen. Dazu gehört die Kommunikation mit der "`Außenwelt"' über UNIX-Sockets, die Verwaltung der Warteschlange mit Aufträgen, das Einlesen der Daten mit den dazugehörigen Koordinatentransformationen, die Aufteilung auf mehrere Kacheln falls nicht alle Daten in den Speicher passen und der Start der eigentlichen Durchmusterung.
+
+Zur Kommunikation der Systembestandteile untereinander kommt das simple JSON-Format\footnote{siehe dazu \url{http://www.json.org/}} zum Einsatz. JSON bietet sich an, da für die Speicherung in der ausgewählten Datenbank sowieso JSON zum Einsatz kommt und dieses Datenformat von allen beteiligten Komponenten sehr gut unterstützt wird. In C++ lässt sich JSON sehr einfach über eine Open-Source Header-Only Bibliothek\footnote{siehe dazu: \url{https://github.com/nlohmann/json}} einbinden und dann wie native Objekte nutzen.
+
+Die Komponente "`searchEngineWrapper"' startet zunächst zwei Threads: den \verb|queueDispatcher| und den \verb|ipcListener|. Der  \verb|ipcListener| lauscht permanent auf einem UNIX-Socket zur Interprozess-Kommunikation (IPC) und stellt von dort empfangene Aufträge in eine FIFO-Queue ein. Aus dieser FIFO-Queue entnimmt der \verb|queueDispatcher| nacheinander die Aufgaben und bringt sie zur Ausführung. Der Zugriff auf die Warteschlange wird mit Semaphoren und einer Conditional Variable geschützt, so dass bei leerer Warteschlange kein aktives Polling stattfinden muss, sondern der \verb|queueDispatcher| schlafen kann.
+
+Der \verb|queueDispatcher| bringt die in der Warteschlange eingestellten Befehle nacheinander zur Ausführung. Er versteht dabei lediglich zwei Befehle: 
+\begin{itemize}
+	\item \verb|SCAN|: startet eine Durchmusterung eines bestimmten Kartenausschnitts nach potentiellen Notlandefeldern
+	\item \verb|SAVE_2_M_FILE|: speichert die Höhenwerte der Eingabedaten eines bestimmten Kartenausschnitts in ein Matlab-kompatibles Dateiformat. Dies diente zu Beginn der Entwicklung dazu sich ein Bild der Daten zu machen und diese mit GNU Octave zu untersuchen.
+\end{itemize}
+Die Befehle kommen in Form von JSON-Objekten und enthalten alle notwendigen Parameter, die zur Ausführung benötigt werden.
+
+Wenn ein \verb|SCAN| Task ausgeführt wird, so wird ein weiterer Thread aufgespannt, der sich zunächst um das einlesen der Rohdaten kümmert bevor er die als externe Bibliothek eingebundene Komponente "`Durchmusterung"' startet innerhalb derer das heavy lifting der Landebahnsuche stattfindet. Wie die Rohdaten verarbeitet werden wird gleich näher beschrieben.
+
+Es wird immer nur ein \verb|SCAN|-Task auf einmal abgearbeitet, da benutzte Komponente "`Durchmusterung"' intern eine Parallelisierung durchführt und so die vorhandene Prozessorleistung so optimal ausnutzen kann. Eine Parallelisierung mehrere Tasks würde lediglich zu einer unnötigen Konkurrenz um Ressourcen führen ohne dass daraus mehr Performance erwachsen würde.
+
+Durch die Aufteilung des "`searchEngineWrapper"' in mehrere parallele Threads (die sich meistens langweilen und auf externe Anweisungen warten) bleibt die Applikation auch dann reaktiv, wenn gerade eine Durchmusterung eines Bereichs durchgeführt wird, welche intern maximale Leistung von den zur Verfügung stehenden Kernen verlangt.
+
+Bevor weitere Details der erstellten Software beschreiben werden, muss noch kurz auf die verwendeten Datenformate für Geodaten eingegangen werden:
+
+\section{Datenformate und Verarbeitung}
+Die Höhendaten werden, wie bei Geodaten üblich als sogenanntes GeoTIFF bereitgestellt. 
+
+Die gefundenen potentiellen Landebahnen sind durch ein Rechteck charakterisiert, welches mitsamt bestimmten Parametern als GeoJSON in die Datenbank abgelegt wird.
+
+\subsection{GeoTIFF}
+Beim TIFF Format handelt es sich um ein Containerformat, das für einen rechteckigen Bereich aus Pixeln für jedes Pixel Informationen in den verschiedensten Datenformaten aufnehmen kann. Einen ersten Überblick gibt Wikipedia\footnote{siehe dazu \url{https://de.wikipedia.org/wiki/Tagged_Image_File_Format}} während die vollständige Spezifikation unter \url{https://www.loc.gov/preservation/digital/formats/fdd/fdd000022.shtml} abgerufen werden kann. Glücklicherweise ist es nicht notwendig diese Spezifikation selber zu implementieren. Es reicht aus einige Basiseigenschaften zu kennen und passende Bibliotheken zu benutzen.
+
+Bei TIFF Dateien, wie sie im Geodaten-Bereich verwendet werden, handelt es sich um Ausschnitte der Erdkugel, welche auf eine rechteckige Ebene projiziert wurden. In dieser Ebene hat jedes Pixel eine feste Größe und jedem Pixel sind in verschiedenen Bändern diverse Daten zugeordnet. Im vorliegenden Fall handelt es sich um 20mx20m große Pixel denen jeweils ein FLOAT32-Wert mit Höheninformationen zugeordnet ist.
+Da die zugrundeliegenden Daten nicht zwingend als Rechteck vorliegen (NRW ist \emph{kein} rechteckiges Land), wird ein bestimmter Zahlenwert als \verb|noDataValue| definiert welcher ungültige/nicht vorhandene Daten beschreibt.
+
+Die Daten werden verlustfrei komprimiert gespeichert und können von speziellen Bibliotheken (meist basierend auf der Open-Source Bibliothek libTIFF\footnote{siehe dazu \url{http://www.libtiff.org/}}) eingelesen werden.
+
+Neben den in der eigentlichen TIFF Datei kodierten Information gehört zu einem GeoTIFF-Datensatz noch ein sogenanntes World-File mit Informationen zur Lage und Projektion der Kugelkoordinaten in die Ebene. Mit Hilfe dieser Daten lässt sich jedem Pixel des TIFF eindeutig ein Punkt auf der Erdoberfläche zuordnen. Diese dateien werden üblicherweise zusammen mit dem GeoTIFF als sogenannte "`Sidecar-Files"' mitgeliefert, jedoch erlaubt das TIFF Format auch die direkte Einbettung dieser Informationen. Sie sind dann nicht mehr für den Menschen lesbar. 
+
+\subsection{Speicherformat: GeoJSON}
+Im Gegensatz zu dem rasterorientieren GeoTIFF Format ist für die Verwaltung der gefundenen potentiellen Landebahnen ein vektororientiertes Format deutlich besser geeignet. Wegen seiner Einfachheit, seiner weiten Verbreitung und der sehr guten Unterstützung durch die Datenbank fiel die Wahl auf das GeoJSON Format.
+
+Ein GeoJSON Objekt ist ein einfaches JSON Objekt, welches die drei Properties \emph{type}, \emph{properties} und \emph{geometry} enthält. In der Property \emph{type} angegeben, ob es sich um nur eine Geometrie (\emph{type: Feature}) oder um einen mehrteiligen Satz von Geometrien (\emph{type: FeatureCollection}) handelt. In \emph{geometry} wird das Objekt selber spezifiziert. In unserem Fall handelt es sich um Polygone, deren Eckpunkte durch Koordinaten angegeben werden. In \emph{properties} schließlich können dem GeoJSON Objekt noch beliebige weitere Eigenschaften zugeordnet werden.
+
+Die vollständige Spezifikation des Formats ist zu finden unter \url{https://geojson.org}. Ein sehr praktisches Tool um das Datenformat kennenzulernen und selber erstellte Datensätze auf Konformität zu testen findet sich unter \url{http://geojson.io}.
+
+\section{GeoTIFFHandler}
+
+Um den Umgang mit den GeoTIFF Daten zu kapseln wurde eine Klasse \emph{GeoTIFFHandler} entwickelt, welche nach Angabe eines Dateipfades ein GeoTIFF-File einliest und sich um die Verwaltung sämtlicher Metainformationen kümmert. Die Höhendaten werden der benutzenden anwendung direkt im Speicher zur Verfügung gestellt und können bequem zugegriffen werden, ohne dass sich um Speicherverwaltung oder Geodaten-Transformationen gekümmert werden muss. Für sehr große Datensätze, die nicht mehr komplett in den Speicher passen übernimmt die \emph{GeoTIFFHandler}-Klasse auch die Aufteilung in mehrere Kacheln und die dazu gehörende Speicherverwaltung.
+
+Die einzelnen Funktionen werden weiter unten näher erläutert.
+
+\subsection{Datenextraktion}
+Der erste Schritt um mit einem Datensatz zu arbeiten ist die Extraktion der darin enthaltenen Daten. Wie oben schon erläutert wurde handelt es sich bei TIFF um ein sehr komplexes Format, das Dateien beliebiger Größe aufnehmen kann.
+
+Da natürlich keine Routine zum Dekodieren diese Datenformats erstellt werden sollte wurden mehrere Bibliotheken gesichtet, die zum Einlesen der Daten in einem TIFF geeignet sind. Ein wichtiger Aspekt dabei war, dass die Bibliothek eine effiziente Einleseroutine für Teildaten eines großen Datensatzes bereitstellen soll. Da die Geodaten sehr groß werden können ist die Wahrscheinlichkeit gegeben, dass nicht der gesamte Datensatz auf einmal verarbeitet werden kann. Auch soll es möglich sein nur bestimmte Ausschnitte eines Datensatzes zu Durchmustern um dadurch auf eine kurze Durchmusterungszeit zu kommen.
+
+Nach diesen Kriterien ausgewählt fiel die Wahl auf die Bibliothek "`LargeTIFFTools"'\footnote{siehe dazu: Deroulers et al., \href{http://www.diagnosticpathology.org/content/8/1/92}{Analyzing huge pathology images with open source software, Diagnostic Pathology 8:92 (2013)}.} und das darin enthaltene \texttt{tiffastcrop}. Diese Bibliothek lädt nicht das gesamte TIFF in den Speicher, bevor es einen Ausschnitt entnimmt, sondern lediglich die tatsächlich benötigten Teile. dies bringt nach Angaben des Bibliotheksautors dramatische Geschwindigkeitsvorteile gegenüber einer Reihe anderer gebräuchlicher Bibliotheken. (Diese Aussage konnte aufgrund fehlender "`großer"' Datensätze nicht überprüft werden. Das Laden der Bildausshnitte geht aber tatsächlich sehr schnell.) 
+
+Mit Hilfe dieser Bibliothek ist die Klasse \texttt{GeoTIFFHandler} in der Lage jeden beliebigen rechteckigen Ausschnitt eines GeoTIFF-Datensatzes in den Speicher zu laden und dort die Höhendaten als \texttt{FLOAT32} zur Verfügung zu stellen.
+
+Falls der angeforderte Ausschnitt zu groß ist um in den Speicher zu passen wird automatisch eine Kachelung vorgenommen.
+In der folgenden Abbildung \ref{kachelung} ist das Prinzip dargestellt: Es wird festgestellt, wie groß ein rechteckiger Ausschnitt des angeforderten Ausschnitts maximal sein darf, damit er noch vollständig in den Speicher passt. Als Randbedingung gilt, dass angrenzende Kacheln um mindestens die minimale Landebahnlänge (z. B. 2000m) überlappen müssen. Dadurch ist sichergestellt, dass aufgrund von Kachelrändern keine potentiellen Bahnen übersehen werden. Das schlimmste, was dadruch passieren kann ist, dass eine potentielle Bahn in beiden Kacheln gefunden wird und dadurch doppelt in die Datenbank eingetragen wird.
+
+\begin{figure}[ht]
+\centering
+	\includegraphics[width=0.5\textwidth]{../Vorgehensweise/drawings/UeberlappungKacheln.png}
+	\caption{Prinzip der Kachelung bei Datensätzen, die nicht vollständig in den Speicher passen}
+	\label{kachelung}
+\end{figure}
+
+
+In der aktuellen Implementierung ist eine künstliche Beschränkung auf die Hälfte des noch zur Verfügung stehenden RAMs eingestellt.\footnote{Der noch maximal zur Verfügung stehende Speicher lässt sich ermitteln über \texttt{size\_t maxUsableRAM = sysconf(\_SC\_AVPHYS\_PAGES) * sysconf(\_SC\_PAGESIZE);}}. Dies könnte in künftigen Versionen leicht geändert werden, war aber mit den vorhandenen Datensätzen nicht notwendig.
+
+\subsection{Koordinatensysteme}
+
+Eine große Herausforderung bei der Verarbeitung von Geodaten stellen die verwendeten Projektionen und Koordinatensysteme dar. Da es nicht möglich ist eine Kugeloberfläche (genauer eine Elipsoidoberfläche) gleichzeitig Längen- und Winkeltreu auf eine Ebene zu projizieren, existiert eine Vielzahl verschiedener Projektionssysteme, welche immer einen gewissen Kompromiss aus den gewählten Anforderungen darstellen. So listet allein die \href{http://geotiff.maptools.org/proj_list/}{GeoTIFF Projections Transform List} über 40 verschiedene, offensichtlich gängige Projektionen für GeoTIFF Datensätze auf.
+
+Glücklicherweise gibt es eine sehr umfangreiche und relativ gut dokumentierte open source Bibliothek, welche die Umrechnung der verschiedenen Projektionen und Koordinatensysteme abstrahiert und zur Verfügung stellt. Diese \href{http://www.gdal.org/}{GDAL - Geospatial Data Abstraction Library} kommt auch in diesem Projekt zum Einsatz und ermöglicht es auf relativ einfache Art und Weise die Daten aus dem GeoTIFF zu extrahieren und mit Koordinaten im WGS84-Koordinatensystem\footnote{siehe hierzu als Einstieg: \href{https://de.wikipedia.org/wiki/World_Geodetic_System_1984}{https://de.wikipedia.org/wiki/World\_Geodetic\_System\_1984}} in Einklang zu bringen. Das WGS84 System ist das aktuell in der Luftfahrt verwendete Koordinatensystem und wird auch in Navigationssystemen und insbesondere in Kartendiensten im Internet verwendet. Koordinaten im WGS84-System werden über die bekannten zwei Werte von geographischer Länge (Longitude) und geographischer Breite (Latitude) angegeben. Die Büro von Prof. Schiffmann an der Fernuniversität Hagen hat in diesem System z. B. die Koordinaten \href{http://bl.ocks.org/d/94faa16e1c8cb9d9226902f9fb0cc36c}{Lat: 51.37632449291616N, Long:7.493609189987183E}
+
+Mit Hilfe der erwähnten Bibliothek werden innerhalb der Klasse \texttt{GeoTIFFHandler} Funktionen bereitgestellt, die von WGS84-Koordinaten auf Pixel im Speicher und umgekehrt umrechnen können. Damit kann die Durchmusterung auf einem reinen Pixel basierten Koordinatensystem erfolgen, während Zuordnung von Geokoordinaten vollständig aus dem Durchmusterungsprozess heraus abstrahiert ist. Es muss dem GeoTIFF-Handler lediglich am Anfang mitgeteilt werden, welcher rechteckige Ausschnitt (in Geokoordinaten) aus dem Datensatz eingelesen werden soll. die Durchmusterung findet dann auf einem rechteckigen Pixelbereich statt. Gefundenen Bahnen werden über Ihren Anfangs- und Endpunkt in Pixel-Koordinaten und Ihre Breite charakterisiert und vom \texttt{GeoTIFFHandler} auf Koordinaten in WGS84 abgebildet.
+
+\paragraph{Schwäche der vorliegenden Implementierung:} Leider hat sich zum Ende der Bearbeitungszeit herausgestellt, dass bei einem Datensatz in der Größe von NRW die zuvor getroffene Annahme falsch ist, dass das GeoTIFF-Pixel-Rechteck an jeder Stelle in Nord-Süd- bzw. Ost-West-Richtung ausgerichtet ist. In der vorliegenden Implementierung wird implizit davon ausgegangen, dass der rechte Nachbar eines jeden Pixels genau in östlicher (also 90\degree) Richtung liegt und der untere Nachbar in südlicher (also 180\degree) Richtung. Das ist aber aufgrund der schon erwähnten Probleme mit der Projektion eines Elipsoiden auf eine Ebene nicht korrekt und so ergeben sich über die gesamte Fläche Abweichungen von wenigen Grad, wenn diese Annahme bei der Durchmusterung auf Pixel-ebene aufrecht erhalten wird. Da es sich bei der vorliegenden Implementierung bisher noch eher um einen Proof-of-Concept handelt wurden diese Abweichungen von der geforderten Richtung toleriert. Im Ausblick wird ein möglicher Lösungsansatz angesprochen um dieses Problem zu lösen.
+
+
+\subsection{Das \emph{GeoTIFFHandler}-Objekt}
+
+Die Suchmaschine hält sich während der Programmlaufzeit ein \texttt{GeoTIFFHandler}-Objekt, welches die gesamte Interaktion mit der GeoTIFF-Datei inklusive der gerade beschriebenen Transformationen übernimmt.
+
+Dieses Objekt stellt der Suchmaschine folgende Daten zur Verfügung:
+
+\begin{lstlisting}[language=c]
+struct datasetInfo {
+	pixelPair extent = {0,0};	
+		//the extent of the current dataset
+	rectSize pixelSize = {0,0}; 	
+		//dimension of a single pixel in [meter]
+	float noDataValue = 0;	//marker for "no data" in the dataset;
+		//the marker value for invalid/non existant pixels
+};	
+\end{lstlisting}
+
+Dies sind die für die Durchmusterung relevanten globalen Daten über den Datensatz. Die Koordinaten der Eckpunkte können über die Funktion \verb|geoCoord pixel2Geo(const pixelCoordFloat source);| abgefragt werden, falls das nötig ist. Wesentlich ist vor allem die Angabe des "`ungültig Werts"' innerhalb der Pixel im Speicher.
+
+Sobald der Benutzer eine Auswahl getroffen hat, welchen Bereich der Welt er nach Notlandefeldern durchmustern möchte kann über den Aufruf der Funktion 
+\begin{lstlisting}[language=c]
+resultType getTilingInfo(const geoCoord topLeft, const geoCoord bottomRight,
+		const float overlap, const size_t maxSize, 
+		tilingCharacteristics *tilingResult);
+\end{lstlisting}
+
+das \texttt{GeoTIFFHandler}-Objekt angewiesen werden das einlesen der Daten in den Speicher vorzubereiten und Informationen darüber bereitzustellen, ob die Daten eventuell in mehreren Kacheln verarbeitet werden müssen. Dazu wird eine spezielle Datenstruktur gefüllt:
+\begin{lstlisting}[language=c]
+struct tilingCharacteristics {
+	int overallXSize = 0, overallYSize = 0;	
+		//the extent of the currently requested cutout of the dataset
+	pixelCoord topLeftPix = {0,0};	
+		//top left pixel coordinate of the requested area
+	pixelCoord bottomRightPix = {0,0};	
+		//bottom right pixel coordinate of the requested area
+	int maxTileSizeXPix = 0, maxTileSizeYPix = 0;
+	int overlapXPix =0, overlapYPix =0;
+	int tilesInX = 0, tilesInY = 0;	
+		//the amount of tiles in X- and Y-direction
+	float overlap = 0;	
+		//the overlap of the tiles in [meter]
+	size_t maxTileMemsize = 0;	
+		//the maximum amount of bytes a tile needs in memory
+};
+\end{lstlisting}
+
+Diese Angaben sind ausreichend um die Durchmusterung auf Pixelebene zu beginnen. Das \texttt{GeoTIFFHandler}-Objekt kann angewiesen werden nacheinander die einzelnen Kacheln (oder auch nur die eine Kachel) in den Speicher zu laden, so dass sie durchsucht werden können. Die gesamte Speicherverwaltung wird duch den \texttt{GeoTIFFHandler} übernommen, weswegen vor dem Laden der nächsten Kachel auch die aktuell verwendete Kachel explizit wieder freigegeben werden muss.
+
+Zusätzlich werden noch einige Datenstrukturen und Hilfsfunktionen zur Verfügung gestellt, die (hoffentlich einigermaßen ) selbsterklärend sind.
+Die wesentlichen zur Verfügung gestellten Funktionen sind:
+\begin{lstlisting}[language=c]
+	resultType getDatasetInfo(datasetInfo *info);
+	resultType getPixelExtent(rectSize *pixelSize);
+	resultType getTilingInfo(const geoCoord topLeft, 
+			const geoCoord bottomRight, const float overlap, 
+			const size_t maxSize, 
+			tilingCharacteristics *tilingResult);
+	resultType getTile(const int xTile, const int yTile, tileData *tile);
+	resultType releaseTile(const int xTile, const int yTile);
+
+	geoCoord pixel2Geo(const pixelCoordFloat source);
+	geoCoord pixel2Geo(const int xTile, const int yTile, 
+			const pixelCoordFloat source);
+	pixelCoord geo2Pixel(const geoCoord source);
+	pixelCoord geo2Pixel(const int xTile, const int yTile, 
+			const geoCoord source);
+
+	/**
+	 * returns a valid geoJSON Object with empty properties
+	 * These have to be overwritten later on.
+	 * see https://gis.stackexchange.com/questions/144084/
+	 		using-gdal-c-to-calculate-distance-in-meters
+	 * see https://geographiclib.sourceforge.io/1.40/
+	 		C/inverse_8c_source.html
+	 */
+	json getGeoJsonPolygon(const pixelCoordFloat start, 
+			const pixelCoordFloat end, const float width);
+	json getGeoJsonPolygon(const pixelCoordFloat start, const float length, 
+			const float heading, const float width);
+	json getGeoJsonPolygon(const pixelCoordFloat pix0, 
+			const pixelCoordFloat pix1, const pixelCoordFloat pix2, 
+			const pixelCoordFloat pix3);
+\end{lstlisting}
+
+\chapter{Komponente "'Durchmusterung"'}
+\section{Durchmusterung der Geotiff Daten und Auffinden der Landebahnen}
 Die Durchmusterung der Geodaten wurden in einer eigenen statischen Library gekapselt ($plane\_library.a$). Innerhalb dieser Library finden sich alle Algorithmen, die zum Auffinden der Landebahnen benötigt werden. Für den Aufrufer ist die Implementation komplett gekapselt. Alle funktionalen Requirements werden von dieser Library übernommen.
 
 
@@ -139,7 +352,7 @@ Der logische Ablauf ist schematisch im Nassi-Shneiderman-Diagramm~\ref{nasshnlog
 \ifend
 \forallinend
 \end{struktogramm}
-\caption{Durchmusterungsalgorithmus in Pseudo-Code}\label{nasshnlogisch}
+\caption{Durchmusterungsalgorithmus in Pseudo-Code}
 \end{figure}
 \clearpage
 \section{Initialisierung}
@@ -444,12 +657,14 @@ Der Code wurde mit einem gcc Version 4.8.5 devtoolset version 4 compiliert. Per 
 Durch die Benutzung des -O3 Optimizer Direktivs ist eine Codebeschleunigung von 1300~\% (11 sec vs. 147 sec) beobachtet worden. 
 Eine Übersicht über die verwendeten Optimierungsschritte sind unter https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html einzusehen.
 
-\chapter{Datenbank Manager}
+\chapter{Komponente "`databaseManager"'}
+
+
 \section{Datenbankauswahl}
 \section{Express-Server App}
 \section{Postprocessing - Merge}
 
-\chapter{Webclient als GUI}
+\chapter{Komponente "'landingClient"'}
 \section{Überblick}
 \section{Features und Bedienung}
   
