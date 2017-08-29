@@ -32,7 +32,6 @@ const getDbEntriesFailed = (state, action) => {
     };
 };
 
-
 const requestDropDb = (state) => {
     return {
         ...state,

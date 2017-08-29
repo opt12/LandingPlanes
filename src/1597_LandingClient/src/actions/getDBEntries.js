@@ -28,11 +28,11 @@ const dropDbFailed = () => ({
 });
 
 
-const queryLandingPlanesDB = (geoPolygon) =>
+const queryLandingPlanesDB = (geoPolygon, showMergedAreas, showMinVariancePlanes) =>
     (dispatch) => {
         dispatch(requestGetDbEntries(geoPolygon));
 
-        return api.requestGetDbEntries(geoPolygon)
+        return api.requestGetDbEntries(geoPolygon, showMergedAreas, showMinVariancePlanes)
             .then(
                 landingPlanes => {
                     console.log("received landing planes from Database: ", landingPlanes);
@@ -48,6 +48,7 @@ const queryLandingPlanesDB = (geoPolygon) =>
                 console.log('error: ', error);
             })
     };
+
 
 const dropLandingPlanesDB = () =>
     (dispatch) => {

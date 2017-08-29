@@ -5,6 +5,7 @@
 \usepackage{amssymb}
 \usepackage{listings}
 \usepackage{struktex}
+\usepackage{url}
 
 \usepackage[ngerman]{babel}
 
@@ -44,17 +45,103 @@ Die Landung selbst soll nach wie vor von einem Menschen durchgeführt werden. Fr
 
 \chapter{Architektur}
 
+Zur Lösung der Aufgabenstellung muss zunächst eine Systemarchitektur festgelegt werden.
+
 \section{Überblick}
-\section{Grobgranulare Parallelität}
+Zum Einlesen der Rohdaten, Steuern der Applikation und zum Auffinden, Persisitieren und Anzeigen der potentiellen Notlandefelder sind vielfältige Schritte notwendig. Diese haben jeweils ihre eigenen spezifischen Herausforderungen und sind bei näherer Betrachtung sogar relativ unabhängig voneinander lösbar.
+
+Daraus ergibt sich die Möglichkeit das System aus relativ lose gekoppelten Komponenten aufzubauen, welche jeweils in einer Programmiersprache entwickelt werden, die auf die jeweilige Aufgabe abgestimmt ihre Stärken ausspielen kann. In der vorliegenden Aufgabenstellung wurde entschieden die Aufgaben, welche vornehmlich große Datenmengen bewegen und "`Number Crunching"' betreiben in C/C++ zu implementieren, während Datenbankzugriffe und das User-Interface in Javascript realisiert wurden.
+
+Eine grobe Übersicht über di einzelnen Systemkomponenten bietet Abbildung \ref{architektur}.
+
+\begin{figure}[h]
+	\includegraphics[width=\textwidth]{../Architektur/Architektur.png}
+	\caption{Architekturüberblick} \label{architektur}
+\end{figure}
+
+Hier sind vier unabhängige Komponenten zu erkennen:
+\begin{itemize}
+	\item das UserInterface
+	\item der DatabaseManager
+	\item die SearchEngine
+	\item die Datenbank
+\end{itemize}
+
+Abgebildet auf eine Model-View-Controller-Architektur (MVC) würde das User Interface der View entsprechen, der Database Manager dem Controller, die Datenbank dem Model. Die Search Engine ist der Geschäftslogik zuzuordnen und liegt kommuniziert ausschließlich über den Controller.
+In der gezeigten Architektur fällt der mergeTask innerhalb des Database Managers etwas aus der Reihe. Dieser Task wurde erst relativ spät hinzugefügt um überlappende potentielle Landebahnen zu größeren Landefeldern zusammenzufassen. Dies ist ein Task, der grundsätzlich vollkommen unabhängig von allen anderen Aufgaben im Hintergrund ablaufen könnte und damit Teil der Geschäftslogik wäre. In der aktuellen Ausbaustufe wurde dieser Task jedoch aus Praktikabilitätsgründen zusammen mit dem Database Manager realisiert. Details dazu folgen in einem eigenen Abschnitt weiter unten.
+
+In der Abbildung \ref{architektur} ist eingezeichnet in welcher Sprache/Programmiersystem die einzelnen Komponenten realisiert wurden. zusätzlich sind wichtige Komponenten und Bibliotheken in grün angegeben.
+
+Die Kommunikation der Komponenten untereinander erfolgt über verschiedene Standard-Mechanismen:
+\begin{itemize}
+	\item lokale Unix Sockets zur Kommunikation des Database Managers mit der Search Engine.
+	\item REST (Representational State Transfer) -API zur Kommunikation des User Interface mit dem Controller
+	\item TCP/IP zur Kommunikation des Database Managers mit der Datenbank
+\end{itemize}
+
+
+\section{Grobkörnige Parallelität}
+Aus der Abbildung ist ersichtlich, dass die vier Hauptkomponenten des Systems nur sehr lose gekoppelt sind. Die eingesetzten Kommunikationsprotokolle zwischen den Komponenten sind allesamt unabhängig von der konkreten physikalischen Verbindung. Die ausgetauschten Datenmengen zwischen den einzelnen Komponenten sind relativ klein. Daraus ergibt sich die Möglichkeit alle vier Komponenten auf unterschiedlichen Rechnern zu instantiieren und ablaufen zu lassen.
+
+Damit ergibt sich schon eine gewisse, sehr grobkörnige Parallelität, welche bei Engpässen der Rechenleistung oder des Speichers für bestimmte Tasks ausgenutzt werden kann um die Gesamtperformance des Systems zu steigern. auch können für die einzelnen Aufgaben unterschiedliche, heterogene Maschinen eingesetzt werden. So stellt eine Datenbank andere Anforderungen an die Maschine als das Durchsuchen großer Datenmengen mit der Search Engine.
+
+Ein weiterer Vorteil der konsequenten Trennung der View vom Rest der Software liegt darin, dass die Ergebnisse der Durchmusterung auch auf relativ schwachbrüstigen Geräten angezeigt werden können, welche lediglich über einen Javascript fähigen Browser und eine Netzwerkverbindung verfügen.
+
 \section{Feingranulare Parallelität}
 
-\chapter{Datenformate und Verarbeitung}
-\section{GeoTIFF}
+Während die grobkörnige Parallelität sich direkt aus der gewählten Architektur ergibt und quasi gratis kommt, so ergeben sich für die rechenintensive Aufgabe des Durchmusterns der Ausgangsdaten weitere Anforderungen, die über eine solche lose Kopplung hinausgehen.
+
+Da inzwischen jeder halbwegs moderne Rechner über Mehrkernprozessoren und relativ viel gemeinsamen Speicher verfügt lag es nahe die rechenintensive Aufgabe der Datenanalyse explizit zu parallelisieren und dazu shared Memory Techniken zu nutzen. Genutzt wurden dafür im vorliegenden Lösungsvorschlag POSIX Threads, die mittels der \emph{pthreads}-Routinen eingebunden werden können.
+
+Zusätzlich zu den Number-Crunching-threads, welche in der Bilbiothek "`Durchmusterung"' zur Performance-Steigerung eingesetzt werden, ist die gesamte Komponente searchEngine auf mehrere Threads aufgeteilt um eine reaktive Applikation zu realisieren. Details dazu werden im nächsten Kapitel erläutert.
+
+
+\chapter{Komponente "`searchEngineWrapper"'}
+
+Die Komponente "`searchEngineWrapper"' ist in C/C++ realisiert und dient dazu vom Controller Aufgaben entgegen zunehmen und auszuführen. Dazu gehört die Kommunikation mit der "`Außenwelt"' über UNIX-Sockets, die Verwaltung der Warteschlange mit Aufträgen, das Einlesen der Daten mit den dazugehörigen Koordinatentransformationen, die Aufteilung auf mehrere Kacheln falls nicht alle Daten in den Speicher passen und der Start der eigentlichen Durchmusterung.
+
+Zur Kommunikation der Systembestandteile untereinander kommt das simple JSON-Format\footnote{siehe dazu \url{http://www.json.org/}} zum Einsatz. JSON bietet sich an, da für die Speicherung in der ausgewählten Datenbank sowieso JSON zum Einsatz kommt und dieses Datenformat von allen beteiligten Komponenten sehr gut unterstützt wird. In C++ lässt sich JSON sehr einfach über eine Open-Source Header-Only Bibliothek\footnote{siehe dazu: \url{https://github.com/nlohmann/json}} einbinden und dann wie native Objekte nutzen.
+
+Die Komponente "`searchEngineWrapper"' startet zunächst zwei Threads: den \verb|queueDispatcher| und den \verb|ipcListener|. Der  \verb|ipcListener| lauscht permanent auf einem UNIX-Socket zur Interprozess-Kommunikation (IPC) und stellt von dort empfangene Aufträge in eine FIFO-Queue ein. Aus dieser FIFO-Queue entnimmt der \verb|queueDispatcher| nacheinander die Aufgaben und bringt sie zur Ausführung. Der Zugriff auf die Warteschlange wird mit Semaphoren und einer Conditional Variable geschützt, so dass bei leerer Warteschlange kein aktives Polling stattfinden muss, sondern der \verb|queueDispatcher| schlafen kann.
+
+Der \verb|queueDispatcher| bringt die in der Warteschlange eingestellten Befehle nacheinander zur Ausführung. Er versteht dabei lediglich zwei Befehle: 
+\begin{itemize}
+	\item \verb|SCAN|: startet eine Durchmusterung eines bestimmten Kartenausschnitts nach potentiellen Notlandefeldern
+	\item \verb|SAVE_2_M_FILE|: speichert die Höhenwerte der Eingabedaten eines bestimmten Kartenausschnitts in ein Matlab-kompatibles Dateiformat. Dies diente zu Beginn der Entwicklung dazu sich ein Bild der Daten zu machen und diese mit GNU Octave zu untersuchen.
+\end{itemize}
+Die Befehle kommen in Form von JSON-Objekten und enthalten alle notwendigen Parameter, die zur Ausführung benötigt werden.
+
+Wenn ein \verb|SCAN| Task ausgeführt wird, so wird ein weiterer Thread aufgespannt, der sich zunächst um das einlesen der Rohdaten kümmert bevor er die als externe Bibliothek eingebundene Komponente "`Durchmusterung"' startet innerhalb derer das heavy lifting der Landebahnsuche stattfindet. Wie die Rohdaten verarbeitet werden wird gleich näher beschrieben.
+
+Es wird immer nur ein \verb|SCAN|-Task auf einmal abgearbeitet, da benutzte Komponente "`Durchmusterung"' intern eine Parallelisierung durchführt und so die vorhandene Prozessorleistung so optimal ausnutzen kann. Eine Parallelisierung mehrere Tasks würde lediglich zu einer unnötigen Konkurrenz um Ressourcen führen ohne dass daraus mehr Performance erwachsen würde.
+
+Durch die Aufteilung des "`searchEngineWrapper"' in mehrere parallele Threads (die sich meistens langweilen und auf externe Anweisungen warten) bleibt die Applikation auch dann reaktiv, wenn gerade eine Durchmusterung eines Bereichs durchgeführt wird, welche intern maximale Leistung von den zur Verfügung stehenden Kernen verlangt.
+
+Bevor weitere Details der erstellten Software beschreiben werden, muss noch kurz auf die verwendeten Datenformate für Geodaten eingegangen werden:
+
+\section{Datenformate und Verarbeitung}
+Die Höhendaten werden, wie bei Geodaten üblich als sogenanntes GeoTIFF bereitgestellt. 
+
+Die gefundenen potentiellen Landebahnen sind durch ein Rechteck charakterisiert, welches mitsamt bestimmten Parametern als GeoJSON in die Datenbank abgelegt wird.
+
+\subsection{GeoTIFF}
+Beim TIFF Format handelt es sich um ein Containerformat, das für einen rechteckigen Bereich aus Pixeln für jedes Pixel Informationen in den verschiedensten Datenformaten aufnehmen kann. Einen ersten Überblick gibt Wikipedia\footnote{siehe dazu \url{https://de.wikipedia.org/wiki/Tagged_Image_File_Format}} während die vollständige Spezifikation unter \url{https://www.loc.gov/preservation/digital/formats/fdd/fdd000022.shtml} abgerufen werden kann. Glücklicherweise ist es nicht notwendig diese Spezifikation selber zu implementieren. Es reicht aus einige Basiseigenschaften zu kennen und passende Bibliotheken zu benutzen.
+
+Bei TIFF Dateien, wie sie im Geodaten-Bereich verwendet werden, handelt es sich um Ausschnitte der Erdkugel, welche auf eine rechteckige Ebene projiziert wurden. In dieser Ebene hat jedes Pixel eine feste Größe und jedem Pixel sind in verschiedenen Bändern diverse Daten zugeordnet. Im vorliegenden Fall handelt es sich um 20mx20m große Pixel denen jeweils ein FLOAT32-Wert mit Höheninformationen zugeordnet ist.
+Da die zugrundeliegenden Daten nicht zwingend als Rechteck vorliegen (NRW ist \emph{kein} rechteckiges Land), wird ein bestimmter Zahlenwert als \verb|noDataValue| definiert welcher ungültige/nicht vorhandene Daten beschreibt.
+
+Die Daten werden verlustfrei komprimiert gespeichert und können von speziellen Bibliotheken (meist basierend auf der Open-Source Bibliothek libTIFF\footnote{siehe dazu \url{http://www.libtiff.org/}}) eingelesen werden.
+
+Neben den in der eigentlichen TIFF Datei kodierten Information gehört zu einem GeoTIFF-Datensatz noch ein sogenanntes World-File mit Onformationen zur Lage und Projektion der Kugelkoordinaten in die Ebene. Mit Hilfe dieser Daten lässt sich jedem Pixel des TIFF eindeutig ein Punkt auf der Erdoberfläche zuordnen.
+
+\subsection{Speicherformat: GeoJSON}
+\section{GeoTIFFHandler}
 \subsection{Datenextraktion}
 \subsection{Koordinatensysteme}
-\section{Speicherformat: GeoJSON}
 
-\chapter{Durchmusterung der Geotiff Daten und Auffinden der Landebahnen}
+
+\chapter{Komponente "'Durchmusterung"'}
+\section{Durchmusterung der Geotiff Daten und Auffinden der Landebahnen}
 Die Durchmusterung der Geodaten wurden in einer eigenen statischen Library gekapselt ($plane\_library.a$). Innerhalb dieser Library finden sich alle Algorithmen, die zum Auffinden der Landebahnen benötigt werden. Für den Aufrufer ist die Implementation komplett gekapselt. Alle funktionalen Requirements werden von dieser Library übernommen.
 
 
@@ -442,12 +529,12 @@ Der Code wurde mit einem gcc Version xx devtoolset yx compiliert. Die Standardü
 Durch die Benutzung des -O3 Optimizer Direktivs ist eine Codebeschleunigung von yx \% beobachtet worden. 
 Eine Übersicht über die verwendeten Optimierungsschritte sind unter https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html einzusehen.
 
-\chapter{Datenbank Manager}
+\chapter{Komponente "`databaseManager"'}
 \section{Datenbankauswahl}
 \section{Express-Server App}
 \section{Postprocessing - Merge}
 
-\chapter{Webclient als GUI}
+\chapter{Komponente "'landingClient"'}
 \section{Überblick}
 \section{Features und Bedienung}
   
