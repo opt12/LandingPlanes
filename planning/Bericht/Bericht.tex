@@ -21,6 +21,22 @@
 
 \usetikzlibrary{arrows,%
                 shapes,positioning}
+                
+\lstdefinelanguage{JavaScript}{
+  keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break},
+  keywordstyle=\color{blue}\bfseries,
+  ndkeywords={class, export, boolean, throw, implements, import, this},
+  ndkeywordstyle=\color{darkgray}\bfseries,
+  identifierstyle=\color{black},
+  sensitive=false,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{purple}\ttfamily,
+  stringstyle=\color{red}\ttfamily,
+  morestring=[b]',
+  morestring=[b]"
+}
+                
 
 \begin{document}
 
@@ -661,15 +677,201 @@ Eine Übersicht über die verwendeten Optimierungsschritte sind unter https://gc
 
 \chapter{Komponente "`databaseManager"'}
 
+Im Architekturüberblick in Abbildung \ref{architektur} ist zu erkennen, dass in der Komponente "`databaseManager"' die gesamte Kommunikation der anderen Komponenten zusammen läuft. Tatsächlich ist diese Komponente die zentrale Schaltstelle, von der aus alle anderen Programmteile aufgerufen und gesteuert werden. Sie stellt in einer an MVC angelehnten Architektur den Controller dar.
+
+Um diese Aufgabe zu erfüllen muss der DatabaseManager mehrere Interfaces zur Verfügung stellen:
+\begin{itemize}
+	\item eine Verbindung über UNIX-Sockets zur searchEngine
+	\item eine REST-API zur Kommunikation mit dem UserInterface, also dem Benutzer
+	\item eine Schnittstelle zur Datenbank
+\end{itemize}
+
+Der DatabaseManager wurde als JavaScript Applikation in der serverseitigen Laufzeitumgebung Node.js\footnote{siehe dazu: \href{https://nodejs.org/en/}{https://nodejs.org/en/}} umgesetzt. Der Hauptgrund für diese Wahl lag darin, dass schon Erfahrungen mit der Erstellung von Web-Apps in dieser Umgebung vorlagen. Die Bereitstellung einer REST-API, die Verarbeitung von JSON Objekten und die Anbindung der gewählten MongoDB lassen sich in JavaScript mit Hilfe von sehr gut gepflegten Bibliotheken mit wenigen Zeilen Code erledigen. Obwohl zu Beginn noch unbekannt, ließ sich auch die Erstellung ud Bedienung eines UNIX-Sockets zur Kommunikation mit einer passenden Bibliothek sehr leicht realisieren.
+Darüber hinaus gibt es (mindestens) eine sehr gute Bibliothek zur Unterstützung von Geodaten. 
+
+Die wichtigsten in diesem Projekt verwendeten Bibliotheken sind:\footnote{Die Bibliotheken sind alle über den "`node package manager"' (npm) unter \href{https://www.npmjs.com}{https://www.npmjs.com} zu finden.}
+\begin{itemize}
+	\item \href{https://www.npmjs.com/package/express}{Express}: Zur Bereitstellung eines Web-Servers mit einer REST-API und zur Auslieferung der Client Web-Seite.
+	\item \href{https://www.npmjs.com/package/socket-ipc}{Socket-Ipc}: Zur Realisierung der zwei-Wege Unix-Socket Kommunikation mit der searchEngine Komponente
+	\item \href{https://www.npmjs.com/package/mongoose}{Mongoose}: Zum leichten Zugriff auf eine MongoDB Datenbank
+	\item \href{https://www.npmjs.com/package/turf}{Turf}: Eine Biblitohek zur Unterstützung im Umgang mit Geodaten. 
+\end{itemize}
+
+Der DatenbankManager ist der Einstiegspunkt in das System. Er startet selbständig eine Instanz der SearchEngine und stellt per HTTP die Webseite für den Client bereit.
 
 \section{Datenbankauswahl}
+
+Es wurde eine Datenbank gesucht, die Geodaten im \href{http://geojson.org/}{GeoJSON}-Format möglichst direkt unterstützt. Eine dafür gut geeignete Datenbank, die dieses Format und spezielle Abfragen darauf, unterstützt ist \href{https://docs.mongodb.com/}{MongoDB}. Diese Datenbank ist der Klasse der NoSQL-Datenbanken\footnote{siehe dazu als Einstieg: \href{https://de.wikipedia.org/wiki/NoSQL}{https://de.wikipedia.org/wiki/NoSQL}.} zuzuordnen und zur Aufnahme von beliebigen JSON Objekten geeignet. 
+
+Insbesondere werden über spezielle Abfragen und Operationen auch GeoJSON-Daten unterstützt.
+MongoDB unterstützt unter anderem direkte geographische Abfragen, so dass auch eine Abfrage nach allen Notlandeflächen in maximal 20km Entfernung recht leicht möglich sind. Siehe dazu \href{https://docs.mongodb.com/manual/reference/operator/query-geospatial/}{Geospatial Query Operators}.
+
+In der Datenbank sollen gefundene Landeflächen als Polygonumriss in einem GeoJSON mit ihrer Richtung und weiteren Parametern über Ihre Minimaleigenschaften eingetragen werden. Konkret sieht ein Beispieleintrag so aus:
+\begin{lstlisting}[language=JavaScript]
+{
+    "_id" : ObjectId("59a5afe2cde2b23ffe6b168f"),
+    "geoJSON" : {
+        "type" : "Feature",
+        "properties" : {
+            "actualHeading" : 90,
+            "actualLength" : 2214,
+            "actualRise" : 0.200002670288086,
+            "actualVariance" : 0.0065871326117382,
+            "maxRise" : 5,
+            "maxVariance" : 2.1,
+            "mergeable" : true,
+            "minLength" : 2000,
+            "minWidth" : 30,
+            "mergePass" : false,
+            "isMergeResult" : false
+        },
+        "geometry" : {
+            "type" : "Polygon",
+            "coordinates" : [ 
+                [ 
+                    [ 
+                        6.54887406221377, 
+                        51.3790183850639
+                    ], 
+                    [ 
+                        6.54885965890763, 
+                        51.3792878954276
+                    ], 
+                    [ 
+                        6.51699108255441, 
+                        51.3786165531896
+                    ], 
+                    [ 
+                        6.51700567265951, 
+                        51.37834704926
+                    ], 
+                    [ 
+                        6.54887406221377, 
+                        51.3790183850639
+                    ]
+                ]
+            ]
+        }
+    },
+    "__v" : 0
+}
+\end{lstlisting}
+
+Die Datenbank kann über die Koordinaten in der \emph{geometry} Property einen sogenannten 2D-Sphere-Index\footnote{siehe dazu: \href{https://docs.mongodb.com/manual/core/2dsphere/}{https://docs.mongodb.com/manual/core/2dsphere/}} anlegen um Abfragen über räumliche eigenschaften direkt zu unterstützen.
+
+Damit unterstützt
+MongoDB auch eine Abfrage \href{https://docs.mongodb.com/manual/reference/operator/query/geoIntersects/#op._S_geoIntersects}{\texttt{\$geoIntersects}}. Damit ist es möglich Überlappungen einer Fläche mit bereits vorhandenen Objekten in der Datenbank abzufragen. 
+Falls dies der Fall ist, können alle überlappenden Landeflächen einer Richtung zu einem gemeinsamen Objekt zusammengefasst werden um die Anzahl der Objekte zur anzeige zu minimieren.
+
+Auch kann die Abfrage der Daten auf einen bestimmten Kartenausschnitt begrenzt werden, so dass nicht immer alle gefundenen potentiellen Notlandefelder zur Anzeige der Ergebnisse verarbeitet werden müssen.
+
 \section{Express-Server App}
+
+Wie bereits mehrfach erwähnt nimmt der DatabaseManager seine Befehle vom Benutzer per REST-API entgegen. Bei einer REST-API (Representational State Transfer) stellt der Webserver verschiedene Endpunkte per HTTP bereit und startet bei Ereignissen (GET, POST, PUT, DELETE) auf diesen Endpunkten bestimmte Aktionen oder antwortet mit Daten. Für die vorliegende Aufgabe werden nur wenige relativ einfache Befehle benötigt. Die zur Verfügung gestellten Endpunkte sind:
+
+\begin{itemize}
+	\item GET auf \emph{/}: Auf dem Index-Endpunkt liefert die Express-App die HTML-Seite und zugehöriges JavaScript für den Client aus.
+	\item POST auf \emph{/api/fileInfo/}: Die Dateiinformationen des über einen Dateinamen spezifizierten GeoTIFF werden zurückgegeben. Zur Ermittlung bedient sich die Applikation des Hilfsprogramms \emph{gdalinfo}\footnote{Dieses Programm kommt zusammen mit der GDAL-Bibliothek und liefert Informationen über einen als Rasterdaten vorliegenden Datensatz. \href{http://www.gdal.org/gdalinfo.html}{http://www.gdal.org/gdalinfo.html}}, welches sein Ergebnis als JSON Objekt zurück liefern kann.
+	\item POST auf \emph{/api/fileInfo/extent}: Liefert das konvexe Umfangspolygon des per Dateinamen spezifizierten Datensatzes. Darüber lässt sich auf einer Karte die Abdeckung des Datensatzes einblenden. Die Daten werden aus einem Aufruf von \emph{gdalinfo} extrahiert.
+	\item POST auf \emph{/api/commands/}: Nimmt einen Task entgegen und leitet ihn über einen UNIX-Socket weiter an die searchEngine Komponente, die auch für die Ausführung verantwortlich ist. Aktuell werden zwei Task-Typen unterstützt:
+	\begin{itemize}
+		\item \texttt{SCAN}: Durchmustert einen Bereich nach potentiellen Notlandefeldern. Die Suchparameter und der Bereich sowie angaben zum Datensatz werden über ein JSON-Objekt mitgeliefert.
+		\item \texttt{SAVE\_2\_M\_FILE}: Speichert einen Bereich eines GeoTIFF Datensatzes in einer Matlab/GNU Octave kompatiblen Textdatei. Dies war vor allem zu Beginn der Implementierung wichtig um die Datensätze manuell auf Ihren Inhalt zu untersuchen.
+	\end{itemize}
+	\item DELETE auf \emph{/api/commands/drop}: Ein Delete-Kommando auf diesen Endpunkt löscht sämtliche Inhalte der Datenbank. Dieses Kommando wird für Test- und Demozwecke benötigt.
+	\item POST auf \emph{/api/queries/}: Ein Post auf diesen Endpunkt fragt die Datenbank ab und liefert die Einträge in einem als Parameter übergebenen Bereich als JSON-Array zurück. Zusätzlich zum abzufragenden Bereich werden noch Parameter erwartet, welche die Art der angeforderten Ergebnisse spezifizieren. Angefragt werden können
+		\begin{itemize}
+			\item \texttt{mergedAreas}: Mit diesem Parameter wird definiert, ob die originalen, von der searchEngine gefundenen Landebahnen abgefragt werden, oder ob die zusammengefassten Landefelder geliefert werden, in denen überlappende Bahnen zu einem komplexen Polygon zusammengefasst wurden.
+			\item \texttt{minVariancePlanes}: Mit diesem Parameter können zusätzlich zu den, nach den Suchparametern gültigen, Bahnen auch noch die Teilbahnen abgefragt werden, welche innerhalb einer gefundenen zulässigen Bahn den Bereich darstellt, in dem die minimale Varianz auftritt. In diesem Bereich ist die geringste Holprigkeit zu erwarten
+		\end{itemize}
+\end{itemize}
+
+Neben diesen per HTTP zur Verfügung gestellten Endpunkten zur Benutzerinteraktion kommuniziert der DatabaseManager noch über einen UNIX-Socket mit der searchEngine Komponente. Dafür sind jedoch noch weniger Befehle notwendig um die Aufgabe zu erfüllen. Über die Interprozess-Kommunikation (IPC) werden folgende Botschaften zwischen DatabaseManager (DBM) und SearchEngine (SE) ausgetauscht:
+\begin{itemize}
+	\item DBM $\rightarrow$ SE \texttt{SCAN}: Es wird eine Durchmusterung eines Datensatzausschnitts in Auftrag gegeben. Die Parameter werden als JSON durchgereicht.
+	\item DBM $\rightarrow$ SE \texttt{SAVE\_2\_M\_FILE}: Speichert einen Bereich eines GeoTIFF Datensatzes in einer Matlab/GNU Octave kompatiblen Textdatei.
+	\item SE $\rightarrow$ DBM \texttt{landingPlane}: Die SE hat eine neue potentielle Landebahn gefunden und übergibt sie über ein JSON-Objekt an den DBM um sie in der Datenbank zu persistieren. Für jede gefundene potentielle Bahn werden zwei Objekte übergeben: Die Bahn maximaler Ausdehung, so dass die geforderten Suchkriterien gerade noch eingehalten werden und eine innerhalb dieser Bahn liegende Teilbahn, welche minimale Varianz aufweist und gerade noch die geforderte Mindestlänge erreicht.
+	\item SE $\rightarrow$ DBM \texttt{taskReceipt}: Mit einem Task-Receipt meldet die SE dem DBM die Fertigstellung eines Auftrags. Damit kann der DBM nachhalten ob und welche Aufträge noch ausstehen und gegebenenfalls den Client aktiv informieren (Push). Aktuell wird diese Möglichkeit jedoch noch nicht genutzt.
+\end{itemize}
+
 \section{Postprocessing - Merge}
 
+In der Praxis hat sich gezeigt, dass es sehr häufig vorkommt, dass potentielle Landebahnen dicht beieinander liegen und sich gegenseitig überlappen. Um die Darstellung solcher Landefelder übersichtlicher zu gestalten wurde eine Postprocessing Komponente erstellt.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.5\textwidth]{../Vorgehensweise/drawings/ueberlappendeBahnen.png}
+	\caption{Überlappende Landebahnen, die zu einem komplexen Polygon zusammengefasst werden können}
+\end{figure}
+Dieser Landebahnen-Merge ist wegen seiner intensiven Zugriffe auf die Datenbank auch in der Codebasis des DatabaseManagers integriert. Es handelt sich aber um eine völlig unabhängige Komponente, welche auch in einem eigenen Prozess gestartet wird. Dieser unabhängige Postprocessing Task, durchsucht die Datenbank vollständig nach überlappenden Landebahnen mit gleicher Ausrichtung. Solche rechteckigen Bahnen können zu einer größeren Landefläche mit einem komplexen Polygon als Umriss zusammengefasst werden. 
+
+Der Algorithmus ist sehr einfach gehalten: nacheinander werden alle unbearbeiteten Bahnen aus der Datenbank gesucht. Für jede gefundenen Bahn wird eine weitere Datenbank-Abfrage gestartet um überlappende Bereiche gleicher Himmelsrichtung zu finden. Alle so erhaltenen überlappenden Bereiche werden über die Bibliothek \emph{turf.js} zu einem komplexen Polygon zusammengefasst. Als Parameter erhält dieses Feld die minimale Bahnlänge der beteiligten Ausgangsbahnen und die maximale Varianz und Steigung. Die Ursprünglich von der SearchEngine gelieferten Bahnen werden nicht aus der Datenbank entfernt, sondern lediglich als schon bearbeitet markiert. So kann jederzeit auf die ursprüngliche Datenbasis zurückgegriffen werden.
+
+Aktuell muss der Merge-Lauf noch manuell gestartet werden.
+
 \chapter{Komponente "'landingClient"'}
+
+Da in unserer Arbeitsgruppe bisher keine Erfahrung mit nativer GUI-Programmierung vorliegt, wurde beschlossen diesen Schritt auszulassen und direkt eine plattformunabhängige GUI basierend auf modernen Webtechnologien zu erstellen.
+
+Diese GUI läuft auf jedem modernen Webbrowser und kann somit auch als Anzeige-Komponente auf schmalbrüstigen Geräten wie z. B. Smartphomnes zum Einsatz kommen, während das Heavy Lifting der Durchmusterung und der Datenhaltung auf einem kräftigen Server erledigt werden kann.
+
+\begin{figure}[ht]
+	\includegraphics[width=\textwidth]{./drawings/LandingClient_Screen1.png}
+	\caption{Beisiel Screenshot aus der Weboberfläche zur Bedienung des Systems}
+\end{figure}
+
 \section{Überblick}
+
+Zur Realisierung der GUI wurde auf das von Facebook entwickelte und zur Verfügung gestellte REACT-Framework\footnote{siehe dazu: \href{https://facebook.github.io/react/}{https://facebook.github.io/react/}} zurückgegriffen. Der innere Status der Web-App wird über das dazu passende REDUX-StateManagement\footnote{siehe dazu: \href{http://redux.js.org/}{http://redux.js.org/}} verwaltet. Die Darstellung der einzelnen HTML-Elemente erfolgt über die Bootstrap-Bibliothek\footnote{siehe dazu: \href{https://getbootstrap.com/}{https://getbootstrap.com/} und \href{https://react-bootstrap.github.io/}{https://react-bootstrap.github.io/}} von Twitter. Zur Darstellung der Karte wird auf die Bibliothek Leaflet\footnote{siehe dazu: \href{http://leafletjs.com/}{http://leafletjs.com/} und \href{https://github.com/PaulLeCam/react-leaflet}{https://github.com/PaulLeCam/react-leaflet}} zurückgegriffen, die eine einfache Darstellung von OpenStreetMap\footnote{siehe dazu: \href{https://www.openstreetmap.org}{https://www.openstreetmap.org}}-Karten erlaubt
+
+REACT-Apps werden vollständig in Javascript kodiert, in das HTML-Elemente eingebettet werden. 
+
+Ohne auf zu viele Details einzugehen wird die Funktionsweise der App lediglich kurz umrissen:
+
+Die App unterhält intern einen State-Container (REDUX-Store), welcher alle notwendigen Daten enthält um den aktuellen Status der App zu bestimmen. In unserem Fall werden dort Informationen über die ausgewählte GeoTIFF-Datei (Dateiname, Dateieigenschaften, enthaltene Geodaten, Ausdehnung, \ldots) und die aktuell verfügbaren Notlandefelder (Array von \emph{landingPlanes[]} mit GeoJSON als Inhalt) gehalten. 
+
+\begin{figure}[ht]
+	\includegraphics[width=\textwidth]{./drawings/ReduxStore_1.png}
+	\caption{Der REDUX-Store zur Kontrolle des App-Status}
+\end{figure}
+
+
+Diese Daten werden nach Anforderung über die Bedienelemente asynchron vom Server (DatabaseManager per HTTP) abgefragt. Sobald eine asynchrone Anfrage beantwortet wurde sorgt das REACT-Framework dafür, dass die notwendigen Elemente des User-Interface neu gerendert werden um jederzeit eine aktuelle Darstellung zu erhalten. Diese Elemente werden mit dem REDUX-Store verknüpft, so dass auf Änderungen der Status-Staten direkt reagiert werden kann.
+
+Zur Darstellung der gefundenen Landebahnen werden immer nur diejenigen Bahnen vom Server abgerufen, die im gezeigten Kartenausschnitt liegen. Das dient dazu, dass einerseits nicht zu viele (irrelevante) Daten über das Netzwerk übertragen werden müssen und sorgt gleichzeitig für eine relativ hohe Update Rate der Daten, da nach jedem Ändern von Ausschnitt oder Zoom eine Aktualisierung angefragt wird. Lokal im Client werden die angezeigten Daten noch gefiltert, so dass die Darstellung auf Bahnen bestimmter Richtungen eingeschränkt werden kann und ausgewählt werden kann, ob die zusammengefassten Landeflächen oder die einzelnen Rohdaten angezeigt werden sollen. Auch kann gefiltert werden ob die Teilbahnen minimaler Varianz überblendet werden sollen.
+
+
+
 \section{Features und Bedienung}
-  
+
+
+Der Webclient für die Landebahnensuche präsentiert sich sehr schlicht. Zunächst wird lediglich eine leere Seite zur Auswahl der interessierenden GeoTIFF Datei dargestellt.
+
+\begin{figure}[ht]
+	\includegraphics[width=\textwidth]{./drawings/LandingClient_Screen_Start.png}
+	\caption{Auswahl der zu bearbeitenden GeoTIFF-Datei}
+\end{figure}
+
+Der Benutzer kann hier eine zu bearbeitende Datei auswählen und die zugehörigen Dateiinfos abrufen.
+
+Die Darstellung wechselt zur Hauptansicht, in der der in der ausgewählten Datei enthaltene Ausschnitt in einer Karte angezeigt wird.
+\begin{figure}[ht]
+	\includegraphics[width=\textwidth]{./drawings/LandingClient_Screen_Ueberblick.png}
+	\caption{Überblick über den im GeoTIFF enthaltenen Datensatz}
+\end{figure}
+
+Hier kann der Benutzer die relevanten Parameter zu minimalen Bahnmaßen und Steigungs- und Holprigkeitseigenschaften einstellen. Auch die Durchmusterungsrichtungen können hier vorgegeben werden. Ein Klick auf "`Scan"' setzt einen "`SCAN"'-Task über die REST-API des Servers ab. Als Scan-Bereich wird der gerade sichtbare Bereich der Karte angegeben. Wenn die Kartenausschnitt größer ist als der GeoTIFF-Datensatz, dann wird natürlich nur der vorhandene Datensatz untersucht.
+
+Leider wird die Fertigstellung der Scan-Task noch nicht per Push an den Client zurückgemeldet. Daher ist ein "`request Results"' Knopf vorhanden, der eine manuelle Abfrage der gefundenen Bahnen erlaubt. Diese Anfrage wird aber auch bei jeder Manipulation des gezeigten Kartenausschnitts abgesetzt, so dass eine manuelle Abfrage nur selten notwendig ist.
+
+Sobald potentielle Bahnen angezeigt werden kann der Benutzer darauf noch Filter anwenden um die Darstellung übersichtlicher zu gestalten.
+
+\begin{figure}[ht]
+	\includegraphics[width=\textwidth]{./drawings/LandingClient_Screen_Planes.png}
+	\label{dargestellte_bahnen}
+	\caption{Gefundene Landebahnen mit angewendeten Filtern zur Darstellung}
+\end{figure}
+
 \chapter{Ausblick und weitere Ideen}
 
 Im Rahmen der Untersuchungen mit der im Praktikum erarbeiteten Softwarelösung sind einige verblüffende und interessante Artefakte sichtbar geworden.
@@ -683,10 +885,38 @@ Die Berechnung der Varianz der Landebahn bzw. das Auffinden der optimalen Landeb
 Es könnten weitere Parameter eingeführt werden, um noch mehr Randbedingungen an die Qualität einer Landebahn zu stellen. Dieses benötigt aber sicherlich noch mehr domänenpezifischen Input.
 Interessant wäre es, Datensets mit mehr Datenpunkten und die Laufzeit bei diesen Randbedingungen zu untersuchen. Insbesondere, wenn die Fläche in eine größere Anzahl von Subkacheln gesplittet wird.
  
-\section{Richtungskorrektur des GeoTIFF}
-\section{Push für Webclient}
-\section{Merge als nachgeschalteter Prozess aus dem Speicher}
-\section{Kollisionsabfrage mit Objekten aus OSM}
 \section{Parallele Bearbeitung mehrerer Kacheln per MPI}
-Besonders bei größeren Datensätzen wäre es interessant, die Laufzeiteigenschaften der Software zu untersuchen. Bei sehr großen Datensätze wäre ein embedding in eine MPI Lösung vielleicht interessant, das die Daten innerhalb eines Clusters verteilt. Pro Knoten könnte dann mit Threading eine feingranulare Parallelisierung durchgeführt werden.
+Besonders bei größeren Datensätzen wäre es interessant, die Laufzeiteigenschaften der Software zu untersuchen. Bei sehr großen Datensätze wäre ein embedding in eine MPI Lösung vielleicht interessant, das die Daten innerhalb eines Clusters verteilt. Pro Knoten könnte dann mit Threading eine feingranulare Parallelisierung durchgeführt werden. 
+
+Die im GeoTIFFHandler sowieso schon vorgesehen Kachelung des Datensatzes könnte direkt zur Aufteilung der Daten auf verschiedene MPI-Knoten genutzt werden. Die Durchmusterung dieser einzelnen Kacheln kann völlig unabhängig voneinander erfolgen, so dass mit einem linearen Speedup gerechnet werden kann, solange die Datensätze große genug sind.
+
+\section{Richtungskorrektur des GeoTIFF}
+
+Wie weiter oben schon erwähnt stimmt aktuell die Ausrichtung der Landebahnen nicht mit der tatsächlichen Ausrichtung auf der Erdkugel überein. Es entsteht eine geringe Abweichung, da für diesen Proof-of-concept angenommen wurde, dass der GeoTIFF-Datensatz strikt in Nord-Süd- und Ost-West-Richtung ausgerichtet ist. Genau genommen muss aber die korrekte Ausrichtung eines jeden Pixels einzeln bestimmt werden um die korrekte auf Kugelkoordinaten bezogene Ausrichtung zu erhalten.
+
+In der \emph{GDAL}-Bibliothek stehen alle benötigten Transformationen zur Verfügung um die korrekte Ausrichtung für jedes Pixel zu berechnen. Die Berechnung innerhalb der Duchmusterungsroutine würde damit jedoch erheblich aufwändiger, weil in jedem Schritt der nächste Nachbar neu berechnet werden muss und nicht mehr ein vorberechneter Richtungsvektor zum Fortschreiten entlang eines Durchmusterungsstrahls in Pixelkoordinaten verwendet werden kann. Es wäre interessant zu untersuchen, ob eine richtungskorrektur wirklich bei jedem Rasterpixel notwendig wird, oder ob eine seltenere Richtungskorrektur nicht ausreichen gute Ergebnisse liefert.
+
+\section{Push für Webclient}
+Aktuell müssen die Ergebnisse einer Durchmusterung noch manuell vom Server in den Web-Client abgerufen werden. Um den Komfort zu steigern wäre es schön einen Push-Mechanismus zu implementieren, der den Client benachrichtigt, sobald neue Objekte in der Datenbank eingetragen werden.
+
+Ein solcher Mechanismus ist über Web-Sockets\footnote{siehe hierzu: Als Einstieg \href{https://de.wikipedia.org/wiki/WebSocket}{https://de.wikipedia.org/wiki/WebSocket} und zur konkreten Implementierung in einer Express-App  \href{https://www.npmjs.com/package/express-ws}{https://www.npmjs.com/package/express-ws}.} leicht verfügbar. Damit kann der Server an registrierte Clients Push-Nachrichten senden, ohne dass eine neue Abfrage abgesetzt werden muss.
+
+
+\section{Merge als nachgeschalteter Prozess aus dem Speicher}
+Der Merge der überlappenden Landebahnen ist aktuell sehr simpel und wenig effizient implementiert. Bei einer großen Menge frisch gefundener Landebahnen dauert der Merge-Lauf aktuell deutlich länger als die Durchmusterung des zugrunde liegenden GeoTIFF. Das liegt daran, dass in der aktuellen Implementierung eine sehr große Anzahl an Datenbankzugriffen stattfindet: Es wird jede unbearbeitete Landebahn aus der Datenbank einzeln abgefragt. Daraufhin werden zu jeder so gefundenen Bahn alle überlappenden Objekte in der Datenbank gesucht. Das neu entstehende Polygon wird nun als neues unbearbeitetes Objekt in der Datenbank gespeichert. Für jedes so bearbeitete Objekt müssen sowohl Lese- als auch Schreibzugriffe auf der Datenbank stattfinden.
+
+Sehr viel Effizienter ließe sich ein Merge-Postprocessing implementieren, wenn die neu gefundenen Bahnen eines Scan-Durchlaufs im Speicher gehalten würden und nach Beendigung des Scan-Durchlaufs ein Merge über die Objekte im Speicher durchgeführt würde. Die damit gewonnenen Zusammengefassten Landeflächen können mit einem einzigen Datenbankzugriff geschrieben werden. 
+
+Mit einem solchen Postprocessing ohne Datenbankzugriffe sind Performance Steigerung beim Merge um Größenordnungen zu erwarten.
+Ob der Merge in C++ oder in Javascript implementiert wird, dürfte nach erster Einschätzung keine große Rolle spielen.
+
+\section{Kollisionsabfrage mit Objekten aus OSM}
+Wie in Abbildung \ref{dargestellte_bahnen} zu erkennen ist findet eine Durchmusterung natürlich bevorzugt Wasserflächen als potentielle Landeflächen, da diese in den Höhendaten sehr flach und glatt erscheinen. Obwohl es Piloten gibt, die auch auf Wasser landen können\footnote{siehe hierzu: \href{http://www.zeit.de/wissen/2016-09/chesley-sullenberger-new-york-airbus-pilot-hudson-river-notlandung}{http://www.zeit.de/wissen/2016-09/chesley-sullenberger-new-york-airbus-pilot-hudson-river-notlandung}}, so ist das in der Regel nicht die bevorzugte Landebahn. 
+
+Als Erweiterung der Landebahnensuche kann relativ einfach eine Kollisionsabfrage mit unerwünschten Objekten eingebaut werden. Diese unerwünschten Objekte müssen lediglich in einer Datenbank als GeoJSON vorliegen. Vor dem Eintrag einer neuen Bahn kann geprüft werden, ob eine Kollision mit einem dieser Sperr-Objekte vorliegt. Falls das der Fall ist so kann die neue Bahn gegebenenfalls vollständig verworfen, oder aber beschnitten werden.
+
+Geeignete Sperrflächen sind prinzipiell über die Datenbank von Openstreetmap verfügbar. 
+
+Um diese Funktionalität zu implementieren sind jedoch noch deutlich weitergehende Untersuchungen über Art und Datenformat unerwünschter Objekte durchzuführen.
+
 \end{document}
