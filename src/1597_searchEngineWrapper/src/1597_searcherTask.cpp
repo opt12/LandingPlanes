@@ -18,9 +18,9 @@
 // for convenience
 using json = nlohmann::json;
 
-#include "../../GeoTiff_Handler/src/GeoTiffHandler.h"
-#include "../../GeoTiff_Handler/src/readInTiff.h"
-#include "../../GeoTiff_Handler/src/config.h"	//TODO: Das ist unschön, wenn wir nicht auch autoconfig und autoheaders benutzen wollen.
+#include "GeoTiffHandler.h"
+#include "readInTiff.h"
+#include "config.h"	//TODO: Das ist unschön, wenn wir nicht auch autoconfig und autoheaders benutzen wollen.
 
 static eResult scanForLandingPlanes(json taskDescription, int commSocket) {
 	cout << "SCAN Thread: scanning for Landing Planes" << endl;

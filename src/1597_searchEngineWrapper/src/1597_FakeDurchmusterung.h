@@ -9,7 +9,7 @@
 #define FAKEDURCHMUSTERUNG_H_
 
 #include "1597_Task_Definition.h"
-#include "../../GeoTiff_Handler/src/GeoTiffHandler.h"
+#include "GeoTiffHandler.h"
 
 struct tcreateFakePlaneStarterParam {
 	const tileData *actualTile;

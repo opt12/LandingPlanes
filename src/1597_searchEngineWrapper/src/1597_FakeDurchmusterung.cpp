@@ -24,7 +24,7 @@
 // for convenience
 using json = nlohmann::json;
 
-#include "../../GeoTiff_Handler/src/GeoTiffHandler.h"
+#include "GeoTiffHandler.h"
 
 static json createFakeLandingPlane(const tileData *actualTile,
 		GeoTiffHandler *myGeoTiffHandler, float heading, float minLength,
