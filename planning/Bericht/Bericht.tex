@@ -149,9 +149,9 @@ Die Befehle werden per IPC in Form von JSON-Objekten abgesetzt und enthalten all
 
 Wenn ein \verb|SCAN| Task ausgeführt wird, so wird ein weiterer Thread aufgespannt, der sich zunächst um das Einlesen der Rohdaten kümmert bevor er die als externe Bibliothek eingebundene Komponente \texttt{Durchmusterung} startet innerhalb derer das Heavy Lifting der Landebahnsuche stattfindet. Wie die Rohdaten verarbeitet werden, wird gleich näher beschrieben.
 
-Es wird immer nur ein \verb|SCAN|-Task auf einmal abgearbeitet. Die benutzte Komponente \texttt{Durchmusterung} führt intern eine Parallelisierung durch und kann so die vorhandene Prozessorleistung optimal ausnutzen. Eine Parallelisierung mehrere Tasks auf höherer Weben würde lediglich zu einer unnötigen Konkurrenz um Ressourcen führen ohne dass daraus mehr Performance erwachsen würde.
+Es wird immer nur ein \verb|SCAN|-Task auf einmal abgearbeitet. Die benutzte Komponente \texttt{Durchmusterung} führt intern eine Parallelisierung durch und kann so die vorhandene Prozessorleistung optimal ausnutzen. Eine Parallelisierung mehrerer Tasks auf höherer Ebene würde lediglich zu einer unnötigen Konkurrenz um Ressourcen führen, ohne dass daraus mehr Performance erwachsen würde.
 
-Durch die Aufteilung der \texttt{searchEngine} in mehrere parallele Threads (die sich meistens langweilen und auf externe Anweisungen warten) bleibt die Applikation auch dann reaktiv, wenn gerade eine Durchmusterung eines Bereichs durchgeführt wird, welche intern maximale Leistung von den zur Verfügung stehenden Kernen verlangt.
+Durch die Aufteilung der \texttt{searchEngine} in mehrere parallele Threads (die sich meistens langweilen und auf externe Anweisungen warten), bleibt die Applikation auch dann reaktiv, wenn gerade eine Durchmusterung eines Bereichs durchgeführt wird, welche intern maximale Leistung von den zur Verfügung stehenden Kernen verlangt.
 
 \skippingparagraph
 Bevor weitere Details der erstellten Software beschrieben werden, muss noch kurz auf die verwendeten Datenformate für Geodaten eingegangen werden:
@@ -162,9 +162,9 @@ Die Höhendaten werden, wie bei Geodaten üblich, als sogenanntes GeoTIFF bereit
 Die gefundenen potentiellen Landebahnen sind durch ein Rechteck charakterisiert, welches mitsamt bestimmter Parameter als GeoJSON in der Datenbank abgelegt wird.
 
 \subsection{GeoTIFF}
-Beim TIFF Format handelt es sich um ein Containerformat, das für einen rechteckigen Bereich aus Pixeln für jedes Pixel Informationen in den verschiedensten Datenformaten aufnehmen kann. Einen ersten Überblick gibt Wikipedia\footnote{siehe dazu \url{https://de.wikipedia.org/wiki/Tagged_Image_File_Format}}, während die vollständige Spezifikation unter \url{https://www.loc.gov/preservation/digital/formats/fdd/fdd000022.shtml} abgerufen werden kann. Glücklicherweise ist es nicht notwendig diese Spezifikation selber zu implementieren. Es reicht aus einige Basiseigenschaften zu kennen und passende Bibliotheken zu benutzen.
+Beim TIFF Format handelt es sich um ein Containerformat, das für einen rechteckigen Bereich aus Pixeln für jedes Pixel Informationen in den verschiedensten Datenformaten aufnehmen kann. Einen ersten Überblick gibt Wikipedia\footnote{siehe dazu \url{https://de.wikipedia.org/wiki/Tagged_Image_File_Format}}, während die vollständige Spezifikation unter \url{https://www.loc.gov/preservation/digital/formats/fdd/fdd000022.shtml} abgerufen werden kann. Glücklicherweise ist es nicht notwendig, diese Spezifikation selber zu implementieren. Es reicht aus, einige Basiseigenschaften zu kennen und passende Bibliotheken zu benutzen.
 
-Bei TIFF Dateien, wie sie im Geodaten-Bereich verwendet werden, handelt es sich um Ausschnitte der Erdkugel, welche auf eine rechteckige Ebene projiziert wurden. In dieser Ebene hat jedes Pixel eine feste Größe und jedem Pixel sind in verschiedenen Bändern diverse Daten zugeordnet. Im vorliegenden Fall handelt es sich um 20mx20m große Pixel denen jeweils ein FLOAT32-Wert mit Höheninformationen zugeordnet ist.
+Bei TIFF Dateien, wie sie im Geodaten-Bereich verwendet werden, handelt es sich um Ausschnitte der Erdkugel, welche auf eine rechteckige Ebene projiziert wurden. In dieser Ebene hat jedes Pixel eine feste Größe und jedem Pixel sind in verschiedenen Bändern diverse Daten zugeordnet. Im vorliegenden Fall handelt es sich um 20m x 20m große Pixel, denen jeweils ein FLOAT32-Wert mit Höheninformationen zugeordnet ist.
 Da die zugrundeliegenden Daten nicht zwingend als Rechteck vorliegen (NRW ist \emph{kein} rechteckiges Land), wird ein bestimmter Zahlenwert als \verb|noDataValue| definiert welcher ungültige/nicht vorhandene Daten beschreibt.
 
 Die Daten werden verlustfrei komprimiert gespeichert und können von speziellen Bibliotheken (meist basierend auf der Open-Source Bibliothek libTIFF\footnote{siehe dazu \url{http://www.libtiff.org/}}) eingelesen werden.
@@ -176,7 +176,7 @@ Im Gegensatz zu dem rasterorientieren GeoTIFF Format ist für die Verwaltung der
 
 Ein GeoJSON Objekt ist ein einfaches JSON Objekt, welches die drei Properties \emph{type}, \emph{properties} und \emph{geometry} enthält. In der Property \emph{type} wird angegeben, ob es sich um nur eine Geometrie (\emph{type: Feature}) oder um einen mehrteiligen Satz von Geometrien (\emph{type: FeatureCollection}) handelt. In \emph{geometry} wird das Geometrieobjekt selber spezifiziert. In unserem Fall handelt es sich um Polygone, deren Eckpunkte durch Koordinaten angegeben werden. In \emph{properties} schließlich können dem GeoJSON Objekt noch beliebige weitere Eigenschaften zugeordnet werden.
 
-Die vollständige Spezifikation des Formats ist zu finden unter \url{https://geojson.org}. Ein sehr praktisches Tool um das Datenformat kennenzulernen und selber erstellte Datensätze auf Konformität zu testen findet sich unter \url{http://geojson.io}.
+Die vollständige Spezifikation des Formats ist unter \url{https://geojson.org} zu finden. Ein sehr praktisches Tool um das Datenformat kennenzulernen und selber erstellte Datensätze auf Konformität zu testen, findet sich unter \url{http://geojson.io}.
 
 \section{GeoTIFFHandler}
 
@@ -185,7 +185,7 @@ Um den Umgang mit den GeoTIFF Daten zu kapseln wurde eine Klasse \texttt{GeoTIFF
 Die einzelnen Funktionen werden weiter unten näher erläutert.
 
 \subsection{Datenextraktion}
-Der erste Schritt um mit einem Datensatz zu arbeiten ist die Extraktion der darin enthaltenen Daten. Wie oben schon erläutert wurde handelt es sich bei TIFF um ein sehr komplexes Format, das Dateien beliebiger Größe aufnehmen kann.
+Der erste Schritt um mit einem Datensatz zu arbeiten ist die Extraktion der darin enthaltenen Daten. Wie bereits schon erläutert, wurde handelt es sich bei TIFF um ein sehr komplexes Format, das Dateien beliebiger Größe aufnehmen kann.
 
 Da natürlich keine Routine zum Dekodieren diese Datenformats erstellt werden sollte, wurden mehrere Bibliotheken gesichtet, die zum Einlesen der Daten in einem TIFF geeignet sind. Ein wichtiger Aspekt dabei war, dass die Bibliothek eine effiziente Einleseroutine für Teildaten eines großen Datensatzes bereitstellen soll. Da die Geodaten sehr groß werden können, ist die Wahrscheinlichkeit gegeben, dass nicht der gesamte Datensatz auf einmal verarbeitet werden kann. Auch soll es möglich sein nur bestimmte Ausschnitte eines Datensatzes zu Durchmustern, um dadurch auf eine kurze Durchmusterungszeit zu kommen.
 
