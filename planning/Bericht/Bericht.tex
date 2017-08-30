@@ -86,7 +86,7 @@ Zur Lösung der Aufgabenstellung muss zunächst eine Systemarchitektur festgeleg
 \section{Überblick}
 Zum Einlesen der Rohdaten, Steuern der Applikation und zum Auffinden, Persistieren und Anzeigen der potentiellen Notlandefelder sind vielfältige Schritte notwendig. Diese haben jeweils ihre eigenen spezifischen Herausforderungen und sind bei näherer Betrachtung sogar relativ unabhängig voneinander lösbar.
 
-Daraus ergibt sich die Möglichkeit das System aus relativ lose gekoppelten Komponenten aufzubauen, welche jeweils in einer Programmiersprache ent\-wickelt werden, die auf die jeweilige Aufgabe abgestimmt, ihre Stärken ausspielen kann. In der vorliegenden Aufgabenstellung wurde entschieden die Aufgaben, welche vornehmlich große Datenmengen bewegen und "`Number Crunching"' betreiben in C/C++ zu implementieren, während Datenbankzugriffe und das UI in JavaScript realisiert wurden.
+Daraus ergibt sich die Möglichkeit, dass System aus relativ lose gekoppelten Komponenten aufzubauen, welche jeweils in einer Programmiersprache ent\-wickelt werden, die auf die jeweilige Aufgabe abgestimmt, ihre Stärken ausspielen kann. In der vorliegenden Aufgabenstellung wurde entschieden, die Aufgaben, welche vornehmlich große Datenmengen bewegen und "`Number Crunching"' betreiben in C/C++ zu implementieren, während Datenbankzugriffe und das UI in JavaScript realisiert wurden.
 
 Eine grobe Übersicht über die einzelnen Systemkomponenten bietet Abbildung \ref{architektur}.
 
@@ -127,14 +127,14 @@ Ein weiterer Vorteil der konsequenten Trennung der View vom Rest der Software li
 
 Während die grobkörnige Parallelität sich direkt aus der gewählten Architektur ergibt und quasi gratis kommt, so ergeben sich für die rechenintensive Aufgabe des Durchmusterns der Ausgangsdaten weitere Anforderungen, die über eine solche lose Kopplung hinausgehen.
 
-Da inzwischen jeder halbwegs moderne Rechner über Mehrkernprozessoren und relativ viel gemeinsamen Speicher verfügt, lag es nahe die rechenintensive Aufgabe der Datenanalyse explizit zu parallelisieren und dazu shared Memory Techniken zu nutzen. Genutzt wurden dafür im vorliegenden Lösungsvorschlag POSIX Threads, die mittels der \texttt{pthreads}-Routinen eingebunden werden können.
+Da inzwischen jeder halbwegs moderne Rechner über Mehrkernprozessoren und relativ viel gemeinsamen Speicher verfügt, lag es nahe, die rechenintensive Aufgabe der Datenanalyse explizit zu parallelisieren und dazu shared Memory Techniken zu nutzen. Genutzt wurden dafür im vorliegenden Lösungsvorschlag POSIX Threads, die mittels der \texttt{pthreads}-Routinen eingebunden werden können.
 
 Zusätzlich zu den Number-Crunching-Threads, welche in der Bibliothek "`Durchmusterung"' zur Performance-Steigerung eingesetzt werden, ist die gesamte Komponente \texttt{searchEngine} auf mehrere Threads aufgeteilt um eine reaktive Applikation zu realisieren. Details dazu werden im nächsten Kapitel erläutert.
 
 
 \chapter{Komponente "`searchEngine"'}
 
-Die Komponente \texttt{searchEngine} ist in C/C++ realisiert und dient dazu vom Controller Aufgaben entgegen zu nehmen und auszuführen. Dazu gehört die Kommunikation mit der "`Außenwelt"' über UNIX-Sockets, die Verwaltung der Warteschlange mit Aufträgen, das Einlesen der Daten mit den dazugehörigen Koordinatentransformationen, die Aufteilung auf mehrere Kacheln, falls nicht alle Daten in den Speicher passen, und der Start der eigentlichen Durchmusterung.
+Die Komponente \texttt{searchEngine} ist in C/C++ realisiert und dient dazu, vom Controller Aufgaben entgegen zu nehmen und auszuführen. Dazu gehört die Kommunikation mit der "`Außenwelt"' über UNIX-Sockets, die Verwaltung der Warteschlange mit Aufträgen, das Einlesen der Daten mit den dazugehörigen Koordinatentransformationen, die Aufteilung auf mehrere Kacheln, falls nicht alle Daten in den Speicher passen, und der Start der eigentlichen Durchmusterung.
 
 Zur Kommunikation der Systembestandteile untereinander kommt das simple JSON-Format\footnote{siehe dazu \url{http://www.json.org/}} zum Einsatz. JSON bietet sich an, da für die Speicherung in der ausgewählten Datenbank sowieso JSON zum Einsatz kommt und dieses Datenformat von allen beteiligten Komponenten sehr gut unterstützt wird. In C++ lässt sich JSON sehr einfach über eine Open-Source Header-Only Bibliothek\footnote{siehe dazu: \url{https://github.com/nlohmann/json}} einbinden und dann wie native Objekte nutzen.
 
@@ -147,7 +147,7 @@ Der \verb|queueDispatcher| bringt die in der Warteschlange eingestellten Befehle
 \end{itemize}
 Die Befehle werden per IPC in Form von JSON-Objekten abgesetzt und enthalten alle notwendigen Parameter, die zur Ausführung benötigt werden.
 
-Wenn ein \verb|SCAN| Task ausgeführt wird, so wird ein weiterer Thread aufgespannt, der sich zunächst um das Einlesen der Rohdaten kümmert bevor er die als externe Bibliothek eingebundene Komponente \texttt{Durchmusterung} startet innerhalb derer das Heavy Lifting der Landebahnsuche stattfindet. Wie die Rohdaten verarbeitet werden wird gleich näher beschrieben.
+Wenn ein \verb|SCAN| Task ausgeführt wird, so wird ein weiterer Thread aufgespannt, der sich zunächst um das Einlesen der Rohdaten kümmert bevor er die als externe Bibliothek eingebundene Komponente \texttt{Durchmusterung} startet innerhalb derer das Heavy Lifting der Landebahnsuche stattfindet. Wie die Rohdaten verarbeitet werden, wird gleich näher beschrieben.
 
 Es wird immer nur ein \verb|SCAN|-Task auf einmal abgearbeitet. Die benutzte Komponente \texttt{Durchmusterung} führt intern eine Parallelisierung durch und kann so die vorhandene Prozessorleistung optimal ausnutzen. Eine Parallelisierung mehrere Tasks auf höherer Weben würde lediglich zu einer unnötigen Konkurrenz um Ressourcen führen ohne dass daraus mehr Performance erwachsen würde.
 
