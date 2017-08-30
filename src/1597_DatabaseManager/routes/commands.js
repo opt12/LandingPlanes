@@ -6,11 +6,6 @@ var handleDropDb = require('../commands/cmdDataBase').handleDropDb;
 
 var counter = 0;
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
-
 /* POST task. */
 router.post('/', function(req, res, next) {
     let type = req.body.type;

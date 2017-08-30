@@ -84,8 +84,10 @@ function handleCreateLandingPlane(params) {
         return Promise.reject(new HttpError(400, `Landing Plane data invalid`));
     }
 
-    //TODO aktuell wird die Landebahnlönmge noch nicht korrekt gesetzt. Dann rechne ich die halt aus.
-    params.properties.actualLength = getActualLengthFromCoordinates(params.geometry.coordinates[0]);
+    //inzwischen kommt die Länge der Landebahn im GeojSOn der Durchmusterung mit.
+    //TODO aus zu untersuchenden Gründen ist die Länge abweichend von der hier möglichen Berechnung. :-(
+    //aktuell wird die Landebahnlönmge noch nicht korrekt gesetzt. Dann rechne ich die halt aus.
+    // params.properties.actualLength = getActualLengthFromCoordinates(params.geometry.coordinates[0]);
 
 
     //standardmässig mergen wir. Die Bahnen mit der besten Varianz werden explizit mit
