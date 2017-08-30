@@ -941,4 +941,94 @@ Geeignete Sperrflächen sind prinzipiell über die Datenbank von Openstreetmap v
 
 Um diese Funktionalität zu implementieren sind jedoch noch deutlich weitergehende Untersuchungen über Art und Datenformat unerwünschter Objekte durchzuführen.
 
+\appendix
+\chapter{Installationsanleitung}
+
+Um die hier beschriebene Software auszuprobieren ist ein Rechner mit einer aktuellen Linux-Distribution erforderlich.
+Notwendig ist insbesondere:
+\begin{itemize}
+\item eine aktuelle Installation von Node.js ($\geq$ Version 8)
+\item eine aktuelle Installation von NPM
+\item eine aktuelle installation von bower (\texttt{npm install -g bower})
+\end{itemize}
+
+Zunächst wird das gesamte Projekt von Github auf den Rechner geklont:
+\begin{verbatim*}
+git clone git@github.com:opt12/LandingPlanes.git
+\end{verbatim*}
+
+\skippingparagraph
+Dann muss die Search Engine Komponente in zwei Schritten gebaut werden:
+
+Zunächst die Bibliothek zur Durchmusterung
+\begin{verbatim*}
+cd LandingPlanes/src/Durchmusterung
+make all
+\end{verbatim*}
+
+Hierbei wird auch die passende GDAL-Bibliothek aus dem Netz heruntergeladen und in den Ordner \texttt{./gdal} gespeichert und gebaut. \footnote{Es kann vorkommen, dass beim Build der Bibliothek ein Fehler auftritt (wenn eine ältere Version von Anaconda auf dem Rechner installiert ist.). In diesem Fall ist es meist ausreichend die GDAL Bibliothek in dem Zustand zu benutzen, den sie bis zum Fehler hat und die \texttt{plane\_library.a} nochmals manuell zu bauen:\\
+\texttt{cd LandingPlanes/src/Durchmusterung}\\
+\texttt{make ./lib/plane\_library.a}
+}
+
+Als nächstes muss die Search engine Komponente, welche die Bibliothek \texttt{plane\_library.a} benutzt erstellt werden:
+\begin{verbatim*}
+cd LandingPlanes/src/1597_searchEngineWrapper/Debug
+make all
+\end{verbatim*}
+
+\skippingparagraph
+Nun muss der Landing Client gebaut werden.
+\begin{verbatim*}
+cd LandingPlanes/src/1597_LandingClient
+npm install
+bower install
+npm run local-build
+\end{verbatim*}
+
+Es ist nun eine Datei \texttt{LandingPlanes/src/1597\_LandingClient/bundle.js} erstellt worden.
+
+\skippingparagraph
+Als letzte Komponente muss der Database Manager vorbereitet werden.
+\begin{verbatim*}
+cd LandingPlanes/src/1597_DatabaseManager
+npm install
+\end{verbatim*}
+
+\skippingparagraph
+Nun muss lediglich die Datei \texttt{LandingPlanes/src/1597\_DatabaseManager/package.json} überprüft und gegebenenfalls angepasst werden. Es müssen die Pfade im Skript 
+\begin{verbatim*}
+"start": "node ./bin/www --tiffpath=/home/eckstein/dev/LandingPlanes/terrain
+         --wrapper=../1597_searchEngineWrapper/Debug/1597_searchEngineWrapper 
+         --clientpath='../1597_LandingClient'"
+\end{verbatim*}
+angepasst werden.
+
+\texttt{tiffpath}: Ist der Pfad zu den GeoTIFF Dateien. (Der muss gesetzt werden, da aktuell nur der Dateiname übergeben wird, nicht der Pfad)
+
+\texttt{wrapper}: Ist der Pfad zur kompilierten Wrapper-Applikation. Diese wird automatisch gestartet und über einen Unix-Socket mit Daten gefüttert. 
+
+\texttt{clientpath}: Der Pfad zum Verzeichnis für die React-Applikation, also den 1597\_LandingClient.
+
+\texttt{terminal}: Ist ein optionaler Parameter um festzulegen, welche Terminal-Emulation benutzt werden soll. \texttt{xterm} sollte auf allem Maschinen funktionieren, falls der Defaultwert \texttt{gnome-terminal} nicht verfügbar ist. Der Parameter kann dann noch mit \texttt{--terminal='xterm'} hinzugefügt werden.
+
+\skippingparagraph
+Wenn diese Vorbereitungen abgeschlossen sind, kann das System mit
+\begin{verbatim*}
+cd LandingPlanes/src/1597_DatabaseManager
+npm start
+\end{verbatim*}
+
+gestartet werden und über das Öffnen von \href{http://localhost:3000}{http://localhost:3000} bedient werden.
+
+
+\skippingparagraph
+Ein manueller Merge von überlappenden Landebahnen kann angestoßen werden durch den Aufruf von 
+\begin{verbatim*}
+cd LandingPlanes/src/1597_DatabaseManager
+npm run cleanup
+\end{verbatim*}
+
+
+
 \end{document}
