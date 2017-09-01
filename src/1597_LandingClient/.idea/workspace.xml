@@ -1,0 +1,1353 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="c1a91e04-982f-4b32-9628-adff4ce078ad" name="Default" comment="" />
+    <ignored path="$PROJECT_DIR$/.tmp/" />
+    <ignored path="$PROJECT_DIR$/temp/" />
+    <ignored path="$PROJECT_DIR$/tmp/" />
+    <ignored path="node_modules/" />
+    <ignored path="bower_components/" />
+    <ignored path="static/bundle.js" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CreatePatchCommitExecutor">
+    <option name="PATCH_PATH" value="" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="Map.jsx" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/components/Map.jsx">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="432">
+              <caret line="209" column="31" lean-forward="false" selection-start-line="209" selection-start-column="31" selection-end-line="209" selection-end-column="31" />
+              <folding>
+                <element signature="e#0#36#0" expanded="true" />
+                <marker date="1504026587100" expanded="true" signature="228:278" ph="..." />
+                <marker date="1504026587100" expanded="true" signature="6606:6857" ph="..." />
+                <marker date="1504026587100" expanded="true" signature="6961:7213" ph="..." />
+                <marker date="1504026587100" expanded="true" signature="16374:16412" ph="&lt;button/&gt;" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="getDBEntries.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/actions/getDBEntries.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="792">
+              <caret line="45" column="16" lean-forward="false" selection-start-line="45" selection-start-column="16" selection-end-line="45" selection-end-column="16" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Startpage.jsx" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/components/Startpage.jsx">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="108">
+              <caret line="6" column="12" lean-forward="false" selection-start-line="6" selection-start-column="12" selection-end-line="6" selection-end-column="12" />
+              <folding>
+                <marker date="1504026587100" expanded="true" signature="1788:1790" ph="{&quot;tiffinfo&quot;: PropTypes.object.isRequired...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>e, f</find>
+      <find>mapDispatchToProps</find>
+      <find>getFileExtents</find>
+      <find>Extent</find>
+      <find>Extents</find>
+      <find>E</find>
+      <find>EXT</find>
+      <find>EXTE</find>
+      <find>EXTENT</find>
+      <find>EXTENTS</find>
+      <find>center</find>
+      <find>inva</find>
+      <find>leafle</find>
+      <find>topleftLat</find>
+      <find>offse</find>
+      <find>leafl</find>
+      <find>max. V</find>
+      <find>state.landingPlanes</find>
+      <find>landingPlanes</find>
+      <find>over</find>
+      <find>planesFeaturecollection</find>
+      <find>minVariancePlanesFeatureCollection</find>
+      <find>mergeable</find>
+      <find>React</find>
+      <find>e.va</find>
+      <find>planesFeatureCollection</find>
+      <find>updatePlanesViewObjects</find>
+      <find>requestLandingPlanes</find>
+      <find>filter</find>
+      <find>45</find>
+    </findStrings>
+    <replaceStrings>
+      <replace>class</replace>
+      <replace>RECEIPT</replace>
+      <replace>payments</replace>
+      <replace>PAYMENT</replace>
+      <replace>Payment</replace>
+      <replace>payment</replace>
+      <replace>Extent</replace>
+      <replace>EXTENT</replace>
+    </replaceStrings>
+    <dirStrings>
+      <dir>$PROJECT_DIR$/node_modules/rc-collapse</dir>
+      <dir>$PROJECT_DIR$/src/components</dir>
+      <dir>$PROJECT_DIR$</dir>
+    </dirStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/src/actions/logout.js" />
+        <option value="$PROJECT_DIR$/src/components/LoginPage.jsx" />
+        <option value="$PROJECT_DIR$/src/actions/getAllocations.js" />
+        <option value="$PROJECT_DIR$/src/components/PaymentsList.jsx" />
+        <option value="$PROJECT_DIR$/src/reducers/receipts.js" />
+        <option value="$PROJECT_DIR$/src/components/ReceiptsList.jsx" />
+        <option value="$PROJECT_DIR$/src/actions/login.js" />
+        <option value="$PROJECT_DIR$/src/actions/createReceipt.js" />
+        <option value="$PROJECT_DIR$/src/reducers/login.js" />
+        <option value="$PROJECT_DIR$/.eslintrc.js" />
+        <option value="$PROJECT_DIR$/src/components/AllocationsPage.jsx" />
+        <option value="$PROJECT_DIR$/src/containers/navbar.js" />
+        <option value="$PROJECT_DIR$/src/containers/startpage.jsx" />
+        <option value="localhost:3001/static/bundle.js" />
+        <option value="$PROJECT_DIR$/src/components/selectFileNameForm.jsx" />
+        <option value="vm:28678" />
+        <option value="vm:2638" />
+        <option value="vm:22861" />
+        <option value="$PROJECT_DIR$/src/containers/root.jsx" />
+        <option value="chrome-extension://fmkadmapgofadopljbjfkapdkoienihi/build/inject.js" />
+        <option value="$PROJECT_DIR$/webpack.config.js" />
+        <option value="$PROJECT_DIR$/src/routes.jsx" />
+        <option value="$PROJECT_DIR$/src/main.jsx" />
+        <option value="$PROJECT_DIR$/server.js" />
+        <option value="$PROJECT_DIR$/src/components/App.jsx" />
+        <option value="$PROJECT_DIR$/src/containers/StartpageContainer.jsx" />
+        <option value="$PROJECT_DIR$/src/reducers/fileinfo.js" />
+        <option value="chrome-extension://lmhkpmbekcpmknklioeibfkpmmfibljd/js/pagewrap.bundle.js" />
+        <option value="$PROJECT_DIR$/src/actions/getFileinfo.js" />
+        <option value="$PROJECT_DIR$/node_modules/react-leaflet/package.json" />
+        <option value="vm:36" />
+        <option value="vm:38" />
+        <option value="$PROJECT_DIR$/src/actions/scanForLandingPlanes.js" />
+        <option value="$PROJECT_DIR$/src/components/SelectFileNameForm.jsx" />
+        <option value="$PROJECT_DIR$/.babelrc" />
+        <option value="$PROJECT_DIR$/Anleitung_Installation.txt" />
+        <option value="$PROJECT_DIR$/src/actions/sendTask2Server.js" />
+        <option value="$PROJECT_DIR$/src/reducers/index.js" />
+        <option value="$PROJECT_DIR$/node_modules/react-leaflet-geojson-cluster/lib/GeoJsonCluster.js" />
+        <option value="$PROJECT_DIR$/index.html" />
+        <option value="$PROJECT_DIR$/package-lock.json" />
+        <option value="$PROJECT_DIR$/package.json" />
+        <option value="$PROJECT_DIR$/static/dummy.lock" />
+        <option value="$PROJECT_DIR$/../1597_DatabaseManager/routes/ipcReceiver.js" />
+        <option value="chrome-extension://lmhkpmbekcpmknklioeibfkpmmfibljd/js/content.bundle.js" />
+        <option value="$PROJECT_DIR$/src/utils/api/index.js" />
+        <option value="$PROJECT_DIR$/src/actions/getDBEntries.js" />
+        <option value="$PROJECT_DIR$/src/actions/types.js" />
+        <option value="$PROJECT_DIR$/src/reducers/landingPlanes.js" />
+        <option value="$PROJECT_DIR$/src/components/Startpage.jsx" />
+        <option value="$PROJECT_DIR$/src/components/Map.jsx" />
+      </list>
+    </option>
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER">
+    <package-json value="$PROJECT_DIR$/package.json" />
+  </component>
+  <component name="JsFlowSettings">
+    <service-enabled>false</service-enabled>
+    <exe-path />
+    <annotation-enable>false</annotation-enable>
+    <other-services-enabled>false</other-services-enabled>
+  </component>
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
+  <component name="NodeModulesDirectoryManager">
+    <handled-path value="$PROJECT_DIR$/node_modules" />
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="x" value="1919" />
+    <option name="y" value="-11" />
+    <option name="width" value="1682" />
+    <option name="height" value="1062" />
+  </component>
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State>
+            <id />
+          </State>
+          <State>
+            <id>Spelling</id>
+          </State>
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>SpellCheckingInspection</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource ProjectPane="true" />
+      <sortByType />
+      <manualOrder />
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="Scope" />
+      <pane id="Scratches" />
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="1597_LandingClient" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="1597_LandingClient" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="1597_LandingClient" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="1597_LandingClient" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="1597_LandingClient" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="1597_LandingClient" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="utils" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="api" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="1597_LandingClient" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="1597_LandingClient" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="reducers" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="1597_LandingClient" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="1597_LandingClient" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="components" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="1597_LandingClient" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="1597_LandingClient" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="actions" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="nodejs_interpreter_path" value="/usr/local/bin/node" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="HbShouldOpenHtmlAsHb" value="" />
+    <property name="js.eslint.eslintPackage" value="$PROJECT_DIR$/node_modules/eslint" />
+    <property name="js-jscs-nodeInterpreter" value="/usr/local/bin/node" />
+    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
+    <property name="node.js.path.for.package.eslint" value="$USER_HOME$/.nvm/versions/node/v8.1.3/bin/node" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.selected.package.eslint" value="$PROJECT_DIR$/node_modules/eslint" />
+    <property name="node.js.path.for.package.standard" value="$USER_HOME$/.nvm/versions/node/v8.1.3/bin/node" />
+    <property name="node.js.detected.package.standard" value="true" />
+    <property name="node.js.selected.package.standard" value="$PROJECT_DIR$/node_modules/eslint" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/reducers" />
+      <recent name="$PROJECT_DIR$/src/actions" />
+      <recent name="$PROJECT_DIR$/test" />
+      <recent name="$PROJECT_DIR$/src/components" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="JavaScript Debug.DebugApp">
+    <configuration default="false" name="local-build" type="js.build_tools.npm" factoryName="npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="local-build" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="server-build" type="js.build_tools.npm" factoryName="npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="server-build" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="local-watch" type="js.build_tools.npm" factoryName="npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="local-watch" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="DartCommandLineRunConfigurationType" factoryName="Dart Command Line Application">
+      <method />
+    </configuration>
+    <configuration default="true" type="DartTestRunConfigurationType" factoryName="Dart Test">
+      <method />
+    </configuration>
+    <configuration default="true" type="JavaScriptTestRunnerJest" factoryName="Jest">
+      <node-interpreter value="project" />
+      <working-dir value="" />
+      <envs />
+      <scope-kind value="ALL" />
+      <method />
+    </configuration>
+    <configuration default="true" type="JavaScriptTestRunnerKarma" factoryName="Karma">
+      <config-file value="" />
+      <node-interpreter value="project" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="JavaScriptTestRunnerProtractor" factoryName="Protractor">
+      <config-file value="" />
+      <node-interpreter value="project" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug">
+      <method />
+    </configuration>
+    <configuration default="true" type="NodeJSConfigurationType" factoryName="Node.js" path-to-node="project" working-dir="">
+      <method />
+    </configuration>
+    <configuration default="true" type="cucumber.js" factoryName="Cucumber.js">
+      <option name="cucumberJsArguments" value="" />
+      <option name="executablePath" />
+      <option name="filePath" />
+      <method />
+    </configuration>
+    <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <gulpfile />
+      <tasks />
+      <arguments />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="js.build_tools.npm" factoryName="npm">
+      <command value="run" />
+      <scripts />
+      <node-interpreter value="project" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="mocha-javascript-test-runner" factoryName="Mocha">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <working-directory />
+      <pass-parent-env>true</pass-parent-env>
+      <envs />
+      <ui />
+      <extra-mocha-options />
+      <test-kind>DIRECTORY</test-kind>
+      <test-directory />
+      <recursive>false</recursive>
+      <method />
+    </configuration>
+    <configuration default="false" name="webpack-server" type="js.build_tools.npm" factoryName="npm" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="webpack-server" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="server-watch" type="js.build_tools.npm" factoryName="npm" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="server-watch" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="DebugApp" type="JavascriptDebugType" factoryName="JavaScript Debug" engineId="98ca6316-2f89-46d9-a9e5-fa9e2b0625b3" uri="http://localhost:3001">
+      <mapping url="http://localhost:63342/UmlageClient/index.html" local-file="$PROJECT_DIR$/index.html" />
+      <mapping url="webpack:///." local-file="$PROJECT_DIR$" />
+      <method />
+    </configuration>
+    <list size="6">
+      <item index="0" class="java.lang.String" itemvalue="npm.webpack-server" />
+      <item index="1" class="java.lang.String" itemvalue="npm.server-watch" />
+      <item index="2" class="java.lang.String" itemvalue="JavaScript Debug.DebugApp" />
+      <item index="3" class="java.lang.String" itemvalue="npm.local-build" />
+      <item index="4" class="java.lang.String" itemvalue="npm.server-build" />
+      <item index="5" class="java.lang.String" itemvalue="npm.local-watch" />
+    </list>
+    <recent_temporary>
+      <list size="3">
+        <item index="0" class="java.lang.String" itemvalue="npm.local-build" />
+        <item index="1" class="java.lang.String" itemvalue="npm.local-watch" />
+        <item index="2" class="java.lang.String" itemvalue="npm.server-build" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false">
+    <option name="remove_strategy" value="false" />
+  </component>
+  <component name="SvnConfiguration" cleanupOnStartRun="true">
+    <configuration>$USER_HOME$/.subversion</configuration>
+    <supportedVersion>125</supportedVersion>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c1a91e04-982f-4b32-9628-adff4ce078ad" name="Default" comment="" />
+      <created>1485028366011</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1485028366011</updated>
+      <workItem from="1485028367389" duration="797000" />
+      <workItem from="1485081006747" duration="3231000" />
+      <workItem from="1486134256191" duration="1385000" />
+      <workItem from="1486237290747" duration="164000" />
+      <workItem from="1486289231730" duration="663000" />
+      <workItem from="1486401770212" duration="608000" />
+      <workItem from="1486488368124" duration="30000" />
+      <workItem from="1486501568026" duration="810000" />
+      <workItem from="1486685275989" duration="8000" />
+      <workItem from="1486727124423" duration="11627000" />
+      <workItem from="1486808014580" duration="24329000" />
+      <workItem from="1486840913883" duration="47000" />
+      <workItem from="1486841038437" duration="8829000" />
+      <workItem from="1486850216857" duration="6000" />
+      <workItem from="1486888735727" duration="620000" />
+      <workItem from="1487013657944" duration="1021000" />
+      <workItem from="1487018352386" duration="51000" />
+      <workItem from="1487018751124" duration="6746000" />
+      <workItem from="1487025641319" duration="2622000" />
+      <workItem from="1487099324497" duration="14042000" />
+      <workItem from="1487176337664" duration="9059000" />
+      <workItem from="1487357003980" duration="16436000" />
+      <workItem from="1487497144468" duration="5740000" />
+      <workItem from="1487502907048" duration="11868000" />
+      <workItem from="1487572963004" duration="18953000" />
+      <workItem from="1487598416810" duration="338000" />
+      <workItem from="1487618210904" duration="3755000" />
+      <workItem from="1487661724079" duration="13888000" />
+      <workItem from="1487681262281" duration="2283000" />
+      <workItem from="1487863061734" duration="1390000" />
+      <workItem from="1488423944440" duration="1066000" />
+      <workItem from="1488675360849" duration="1976000" />
+      <workItem from="1488690542107" duration="2870000" />
+      <workItem from="1488759064857" duration="4016000" />
+      <workItem from="1488838435247" duration="9299000" />
+      <workItem from="1489332331187" duration="731000" />
+      <workItem from="1489835175006" duration="10000" />
+      <workItem from="1489847033106" duration="14050000" />
+      <workItem from="1490029219239" duration="727000" />
+      <workItem from="1490212441473" duration="8000" />
+      <workItem from="1490212470952" duration="860000" />
+      <workItem from="1490302785275" duration="33000" />
+      <workItem from="1490302871113" duration="598000" />
+      <workItem from="1490346701882" duration="9579000" />
+      <workItem from="1490362133409" duration="975000" />
+      <workItem from="1490367666179" duration="2350000" />
+      <workItem from="1490437859540" duration="2958000" />
+      <workItem from="1490447247511" duration="6674000" />
+      <workItem from="1490645472971" duration="108000" />
+      <workItem from="1490943345565" duration="22000" />
+      <workItem from="1490943386690" duration="58000" />
+      <workItem from="1491139207016" duration="4528000" />
+      <workItem from="1491336531116" duration="5977000" />
+      <workItem from="1491641338983" duration="14000" />
+      <workItem from="1492255006664" duration="97000" />
+      <workItem from="1492337711403" duration="10918000" />
+      <workItem from="1492421238668" duration="4419000" />
+      <workItem from="1492427497702" duration="16072000" />
+      <workItem from="1492443927728" duration="4057000" />
+      <workItem from="1492462745587" duration="2345000" />
+      <workItem from="1492877639738" duration="2593000" />
+      <workItem from="1494055000229" duration="80000" />
+      <workItem from="1498847530927" duration="182000" />
+      <workItem from="1498848118590" duration="43000" />
+      <workItem from="1498848177218" duration="8000" />
+      <workItem from="1498848207083" duration="70000" />
+      <workItem from="1498909194663" duration="8448000" />
+      <workItem from="1498928516511" duration="338000" />
+      <workItem from="1498988140308" duration="6932000" />
+      <workItem from="1499112181459" duration="195000" />
+      <workItem from="1499191172762" duration="1285000" />
+      <workItem from="1499248261193" duration="830000" />
+      <workItem from="1499249532559" duration="1962000" />
+      <workItem from="1499252288520" duration="137000" />
+      <workItem from="1499252466446" duration="1159000" />
+      <workItem from="1499253633487" duration="5597000" />
+      <workItem from="1499260437962" duration="13189000" />
+      <workItem from="1499427166327" duration="23231000" />
+      <workItem from="1499710896761" duration="8185000" />
+      <workItem from="1499854650226" duration="6000" />
+      <workItem from="1500041496042" duration="7806000" />
+      <workItem from="1500313516763" duration="873000" />
+      <workItem from="1500314439669" duration="626000" />
+      <workItem from="1500315150869" duration="4232000" />
+      <workItem from="1500319752538" duration="1450000" />
+      <workItem from="1500321478640" duration="210000" />
+      <workItem from="1500322551716" duration="3038000" />
+      <workItem from="1500460408995" duration="2615000" />
+      <workItem from="1500472142881" duration="26000" />
+      <workItem from="1500480384334" duration="2072000" />
+      <workItem from="1500666588533" duration="635000" />
+      <workItem from="1500727574807" duration="4176000" />
+      <workItem from="1500919596179" duration="526000" />
+      <workItem from="1501006632942" duration="7072000" />
+      <workItem from="1501051228915" duration="7827000" />
+      <workItem from="1501059442052" duration="3581000" />
+      <workItem from="1501063058306" duration="6990000" />
+      <workItem from="1501325677592" duration="913000" />
+      <workItem from="1503339512406" duration="3594000" />
+      <workItem from="1503513831307" duration="2691000" />
+      <workItem from="1503697785319" duration="9634000" />
+      <workItem from="1503733902456" duration="17323000" />
+      <workItem from="1503954416891" duration="784000" />
+      <workItem from="1504022810178" duration="1857000" />
+      <workItem from="1504077003776" duration="1219000" />
+    </task>
+    <task id="LOCAL-00001" summary="- added a lot (new Receipts Form and stuff)">
+      <created>1486849845496</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1486849845496</updated>
+    </task>
+    <task id="LOCAL-00002" summary="- added an Accordion to the receipts list on the Allocation.jsx Page">
+      <created>1487028259927</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1487028259927</updated>
+    </task>
+    <task id="LOCAL-00003" summary="- added the receipts List with a reworked, now working accordion to the allocations page">
+      <created>1487197975455</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1487197975456</updated>
+    </task>
+    <task id="LOCAL-00004" summary="- added the receipts List with a reworked, now working accordion to the allocations page">
+      <created>1487197994654</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1487197994654</updated>
+    </task>
+    <task id="LOCAL-00005" summary="- started to show the receipts for patching in ReceiptsList">
+      <created>1487378496494</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1487378496494</updated>
+    </task>
+    <task id="LOCAL-00006" summary="- ReceiptList seems to work now including patching">
+      <created>1487598357659</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1487598357659</updated>
+    </task>
+    <task id="LOCAL-00007" summary="-  implemented deleteReceipt (only for allocated receipts so far)">
+      <created>1487622287155</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1487622287155</updated>
+    </task>
+    <task id="LOCAL-00008" summary="-  implemented payment listing and handling">
+      <created>1487681154541</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1487681154541</updated>
+    </task>
+    <task id="LOCAL-00009" summary="-  added Bugreport on createAllocation Page">
+      <created>1487690614988</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1487690614989</updated>
+    </task>
+    <task id="LOCAL-00010" summary="-  includes the changes from Breck&#10;- includes the first attempt to display the current liabilities in the head of the allocation page&#10;- TODO: there's still a problem with the data in the state of the participants part of the page. --&gt; to be realised with selectors">
+      <created>1489332465829</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1489332465829</updated>
+    </task>
+    <task id="LOCAL-00011" summary="-  added a possibility to add a targetCurrency for the receipts&#10;(unfortunately, this does not work correctly.&#10;When patching a receipt, the targetCurrency is never deleted, as it is compared to some incorrect this.props.receipt in &#10;patchReceipt(newReceiptObj) in ReceiptsList.jsx)&#10;&#10;There is some major FuckUp going on with props and states in the whole Client!!!&#10;">
+      <created>1489860480507</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1489860480507</updated>
+    </task>
+    <task id="LOCAL-00012" summary="-  repaired the &quot;show new receipt form&quot; behavior again">
+      <created>1491342357958</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1491342357958</updated>
+    </task>
+    <task id="LOCAL-00013" summary="-  updated to the latest and greatest after changing a lot">
+      <created>1492443075790</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1492443075790</updated>
+    </task>
+    <task id="LOCAL-00014" summary="-  changed quite some things in the AllocationPage when Receipts and Payments are not yet loaded&#10;- got rid of bootstrap :-) (NAVBAR and Modal converted to react-bootstrap)">
+      <created>1492443368548</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1492443368548</updated>
+    </task>
+    <task id="LOCAL-00015" summary="-  moved the liabilities calculation to the Allocation-container to get proper updates">
+      <created>1492446380114</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1492446380114</updated>
+    </task>
+    <task id="LOCAL-00016" summary="-  corrected a minor flaw in api.logout()">
+      <created>1492447071084</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1492447071084</updated>
+    </task>
+    <task id="LOCAL-00017" summary="-  removed a whole lot of console.log() statements">
+      <created>1492447497876</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1492447497876</updated>
+    </task>
+    <task id="LOCAL-00018" summary="-  removed a whole lot of console.log() statements&#10;- changed layout of receipts list for more clarity">
+      <created>1492879949111</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1492879949111</updated>
+    </task>
+    <task id="LOCAL-00019" summary="- optimized create receipt to not load the whole database again">
+      <created>1498988286055</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1498988286055</updated>
+    </task>
+    <task id="LOCAL-00020" summary="- wir haben jetzt einen authenticationRequired Fehler als eigenen Status">
+      <created>1498997933300</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1498997933300</updated>
+    </task>
+    <task id="LOCAL-00021" summary="- Ein simpler RTeact Client um den ausschnitt auf der Karte zu wählen">
+      <created>1500320696462</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1500320696462</updated>
+    </task>
+    <task id="LOCAL-00022" summary="- Ein simpler React Client um den Ausschnitt auf der Karte zu wählen">
+      <created>1500321597661</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1500321597661</updated>
+    </task>
+    <task id="LOCAL-00023" summary="- Gefundene Landebahnen werden in DB eingetragen&#10;- Landebahnen aus der DB werdewn auf der Karte angezeigt&#10;- Knopf zum Löschen der DB hinzugefügt">
+      <created>1501070025988</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1501070025988</updated>
+    </task>
+    <task id="LOCAL-00024" summary="- vergessene Dateien hinzugefügt">
+      <created>1501325820938</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1501325820938</updated>
+    </task>
+    <task id="LOCAL-00025" summary="- Zusätzliche Quer-Varianz und Number of Threads im UI hinzugefügt">
+      <created>1503345974868</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1503345974868</updated>
+    </task>
+    <task id="LOCAL-00026" summary="- Merge Routine hinzugefügt um Überlappende Bahnen zu einem komplexen Polygon zusammenzufassen">
+      <created>1503707103385</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1503707103385</updated>
+    </task>
+    <task id="LOCAL-00027" summary="- Anzeige um Möglichkeit der &quot;min. Varianz Bahnen&quot; als Overlay erweitert">
+      <created>1503707168382</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1503707168382</updated>
+    </task>
+    <task id="LOCAL-00028" summary="- Reaktive anzeige inklusive Richtungsfilter und Ein-/Ausblenden gebaut">
+      <created>1503751203991</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1503751203991</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="434981000" />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="1919" y="-11" width="1682" height="1062" extended-state="6" />
+    <layout>
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24321063" sideWeight="0.5743741" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24777777" sideWeight="0.6016898" order="9" side_tool="true" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24555555" sideWeight="0.62100184" order="2" side_tool="true" content_ui="tabs" x="1921" y="390" width="1677" height="366" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24555555" sideWeight="0.3789982" order="11" side_tool="false" content_ui="tabs" x="65" y="24" width="1855" height="1056" />
+      <window_info id="npm" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24321063" sideWeight="0.42562592" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24803862" sideWeight="0.7356322" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32444444" sideWeight="0.42124322" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.50666666" sideWeight="0.67773086" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.49788776" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="TypeScript" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.249694" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32444444" sideWeight="0.46710923" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+    </layout>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="processedProjectFiles" value="true" />
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="LOCAL_CHANGES_DETAILS_PREVIEW_SHOWN" value="true" />
+    <ignored-roots>
+      <path value="$PROJECT_DIR$" />
+    </ignored-roots>
+    <MESSAGE value="- added the receipts List with a reworked, now working accordion to the allocations page" />
+    <MESSAGE value="- started to show the receipts for patching in ReceiptsList" />
+    <MESSAGE value="- ReceiptList seems to work now including patching" />
+    <MESSAGE value="-  implemented deleteReceipt (only for allocated receipts so far)" />
+    <MESSAGE value="-  implemented payment listing and handling" />
+    <MESSAGE value="-  added Bugreport on createAllocation Page" />
+    <MESSAGE value="-  includes the changes from Breck&#10;- includes the first attempt to display the current liabilities in the head of the allocation page&#10;- TODO: there's still a problem with the data in the state of the participants part of the page. --&gt; to be realised with selectors" />
+    <MESSAGE value="-  added a possibility to add a targetCurrency for the receipts&#10;(unfortunately, this does not work correctly.&#10;When patching a receipt, the targetCurrency is never deleted, as it is compared to some incorrect this.props.receipt in &#10;patchReceipt(newReceiptObj) in ReceiptsList.jsx)&#10;&#10;There is some major FuckUp going on with props and states in the whole Client!!!&#10;" />
+    <MESSAGE value="-  repaired the &quot;show new receipt form&quot; behavior again" />
+    <MESSAGE value="-  updated to the latest and greatest after changing a lot" />
+    <MESSAGE value="-  changed quite some things in the AllocationPage when Receipts and Payments are not yet loaded&#10;- got rid of bootstrap :-) (NAVBAR and Modal converted to react-bootstrap)" />
+    <MESSAGE value="-  moved the liabilities calculation to the Allocation-container to get proper updates" />
+    <MESSAGE value="-  corrected a minor flaw in api.logout()" />
+    <MESSAGE value="-  removed a whole lot of console.log() statements" />
+    <MESSAGE value="-  removed a whole lot of console.log() statements&#10;- changed layout of receipts list for more clarity" />
+    <MESSAGE value="- optimized create receipt to not load the whole database again" />
+    <MESSAGE value="- wir haben jetzt einen authenticationRequired Fehler als eigenen Status" />
+    <MESSAGE value="- Ein simpler RTeact Client um den ausschnitt auf der Karte zu wählen" />
+    <MESSAGE value="- Ein simpler React Client um den Ausschnitt auf der Karte zu wählen" />
+    <MESSAGE value="- Gefundene Landebahnen werden in DB eingetragen&#10;- Landebahnen aus der DB werdewn auf der Karte angezeigt&#10;- Knopf zum Löschen der DB hinzugefügt" />
+    <MESSAGE value="- vergessene Dateien hinzugefügt" />
+    <MESSAGE value="- Zusätzliche Quer-Varianz und Number of Threads im UI hinzugefügt" />
+    <MESSAGE value="- Merge Routine hinzugefügt um Überlappende Bahnen zu einem komplexen Polygon zusammenzufassen" />
+    <MESSAGE value="- Anzeige um Möglichkeit der &quot;min. Varianz Bahnen&quot; als Overlay erweitert" />
+    <MESSAGE value="- Reaktive anzeige inklusive Richtungsfilter und Ein-/Ausblenden gebaut" />
+    <option name="LAST_COMMIT_MESSAGE" value="- Reaktive anzeige inklusive Richtungsfilter und Ein-/Ausblenden gebaut" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint type="javascript">
+          <url>file://$PROJECT_DIR$/src/utils/api/index.js</url>
+          <line>98</line>
+          <option name="timeStamp" value="31" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/containers/StartpageContainer.jsx</url>
+          <line>19</line>
+          <option name="timeStamp" value="209" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/reducers/fileinfo.js</url>
+          <line>51</line>
+          <option name="timeStamp" value="225" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>mock://webpack:///./~/turf-invariant/index.js</url>
+          <line>17</line>
+          <option name="timeStamp" value="238" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/utils/api/index.js</url>
+          <line>135</line>
+          <option name="timeStamp" value="264" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/utils/api/index.js</url>
+          <line>137</line>
+          <option name="timeStamp" value="265" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/actions/sendTask2Server.js</url>
+          <line>35</line>
+          <option name="timeStamp" value="272" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/node_modules/react-leaflet-geojson-cluster/lib/GeoJsonCluster.js</url>
+          <line>44</line>
+          <option name="timeStamp" value="299" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/node_modules/react-leaflet-geojson-cluster/lib/GeoJsonCluster.js</url>
+          <line>34</line>
+          <option name="timeStamp" value="300" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/actions/getDBEntries.js</url>
+          <line>45</line>
+          <option name="timeStamp" value="313" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/actions/getDBEntries.js</url>
+          <line>63</line>
+          <option name="timeStamp" value="329" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/actions/getDBEntries.js</url>
+          <line>68</line>
+          <option name="timeStamp" value="330" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/utils/api/index.js</url>
+          <line>176</line>
+          <option name="timeStamp" value="333" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/utils/api/index.js</url>
+          <line>178</line>
+          <option name="timeStamp" value="334" />
+        </line-breakpoint>
+        <line-breakpoint type="javascript">
+          <url>file://$PROJECT_DIR$/src/actions/getDBEntries.js</url>
+          <line>37</line>
+          <option name="timeStamp" value="336" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/utils/api/index.js</url>
+          <line>172</line>
+          <option name="timeStamp" value="346" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/components/Startpage.jsx</url>
+          <line>27</line>
+          <option name="timeStamp" value="380" />
+        </line-breakpoint>
+      </breakpoints>
+      <breakpoints-dialog>
+        <breakpoints-dialog />
+      </breakpoints-dialog>
+      <option name="time" value="408" />
+    </breakpoint-manager>
+    <watches-manager>
+      <configuration name="JavascriptDebugType">
+        <watch expression="this.state.planesFeatureCollection" />
+      </configuration>
+    </watches-manager>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/actions/login.js" />
+    <entry file="file://$PROJECT_DIR$/src/actions/getAllocations.js" />
+    <entry file="file://$PROJECT_DIR$/src/actions/getAllocationPayments.js" />
+    <entry file="file://$PROJECT_DIR$/src/actions/createAllocation.js" />
+    <entry file="file://$PROJECT_DIR$/src/components/Navbar.jsx" />
+    <entry file="http://localhost:3001/static/bundle.js">
+      <provider selected="true" editor-type-id="httpFileEditor">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/actions/login.js" />
+    <entry file="file://$PROJECT_DIR$/test/index.js" />
+    <entry file="file://$PROJECT_DIR$/node_modules/prop-types/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="200">
+          <caret line="22" column="36" lean-forward="false" selection-start-line="22" selection-start-column="5" selection-end-line="22" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reducers/utils.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="72">
+          <caret line="4" column="2" lean-forward="false" selection-start-line="4" selection-start-column="2" selection-end-line="4" selection-end-column="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/node_modules/react-router/es/Router.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="196">
+          <caret line="34" column="4" lean-forward="false" selection-start-line="34" selection-start-column="4" selection-end-line="34" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/routes.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="126">
+          <caret line="7" column="31" lean-forward="true" selection-start-line="7" selection-start-column="31" selection-end-line="7" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/bundle.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="258">
+          <caret line="67" column="9" lean-forward="false" selection-start-line="67" selection-start-column="9" selection-end-line="67" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="319">
+          <caret line="31" column="20" lean-forward="false" selection-start-line="31" selection-start-column="20" selection-end-line="31" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/node_modules/turf-center/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="373">
+          <caret line="115" column="32" lean-forward="false" selection-start-line="115" selection-start-column="27" selection-end-line="115" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/node_modules/turf/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="450">
+          <caret line="55" column="31" lean-forward="true" selection-start-line="55" selection-start-column="31" selection-end-line="55" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/node_modules/turf-helpers/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="18">
+          <caret line="1" column="13" lean-forward="false" selection-start-line="1" selection-start-column="13" selection-end-line="1" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/node_modules/turf-bbox/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-725">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/node_modules/turf-invariant/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="126">
+          <caret line="7" column="17" lean-forward="false" selection-start-line="7" selection-start-column="17" selection-end-line="7" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/node_modules/leaflet/package.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/node_modules/react-leaflet/package.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="64" column="16" lean-forward="false" selection-start-line="64" selection-start-column="16" selection-end-line="64" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.eslintrc.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="126">
+          <caret line="7" column="23" lean-forward="false" selection-start-line="7" selection-start-column="23" selection-end-line="7" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.babelrc">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="54">
+          <caret line="3" column="11" lean-forward="false" selection-start-line="3" selection-start-column="11" selection-end-line="3" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reducers/fileinfo.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="281">
+          <caret line="58" column="13" lean-forward="false" selection-start-line="58" selection-start-column="13" selection-end-line="58" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webpack.config.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="22" lean-forward="false" selection-start-line="0" selection-start-column="22" selection-end-line="0" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/node_modules/react-leaflet-geojson-cluster/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="40" lean-forward="true" selection-start-line="0" selection-start-column="40" selection-end-line="0" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="414">
+          <caret line="23" column="5" lean-forward="false" selection-start-line="23" selection-start-column="5" selection-end-line="23" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/node_modules/react-leaflet-geojson-cluster/lib/GeoJsonCluster.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-324">
+          <caret line="3" column="0" lean-forward="false" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/package-lock.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="196">
+          <caret line="3415" column="24" lean-forward="false" selection-start-line="3415" selection-start-column="24" selection-end-line="3415" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/package.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="71">
+          <caret line="15" column="30" lean-forward="false" selection-start-line="15" selection-start-column="30" selection-end-line="15" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="126">
+          <caret line="7" column="32" lean-forward="false" selection-start-line="7" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/dummy.lock">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="63" lean-forward="false" selection-start-line="0" selection-start-column="63" selection-end-line="0" selection-end-column="63" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bower.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="12" column="21" lean-forward="false" selection-start-line="12" selection-start-column="5" selection-end-line="12" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../1597_DatabaseManager/routes/ipcReceiver.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="108">
+          <caret line="6" column="5" lean-forward="true" selection-start-line="6" selection-start-column="5" selection-end-line="6" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reducers/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="5" column="12" lean-forward="false" selection-start-line="5" selection-start-column="12" selection-end-line="5" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/actions/sendTask2Server.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="20" column="41" lean-forward="false" selection-start-line="20" selection-start-column="41" selection-end-line="20" selection-end-column="41" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Anleitung_Installation.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="252">
+          <caret line="14" column="20" lean-forward="false" selection-start-line="14" selection-start-column="1" selection-end-line="14" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/App.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="5" column="4" lean-forward="false" selection-start-line="5" selection-start-column="4" selection-end-line="5" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/containers/StartpageContainer.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#36#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/SelectFileNameForm.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="126">
+          <caret line="10" column="13" lean-forward="false" selection-start-line="10" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/node_modules/react-leaflet/lib/GeoJSON.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-702">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/node_modules/react-leaflet/lib/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="486">
+          <caret line="27" column="30" lean-forward="false" selection-start-line="27" selection-start-column="30" selection-end-line="27" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/containers/navbar.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="108">
+          <caret line="8" column="38" lean-forward="false" selection-start-line="8" selection-start-column="38" selection-end-line="8" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/containers/root.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="11" column="44" lean-forward="false" selection-start-line="11" selection-start-column="44" selection-end-line="11" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/actions/types.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="11" column="0" lean-forward="false" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reducers/landingPlanes.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1062">
+          <caret line="59" column="0" lean-forward="false" selection-start-line="59" selection-start-column="0" selection-end-line="59" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#36#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/actions/getFileinfo.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="378">
+          <caret line="49" column="0" lean-forward="false" selection-start-line="49" selection-start-column="0" selection-end-line="49" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/api/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="162">
+          <caret line="174" column="12" lean-forward="false" selection-start-line="174" selection-start-column="12" selection-end-line="174" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/Startpage.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="108">
+          <caret line="6" column="12" lean-forward="false" selection-start-line="6" selection-start-column="12" selection-end-line="6" selection-end-column="12" />
+          <folding>
+            <marker date="1504026587100" expanded="true" signature="1788:1790" ph="{&quot;tiffinfo&quot;: PropTypes.object.isRequired...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/actions/getDBEntries.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="792">
+          <caret line="45" column="16" lean-forward="false" selection-start-line="45" selection-start-column="16" selection-end-line="45" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/Map.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="432">
+          <caret line="209" column="31" lean-forward="false" selection-start-line="209" selection-start-column="31" selection-end-line="209" selection-end-column="31" />
+          <folding>
+            <element signature="e#0#36#0" expanded="true" />
+            <marker date="1504026587100" expanded="true" signature="228:278" ph="..." />
+            <marker date="1504026587100" expanded="true" signature="6606:6857" ph="..." />
+            <marker date="1504026587100" expanded="true" signature="6961:7213" ph="..." />
+            <marker date="1504026587100" expanded="true" signature="16374:16412" ph="&lt;button/&gt;" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ScopeChooserConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>

@@ -1,0 +1,774 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.92.1 unknown"
+   sodipodi:docname="Vorausschau.svg">
+  <defs
+     id="defs4">
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Lend"
+       style="overflow:visible;">
+      <path
+         id="path3766"
+         d="M -10.666667,0 -14.933333,4.2666667 0,0 -14.933333,-4.2666667 Z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:0.85333335pt"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend-7"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3766-5"
+         d="M -10.666667,0 -14.933333,4.2666667 0,0 -14.933333,-4.2666667 Z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:0.85333335pt" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend-2"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3766-9"
+         d="M -10.666667,0 -14.933333,4.2666667 0,0 -14.933333,-4.2666667 Z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:0.85333335pt" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend-26"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3766-1"
+         d="M -10.666667,0 -14.933333,4.2666667 0,0 -14.933333,-4.2666667 Z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:0.85333335pt" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend-79"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3766-2"
+         d="M -10.666667,0 -14.933333,4.2666667 0,0 -14.933333,-4.2666667 Z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:0.85333335pt" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend-75"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3766-92"
+         d="M -10.666667,0 -14.933333,4.2666667 0,0 -14.933333,-4.2666667 Z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:0.85333335pt" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend-3"
+       style="overflow:visible">
+      <path
+         id="path3766-6"
+         d="M -10.666667,0 -14.933333,4.2666667 0,0 -14.933333,-4.2666667 Z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:0.85333335pt"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker3731"
+       style="overflow:visible">
+      <path
+         id="path3729"
+         d="M -10.666667,0 -14.933333,4.2666667 0,0 -14.933333,-4.2666667 Z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:0.85333335pt"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend-3-3"
+       style="overflow:visible">
+      <path
+         id="path3766-6-2"
+         d="M -10.666667,0 -14.933333,4.2666667 0,0 -14.933333,-4.2666667 Z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:0.85333335pt"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend-3-6"
+       style="overflow:visible">
+      <path
+         id="path3766-6-1"
+         d="M -10.666667,0 -14.933333,4.2666667 0,0 -14.933333,-4.2666667 Z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:0.85333335pt"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend-3-5"
+       style="overflow:visible">
+      <path
+         id="path3766-6-4"
+         d="M -10.666667,0 -14.933333,4.2666667 0,0 -14.933333,-4.2666667 Z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:0.85333335pt"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend-36"
+       style="overflow:visible">
+      <path
+         id="path3766-7"
+         d="M -10.666667,0 -14.933333,4.2666667 0,0 -14.933333,-4.2666667 Z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:0.85333335pt"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker92"
+       style="overflow:visible">
+      <path
+         id="path90"
+         d="M -10.666667,0 -14.933333,4.2666667 0,0 -14.933333,-4.2666667 Z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:0.85333335pt"
+         inkscape:connector-curvature="0" />
+    </marker>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.979899"
+     inkscape:cx="365.5527"
+     inkscape:cy="717.47633"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:snap-global="true"
+     inkscape:snap-bbox="true"
+     inkscape:bbox-nodes="true"
+     inkscape:snap-bbox-edge-midpoints="true"
+     inkscape:window-width="1680"
+     inkscape:window-height="1026"
+     inkscape:window-x="1920"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#00ff00;fill-rule:evenodd;stroke:#000000;stroke-width:0.48433402px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect2985"
+       width="250.48706"
+       height="17.344238"
+       x="84.280258"
+       y="137.08565"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.06666672px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 84.044692,120.98708 h 44.118218 l 12.15218,-13.02239 9.10459,12.48364 c 133.72693,0 267.45387,0 401.1808,0 l 11.31371,-62.494765 73.26974,1.077496"
+       id="path2987"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccccc"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <path
+       style="fill:#00ffff;stroke:#00ffff;stroke-width:1.06666672px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Lend)"
+       d="M 84.571424,168.00539 H 301.68687"
+       id="path2989"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:12.80000019px;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.06666672"
+       x="82.875595"
+       y="182.53038"
+       id="text4203"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan4205"
+         x="82.875595"
+         y="182.53038"
+         style="font-size:12.80000019px;line-height:1.25;font-family:sans-serif;stroke-width:1.06666672">minimale Bahnlänge = Vorausschau Gesamtsteigung</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:12.80000019px;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.06666672"
+       x="87.701637"
+       y="148.5271"
+       id="text4203-3"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan4205-6"
+         x="87.701637"
+         y="148.5271"
+         style="font-size:12.80000019px;line-height:1.25;font-family:sans-serif;stroke-width:1.06666672">Kriterium Gesamtsteigung</tspan></text>
+    <rect
+       style="fill:#ff0000;fill-rule:evenodd;stroke:#000000;stroke-width:0.45901272px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect2985-5"
+       width="219.31914"
+       height="17.369564"
+       x="335.23898"
+       y="137.07298"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#00ff00;fill-rule:evenodd;stroke:#000000;stroke-width:0.26680863px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect2985-5-6"
+       width="81.167961"
+       height="17.561768"
+       x="554.15912"
+       y="136.97687"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#00ff00;fill-rule:evenodd;stroke:#000000;stroke-width:0.14244819px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect2985-1"
+       width="21.248674"
+       height="17.686125"
+       x="82.195778"
+       y="208.90549"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <path
+       style="fill:#00ffff;stroke:#00ffff;stroke-width:1.06666672;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Lend)"
+       d="M 84.032862,237.71045 H 107.16027"
+       id="path2989-2"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:12.80000019px;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.06666672"
+       x="80.962051"
+       y="254.52116"
+       id="text4203-7"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan4205-0"
+         x="80.962051"
+         y="254.52116"
+         style="font-size:12.80000019px;line-height:1.25;font-family:sans-serif;stroke-width:1.06666672">Vorausschau Holprigkeit</tspan></text>
+    <rect
+       style="fill:#ff0000;fill-rule:evenodd;stroke:#000000;stroke-width:0.22099814px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect2985-5-60"
+       width="50.152615"
+       height="17.607578"
+       x="103.62618"
+       y="208.94476"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#00ff00;fill-rule:evenodd;stroke:#000000;stroke-width:0.56879222px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect2985-5-6-6"
+       width="375.34021"
+       height="17.259785"
+       x="153.41179"
+       y="209.11865"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#ff0000;fill-rule:evenodd;stroke:#000000;stroke-width:0.18273041px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect2985-5-60-2"
+       width="34.213314"
+       height="17.645847"
+       x="528.85846"
+       y="208.92561"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#00ff00;fill-rule:evenodd;stroke:#000000;stroke-width:0.25969291px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect2985-5-6-6-3"
+       width="76.865089"
+       height="17.568884"
+       x="563.29297"
+       y="208.9641"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:12.80000019px;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.06666672"
+       x="86.854927"
+       y="220.6926"
+       id="text4203-3-9"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan4205-6-3"
+         x="86.854927"
+         y="220.6926"
+         style="font-size:12.80000019px;line-height:1.25;font-family:sans-serif;stroke-width:1.06666672">Kriterium Holprigkeit</tspan></text>
+    <rect
+       style="fill:#00ff00;fill-rule:evenodd;stroke:#000000;stroke-width:0.56879222px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect2985-5-6-6-8"
+       width="375.34021"
+       height="17.259785"
+       x="153.41179"
+       y="88.890068"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:12.80000019px;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.06666672"
+       x="274.72879"
+       y="101.63842"
+       id="text4203-9"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan4205-7"
+         x="274.72879"
+         y="101.63842"
+         style="font-size:12.80000019px;line-height:1.25;font-family:sans-serif;stroke-width:1.06666672">Mögliche Landebahn</tspan></text>
+    <rect
+       style="fill:#00ff00;fill-rule:evenodd;stroke:#000000;stroke-width:0.71174258px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect2985-7"
+       width="548.11682"
+       height="17.116829"
+       x="97.066315"
+       y="721.41687"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.06666672px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 96.71706,705.20456 h 44.11822 l 12.15218,-13.02239 9.10459,12.48364 440.46651,-2.14286 10.59942,-11.78048 30.4126,13.22036"
+       id="path2987-5"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccccc"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <path
+       style="fill:#00ffff;stroke:#00ffff;stroke-width:1.06666672px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Lend-3)"
+       d="M 97.24379,752.22287 H 314.35923"
+       id="path2989-3"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:12.80000019px;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.06666672"
+       x="95.547958"
+       y="766.74786"
+       id="text4203-5"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan4205-62"
+         x="95.547958"
+         y="766.74786"
+         style="font-size:12.80000019px;line-height:1.25;font-family:sans-serif;stroke-width:1.06666672">minimale Bahnlänge = Vorausschau Gesamtsteigung</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:12.80000019px;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.06666672"
+       x="100.374"
+       y="732.74457"
+       id="text4203-3-91"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan4205-6-2"
+         x="100.374"
+         y="732.74457"
+         style="font-size:12.80000019px;line-height:1.25;font-family:sans-serif;stroke-width:1.06666672">Kriterium Gesamtsteigung</tspan></text>
+    <rect
+       style="fill:#00ff00;fill-rule:evenodd;stroke:#000000;stroke-width:0.14244819px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect2985-1-9"
+       width="21.248674"
+       height="17.686125"
+       x="94.868141"
+       y="793.12299"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <path
+       style="fill:#00ffff;stroke:#00ffff;stroke-width:1.06666672;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Lend-3)"
+       d="m 96.70523,821.92793 h 23.12741"
+       id="path2989-2-3"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:12.80000019px;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.06666672"
+       x="93.634415"
+       y="838.73865"
+       id="text4203-7-6"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan4205-0-0"
+         x="93.634415"
+         y="838.73865"
+         style="font-size:12.80000019px;line-height:1.25;font-family:sans-serif;stroke-width:1.06666672">Vorausschau Holprigkeit</tspan></text>
+    <rect
+       style="fill:#ff0000;fill-rule:evenodd;stroke:#000000;stroke-width:0.22099814px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect2985-5-60-6"
+       width="50.152615"
+       height="17.607578"
+       x="116.29855"
+       y="793.16229"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#00ff00;fill-rule:evenodd;stroke:#000000;stroke-width:0.59477127px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect2985-5-6-6-2"
+       width="411.0285"
+       height="17.233805"
+       x="166.09715"
+       y="793.34918"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#ff0000;fill-rule:evenodd;stroke:#000000;stroke-width:0.25786391px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect2985-5-60-2-6"
+       width="68.423889"
+       height="17.570715"
+       x="577.28265"
+       y="793.18073"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:12.80000019px;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.06666672"
+       x="99.52729"
+       y="804.9101"
+       id="text4203-3-9-8"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan4205-6-3-7"
+         x="99.52729"
+         y="804.9101"
+         style="font-size:12.80000019px;line-height:1.25;font-family:sans-serif;stroke-width:1.06666672">Kriterium Holprigkeit</tspan></text>
+    <rect
+       style="fill:#00ff00;fill-rule:evenodd;stroke:#000000;stroke-width:0.54743016px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect2985-5-6-6-8-9"
+       width="406.6763"
+       height="14.755765"
+       x="166.07349"
+       y="673.09686"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:12.80000019px;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.06666672"
+       x="287.40118"
+       y="685.8559"
+       id="text4203-9-2"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan4205-7-0"
+         x="287.40118"
+         y="685.8559"
+         style="font-size:12.80000019px;line-height:1.25;font-family:sans-serif;stroke-width:1.06666672">Mögliche Landebahn</tspan></text>
+    <path
+       style="fill:#00ffff;stroke:#00ffff;stroke-width:1.06666672px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Lend-3-6)"
+       d="M 385.44312,802.52295 H 602.55856"
+       id="path2989-3-5"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <path
+       style="fill:#00ffff;stroke:#00ffff;stroke-width:1.06666672px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Lend-3-5)"
+       d="M 166.11884,802.52295 H 383.23428"
+       id="path2989-3-7"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#00ff00;fill-rule:evenodd;stroke:#000000;stroke-width:0.46567789px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect2985-53"
+       width="231.31282"
+       height="17.362894"
+       x="103.41331"
+       y="464.36316"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.06666672px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 83.994169,396.27393 h 44.118211 l 12.15218,-13.02239 9.10459,12.48364 c 133.72694,0 267.45388,0 401.18081,0 l 11.31371,-62.49477 73.26975,1.0775"
+       id="path2987-56"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccccc"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <path
+       style="fill:#00ffff;stroke:#00ffff;stroke-width:1.06666672px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Lend-36)"
+       d="M 334.99778,497.56221 H 552.11323"
+       id="path2989-29"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:12.80000019px;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.06666672"
+       x="213.83458"
+       y="513.06512"
+       id="text4203-1"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan4205-2"
+         x="213.83458"
+         y="513.06512"
+         style="font-size:12.80000019px;line-height:1.25;font-family:sans-serif;stroke-width:1.06666672">minimale Bahnlänge = Vorausschau Gesamtsteigung</tspan></text>
+    <rect
+       style="fill:#00ff00;fill-rule:evenodd;stroke:#000000;stroke-width:0.26680863px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect2985-5-6-3"
+       width="81.167961"
+       height="17.561768"
+       x="554.10864"
+       y="464.26373"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#00ff00;fill-rule:evenodd;stroke:#000000;stroke-width:0.14244819px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect2985-1-6"
+       width="21.248674"
+       height="17.686125"
+       x="82.145264"
+       y="406.19235"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <path
+       style="fill:#00ffff;stroke:#00ffff;stroke-width:1.06666672;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Lend-36)"
+       d="m 528.98584,429.72761 h 23.1274"
+       id="path2989-2-0"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:12.80000019px;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.06666672"
+       x="399.73459"
+       y="445.23053"
+       id="text4203-7-62"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan4205-0-6"
+         x="399.73459"
+         y="445.23053"
+         style="font-size:12.80000019px;line-height:1.25;font-family:sans-serif;stroke-width:1.06666672">Vorausschau Holprigkeit</tspan></text>
+    <rect
+       style="fill:#ff0000;fill-rule:evenodd;stroke:#000000;stroke-width:0.22099814px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect2985-5-60-1"
+       width="50.152615"
+       height="17.607578"
+       x="103.57565"
+       y="406.23163"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#00ff00;fill-rule:evenodd;stroke:#000000;stroke-width:0.56879222px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect2985-5-6-6-87"
+       width="375.34021"
+       height="17.259785"
+       x="153.36124"
+       y="406.40552"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#ff0000;fill-rule:evenodd;stroke:#000000;stroke-width:0.18273041px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect2985-5-60-2-9"
+       width="34.213314"
+       height="17.645847"
+       x="528.80798"
+       y="406.21246"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#00ff00;fill-rule:evenodd;stroke:#000000;stroke-width:0.25969291px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect2985-5-6-6-3-2"
+       width="76.865089"
+       height="17.568884"
+       x="563.24249"
+       y="406.25095"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:12.80000019px;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.06666672"
+       x="86.804413"
+       y="417.97946"
+       id="text4203-3-9-0"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan4205-6-3-2"
+         x="86.804413"
+         y="417.97946"
+         style="font-size:12.80000019px;line-height:1.25;font-family:sans-serif;stroke-width:1.06666672">Kriterium Holprigkeit</tspan></text>
+    <rect
+       style="fill:#00ff00;fill-rule:evenodd;stroke:#000000;stroke-width:0.56879222px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect2985-5-6-6-8-3"
+       width="375.34021"
+       height="17.259785"
+       x="153.36124"
+       y="364.17691"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:12.80000019px;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.06666672"
+       x="274.67825"
+       y="376.92526"
+       id="text4203-9-7"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan4205-7-5"
+         x="274.67825"
+         y="376.92526"
+         style="font-size:12.80000019px;line-height:1.25;font-family:sans-serif;stroke-width:1.06666672">Mögliche Landebahn</tspan></text>
+    <rect
+       style="fill:#ffff00;fill-rule:evenodd;stroke:#000000;stroke-width:0.4677844px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect2985-5-9"
+       width="227.89667"
+       height="17.360792"
+       x="335.19284"
+       y="464.36426"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#ffff00;fill-rule:evenodd;stroke:#000000;stroke-width:0.26817355px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect2985-5-9-9"
+       width="74.048019"
+       height="17.560404"
+       x="81.145622"
+       y="464.38852"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:12.80000019px;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.06666672"
+       x="87.651123"
+       y="475.81396"
+       id="text4203-3-7"
+       inkscape:export-filename="/home/eckstein/git/LandingPlanes/planning/Vorgehensweise/drawings/text4203-9.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan4205-6-0"
+         x="87.651123"
+         y="475.81396"
+         style="font-size:12.80000019px;line-height:1.25;font-family:sans-serif;stroke-width:1.06666672">Kriterium Gesamtsteigung</tspan></text>
+  </g>
+</svg>

@@ -9,6 +9,8 @@ endif
 
 all: checkdir ./bin/landebahn documentation ./lib/plane_library.a 
 
+easylib: checkdir documentation ./lib/plane_library.a
+
 clean:
 	rm ./bin/landebahn || true
 	rm -rf latex || true
