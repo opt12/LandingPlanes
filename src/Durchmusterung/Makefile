@@ -1,5 +1,13 @@
 
+
 CC=g++ -pg -g -std=c++11 -O3 -Wall
+
+GCCVERSION=$(shell g++ --version | grep ^gcc | sed 's/^.* //g')
+
+
+ifndef ($(GCCVERSION))
+$(error g++ needs to be installed)
+endif
 
 ifeq ($(DEBUG), 1)
     CFLAGS =-DDEBUG
