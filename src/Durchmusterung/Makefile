@@ -2,10 +2,11 @@
 
 CC=g++ -pg -g -std=c++11 -O3 -Wall
 
-GCCVERSION=$(shell g++ --version | grep ^gcc | sed 's/^.* //g')
+GCCVERSION=$(shell g++ --version | grep ^g++ | sed 's/^.* //g')
 
+$(info $(GCCVERSION))
 
-ifndef ($(GCCVERSION))
+ifndef GCCVERSION
 $(error g++ needs to be installed)
 endif
 
