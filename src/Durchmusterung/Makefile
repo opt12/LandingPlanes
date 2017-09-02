@@ -2,9 +2,13 @@
 
 CC=g++ -pg -g -std=c++11 -O3 -Wall
 
+GCC_AVAIL := $(shell command -v g++ 2> /dev/null)
+ifndef GCC_AVAIL
+$(error g++ needs to be installed in version 4.9 or newer)
+endif
+
 GCCVERSION=$(shell g++ --version | grep ^g++ | sed 's/^.* //g')
 
-$(info $(GCCVERSION))
 
 ifndef GCCVERSION
 $(error g++ needs to be installed)
