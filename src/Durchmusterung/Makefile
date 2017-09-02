@@ -29,6 +29,8 @@ ifeq ("$(wildcard /usr/include/tiff.h)","")
   $(error tiff.h needed. This is usually in a package libtiff-devel)
 endif
 
+DOXY_AVAIL := $(shell command -v doxygen 2> /dev/null)
+
 #test -f /usr/include/tiff.h && $(error tiff.h needed. This is usually in a package libtiff-devel)
 
 ifeq ($(DEBUG), 1)
@@ -88,6 +90,10 @@ checkdir:
 	mkdir obj || true
 	mkdir lib || true
 
-html/index.html: ./src/tile_manager.cpp ./src/tile_worker.cpp ./include/tile_worker.h ./include/tile_manager.h 
+html/index.html: ./src/tile_manager.cpp ./src/tile_worker.cpp ./include/tile_worker.h ./include/tile_manager.h
+ifndef DOXY_AVAIL
+	$(info "doxygen not available so no documentation created")
+else 
 	doxygen doxystyle
+endif
 
