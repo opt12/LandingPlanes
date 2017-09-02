@@ -10,6 +10,27 @@ ifndef GCCVERSION
 $(error g++ needs to be installed)
 endif
 
+
+GCCMAJOR := $(shell echo "$(GCCVERSION)" | cut -f1 -d.)
+GCCMINOR := $(shell echo "$(GCCVERSION)" | cut -f2 -d.)
+
+
+ifeq  ($(shell test $(GCCMAJOR) -lt 4; echo $$?),0)
+$(error g++ version needs to be at least 4.9)
+endif
+
+ifeq  ($(shell test $(GCCMAJOR) -eq 4; echo $$?),0)
+ifeq ($(shell test $(GCCMINOR) -lt 9; echo $$?),0)
+$(error g++ version needs to be at least 4.9)
+endif
+endif
+
+ifeq ("$(wildcard /usr/include/tiff.h)","")
+  $(error tiff.h needed. This is usually in a package libtiff-devel)
+endif
+
+#test -f /usr/include/tiff.h && $(error tiff.h needed. This is usually in a package libtiff-devel)
+
 ifeq ($(DEBUG), 1)
     CFLAGS =-DDEBUG
 else
