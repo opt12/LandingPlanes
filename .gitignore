@@ -14,4 +14,7 @@ vorgehensweise
 .gitignore~
 vorgehensweise*
 src/1597_LandingClient/bower_components/
+*~
+src/Durchmusterung/html/
+src/Durchmusterung/latex/
 

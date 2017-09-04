@@ -1,5 +1,41 @@
 
+
 CC=g++ -pg -g -std=c++11 -O3 -Wall
+
+GCC_AVAIL := $(shell command -v g++ 2> /dev/null)
+ifndef GCC_AVAIL
+$(error g++ needs to be installed in version 4.9 or newer)
+endif
+
+GCCVERSION=$(shell g++ --version | grep ^g++ | sed 's/^.* //g')
+
+
+ifndef GCCVERSION
+$(error g++ needs to be installed)
+endif
+
+
+GCCMAJOR := $(shell echo "$(GCCVERSION)" | cut -f1 -d.)
+GCCMINOR := $(shell echo "$(GCCVERSION)" | cut -f2 -d.)
+
+
+ifeq  ($(shell test $(GCCMAJOR) -lt 4; echo $$?),0)
+$(error g++ version needs to be at least 4.9)
+endif
+
+ifeq  ($(shell test $(GCCMAJOR) -eq 4; echo $$?),0)
+ifeq ($(shell test $(GCCMINOR) -lt 9; echo $$?),0)
+$(error g++ version needs to be at least 4.9)
+endif
+endif
+
+ifeq ("$(wildcard /usr/include/tiff.h)","")
+  $(error tiff.h needed. This is usually in a package libtiff-devel)
+endif
+
+DOXY_AVAIL := $(shell command -v doxygen 2> /dev/null)
+
+#test -f /usr/include/tiff.h && $(error tiff.h needed. This is usually in a package libtiff-devel)
 
 ifeq ($(DEBUG), 1)
     CFLAGS =-DDEBUG
@@ -8,6 +44,8 @@ else
 endif
 
 all: checkdir ./bin/landebahn documentation ./lib/plane_library.a 
+
+easylib: checkdir documentation ./lib/plane_library.a
 
 clean:
 	rm ./bin/landebahn || true
@@ -56,6 +94,10 @@ checkdir:
 	mkdir obj || true
 	mkdir lib || true
 
-html/index.html: ./src/tile_manager.cpp ./src/tile_worker.cpp ./include/tile_worker.h ./include/tile_manager.h 
+html/index.html: ./src/tile_manager.cpp ./src/tile_worker.cpp ./include/tile_worker.h ./include/tile_manager.h
+ifndef DOXY_AVAIL
+	$(info "doxygen not available so no documentation created")
+else 
 	doxygen doxystyle
+endif
 
