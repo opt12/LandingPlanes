@@ -1,0 +1,308 @@
+% $Header$
+
+\documentclass[
+	xcolor=dvipsnames,
+	hideallsubsections
+]{beamer} %xcolor=dvipsnames
+%\documentclass[xcolor=dvipsnames, handout]{beamer} %xcolor=dvipsnames
+
+\usepackage{pgfpages}
+
+\mode<presentation>
+{
+	\usetheme{PaloAlto}
+	\usecolortheme[named=TealBlue]{structure}
+%	\usecolortheme[named=Dandelion]{structure}
+	
+	\setbeamercovered{transparent}
+	% or whatever (possibly just delete it)
+%	\setbeameroption{show notes} % un-comment to see the notes
+%	\setbeameroption{show notes on second screen=right}
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This LaTeX Beamer file is based on the solution template for:
+
+% - Giving a talk on some subject.
+% - The talk is between 15min and 45min long.
+% - Style is ornate.
+
+% Copyright 2004 by Till Tantau <tantau@users.sourceforge.net>.
+%
+% In principle, this file can be redistributed and/or modified under
+% the terms of the GNU Public License, version 2.
+%
+% However, this file is supposed to be a template to be modified
+% for your own needs. For this reason, if you use this file as a
+% template and not specifically distribute it as part of a another
+% package/program, I grant the extra permission to freely copy and
+% modify this file as you see fit and even to delete this copyright
+% notice. 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Thank you so much Till :-)
+
+
+\usepackage[ngerman]{babel}
+% or whatever
+
+\usepackage[latin1]{inputenc}
+% or whatever
+
+\usepackage{times}
+\usepackage[T1]{fontenc}
+ 
+\input{structure.tex} % Include the structure.tex file which specified the document structure and layout
+
+
+% Or whatever. Note that the encoding and the font should match. If T1
+% does not look nice, try deleting the line with the fontenc.
+
+\title[Notlandefelder aus Höhendaten] % (optional, use only with long paper titles)
+{Erkennung von Notlandefeldern aus Höhendaten: \\
+	Parallele Implementierung der Durchmusterung mit \texttt{pThreads}}
+
+\author[] % (optional, use only with lots of authors)
+{Felix~Eckstein, Dr. Björn Wittich}
+% - Use the \inst{?} command only if the authors have different
+%   affiliation.
+
+%\institute[FernUni Hagen] % (optional, but mostly needed)
+%{
+%}
+  
+% - Use the \inst command only if there are several affiliations.
+% - Keep it simple, no one is interested in your street address.
+
+\date[] % (optional)
+{``1597 -- Fachpraktikum Parallele Programmierung''\\
+	im Sommersemester 2017 an der FernUniversität Hagen\\
+23. September 2017}
+
+\subject{Talks}
+% This is only inserted into the PDF information catalog. Can be left
+% out. 
+
+
+
+% If you have a file called "university-logo-filename.xxx", where xxx
+% is a graphic format that can be processed by latex or pdflatex,
+% resp., then you can add a logo as follows:
+
+% \pgfdeclareimage[height=1cm]{university-logo}{images/HannoverJs.png}
+  \pgfdeclareimage[height=1cm]{university-logo}{images/UniHagen.png}
+ \logo{\pgfuseimage{university-logo}}
+
+
+
+% Delete this, if you do not want the table of contents to pop up at
+% the beginning of each subsection:
+\AtBeginSection[]
+{
+  \begin{frame}<beamer>{Outline}
+%    \tableofcontents[currentsection]%,currentsubsection]
+    \tableofcontents[sections=\thesection]
+  \end{frame}
+}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+	\note{
+		\begin{itemize}
+			\item In den \textbackslash note Abschnitt kommen Vortragsnotizen
+			\item \ldots
+		\end{itemize}
+			
+	Kein Vortrag ohne Katzenfotos!
+	}
+\end{frame}
+
+
+
+\begin{frame}{Outline}
+  	\tableofcontents[hideallsubsections]
+	\note{
+		\begin{itemize}
+			\item In den \textbackslash note Abschnitt kommen Vortragsnotizen
+			\item \ldots
+		\end{itemize}
+			
+	Kein Vortrag ohne Katzenfotos!
+	}
+\end{frame}
+
+
+% Since this a solution template for a generic talk, very little can
+% be said about how it should be structured. However, the talk length
+% of between 15min and 45min and the theme suggest that you stick to
+% the following rules:  
+
+% - Exactly two or three sections (other than the summary).
+% - At *most* three subsections per section.
+% - Talk about 30s to 2min per frame. So there should be between about
+%   15 and 30 frames, all told.
+
+\setcounter{framenumber}{\value{framenumber}-1}	%no idea why it otherwise skips one page
+\section{Aufgabenstellung}
+
+\begin{frame}{Funktionsaufrufe in Single-Threaded-Umgebungen}{``Synchrone Programmierung''}
+	
+	\begin{columns}
+		\column{0.5\textwidth}
+		\begin{itemize}[<+->]
+			\item Synchrone Funktionen
+			\begin{itemize}[<.->]
+				\item werden aufgerufen
+				\item berechnen ihr Ergebnis
+				\item geben das Resultat zurück
+			\end{itemize}
+			\item Funktionsaufrufe können die Ausführung blockieren
+			\item Das Warten auf externe Ereignisse führt zu Ineffizienz
+			\item Es ist keine Neben- läufigkeit möglich
+		\end{itemize}
+		\column{0.5\textwidth}
+			\begin{figure}
+				\includegraphics[height=.8\textheight]{images/syncFlow.png}
+			\end{figure}
+	\end{columns}
+
+	\note{
+		\begin{itemize}
+			\item Das Hauptprogramm kann nicht weiterarbeiten
+			\item Nebenläufigkeit ist nicht möglich
+			
+			\skippingparagraph
+			
+			\skippingparagraph
+			
+			\item Was lässt sich daran besser machen?
+		\end{itemize}
+	}
+
+\end{frame}
+
+	\begin{frame}{Asynchrone Programmierung}
+		
+	\begin{itemize}[<+->]
+		\item<1-> Asynchrone Funktionen verhalten sich anders:	
+		\begin{itemize}[<+->]
+			\item<+-> Async Funktionen werden \alert{jetzt} aufgerufen, \ldots
+			\item<+-> \ldots kehren direkt zurück\ldots
+			\item<+-> \ldots und berechnen ihr Ergebnis
+			\item<+-> Diese Ergebnis wird \alert{später} übergeben
+		\end{itemize}
+		\item<+-> Der aufrufende Code erhält die Kontrolle direkt zurück
+		\item<+-> Das Hauptprogramm kann sinnvolle Dinge tun, während die async Funktion noch ihr Ergebnis ermittelt
+		\item<+-> Dadurch gibt es \alert{Nebenläufigkeit} auch in single-threaded Umgebungen
+	\end{itemize}
+
+	\note{
+		Erkläre hier, dass die asynchronen Funktionen eben \alert{doch in einem anderen Thread} ablaufen können.
+
+		Eventuell sogar noch die Grafik Zeigen: 
+		
+		\begin{figure}
+			\includegraphics[height=.5\textheight]{images/syncFlow.png}
+			\caption{Asnychronous Functions are executed outside the JavaScript-Single-Thread}
+		\end{figure}
+		
+	}
+	\end{frame}
+	
+\section{Architektur}
+\subsection{Überblick}
+\subsection{Grobkörnige Parallelität}
+\subsection{Feingranulare Parallelität}
+
+\section{Komponente "`searchEngine"'}
+
+\subsection{Datenformate und Verarbeitung}
+\subsubsection{GeoTIFF}
+\subsubsection{Speicherformat: GeoJSON}
+\subsection{GeoTIFFHandler}
+\subsubsection{Datenextraktion}
+\subsubsection{Koordinatensysteme}
+\subsubsection{Das \texttt{GeoTIFFHandler}-Objekt}
+
+
+\section{Komponente "'Durchmusterung"'}
+\subsection{Durchmusterung der Geotiff Daten und Auffinden der Landebahnen}
+
+\subsection{Interface der Library}
+
+\subsection{Logischer Ablauf innerhalb der Landebahn-Erkennung}
+
+\subsection{Initialisierung}
+
+\subsection{Parallelverarbeitung mittels p\_threads zum Finden der Landebahnen}
+
+\subsection{Detaillierte Beschreibung des Suchalgorithmus}
+
+\subsection{Klassen und Objekte}
+
+\subsection{Verwendete Datenstrukturen}
+
+\subsubsection{Einfluss der Datenstrukturen auf die Performanz}
+
+\subsection{Bestimmung des Speedups in Abhängigkeit des Parallelisierungsgrades}
+
+\subsubsection{Erläuterung des Messverfahren}
+
+\subsubsection{Messergebnisse}
+
+\subsubsection{Diskussion der Messergebnisse}
+
+\subsection{Analyse mittels Profiler}
+
+\subsection{Einfluss von Compiler Direktiven (speziell Optimizer)}
+
+\section{Komponente "`databaseManager"'}
+
+\subsection{Datenbankauswahl}
+
+	\begin{frame}{Ein GeoJSON Objekt zur Ablage in die Datenbank}{}
+			
+		\smaller\lstinputlisting[style=JSStyle, linebackgroundcolor={%
+			\btLstHL<2|handout:0>{18}%
+			\btLstHL<3|handout:0>{19,20}% 
+		}]{snippets/databaseObject.js}
+		
+	\end{frame}
+	
+
+
+	\subsection{Express-Server App}
+	
+	\subsection{Postprocessing - Merge}
+	
+	\section{Komponente "'landingClient"'}
+	
+	\begin{frame}{Benutzeroberfläche}
+		\begin{figure}[ht]
+			\includegraphics[width=\textwidth]{../Bericht/drawings/LandingClient_Screen1.png}
+			\caption{Beispiel Screenshot aus der Weboberfläche zur Bedienung des Systems}
+		\end{figure}
+	\end{frame}
+	
+	\subsection{Überblick}
+	
+	\subsection{Features und Bedienung}
+	
+	\section{Ausblick und weitere Ideen}
+	
+	\subsection{Parallele Bearbeitung mehrerer Kacheln per MPI}
+	
+	\subsection{Richtungskorrektur des GeoTIFF}
+	
+	\subsection{Push für Webclient}
+	
+	\subsection{Merge als nachgeschalteter Prozess aus dem Speicher}
+	
+	\subsection{Kollisionsabfrage mit Objekten aus OSM}
+	
+\end{document}
+
+
