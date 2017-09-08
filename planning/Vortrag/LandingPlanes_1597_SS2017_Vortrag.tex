@@ -1,7 +1,8 @@
-% $Header$
+ % $Header$
 
 \documentclass[
 	xcolor=dvipsnames,
+%	handout,
 	hideallsubsections
 ]{beamer} %xcolor=dvipsnames
 %\documentclass[xcolor=dvipsnames, handout]{beamer} %xcolor=dvipsnames
@@ -10,8 +11,9 @@
 
 \mode<presentation>
 {
-	\usetheme{PaloAlto}
-	\usecolortheme[named=TealBlue]{structure}
+	\usetheme{Rochester}
+	\usecolortheme{wolverine}
+%	\usecolortheme[named=TealBlue]{structure}
 %	\usecolortheme[named=Dandelion]{structure}
 	
 	\setbeamercovered{transparent}
@@ -100,7 +102,7 @@
 % the beginning of each subsection:
 \AtBeginSection[]
 {
-  \begin{frame}<beamer>{Outline}
+  \begin{frame}<beamer> {Outline}
 %    \tableofcontents[currentsection]%,currentsubsection]
     \tableofcontents[sections=\thesection]
   \end{frame}
@@ -122,7 +124,7 @@
 
 
 
-\begin{frame}{Outline}
+\begin{frame} {Outline}
   	\tableofcontents[hideallsubsections]
 	\note{
 		\begin{itemize}
@@ -148,74 +150,200 @@
 \setcounter{framenumber}{\value{framenumber}-1}	%no idea why it otherwise skips one page
 \section{Aufgabenstellung}
 
-\begin{frame}{Funktionsaufrufe in Single-Threaded-Umgebungen}{``Synchrone Programmierung''}
+\begin{frame} {Title}{Subtitle}
 	
-	\begin{columns}
-		\column{0.5\textwidth}
-		\begin{itemize}[<+->]
-			\item Synchrone Funktionen
-			\begin{itemize}[<.->]
-				\item werden aufgerufen
-				\item berechnen ihr Ergebnis
-				\item geben das Resultat zurück
-			\end{itemize}
-			\item Funktionsaufrufe können die Ausführung blockieren
-			\item Das Warten auf externe Ereignisse führt zu Ineffizienz
-			\item Es ist keine Neben- läufigkeit möglich
-		\end{itemize}
-		\column{0.5\textwidth}
-			\begin{figure}
-				\includegraphics[height=.8\textheight]{images/syncFlow.png}
-			\end{figure}
-	\end{columns}
+
 
 	\note{
 		\begin{itemize}
-			\item Das Hauptprogramm kann nicht weiterarbeiten
-			\item Nebenläufigkeit ist nicht möglich
-			
-			\skippingparagraph
-			
-			\skippingparagraph
-			
-			\item Was lässt sich daran besser machen?
+			\item 
 		\end{itemize}
 	}
 
 \end{frame}
 
-	\begin{frame}{Asynchrone Programmierung}
-		
+\begin{frame} {titel}
+	
+\begin{itemize}[<+->]
+	\item<1-> 
 	\begin{itemize}[<+->]
-		\item<1-> Asynchrone Funktionen verhalten sich anders:	
-		\begin{itemize}[<+->]
-			\item<+-> Async Funktionen werden \alert{jetzt} aufgerufen, \ldots
-			\item<+-> \ldots kehren direkt zurück\ldots
-			\item<+-> \ldots und berechnen ihr Ergebnis
-			\item<+-> Diese Ergebnis wird \alert{später} übergeben
-		\end{itemize}
-		\item<+-> Der aufrufende Code erhält die Kontrolle direkt zurück
-		\item<+-> Das Hauptprogramm kann sinnvolle Dinge tun, während die async Funktion noch ihr Ergebnis ermittelt
-		\item<+-> Dadurch gibt es \alert{Nebenläufigkeit} auch in single-threaded Umgebungen
+		\item<+-> 
+		\item<+-> 
+		\item<+-> 
+		\item<+-> 
 	\end{itemize}
+	\item<+-> 
+\end{itemize}
 
-	\note{
-		Erkläre hier, dass die asynchronen Funktionen eben \alert{doch in einem anderen Thread} ablaufen können.
-
-		Eventuell sogar noch die Grafik Zeigen: 
-		
-		\begin{figure}
-			\includegraphics[height=.5\textheight]{images/syncFlow.png}
-			\caption{Asnychronous Functions are executed outside the JavaScript-Single-Thread}
-		\end{figure}
-		
-	}
-	\end{frame}
+\note{
+	
+}
+\end{frame}
 	
 \section{Architektur}
+
+\subsection{Architekturziele}
+
+\begin{frame} {Systemarchitektur}{Anforderungen}
+	
+	Anforderungen an die Architektur:
+	
+	\begin{itemize}
+	\item inhärent parallel
+	\item lose gekoppelte Komponenten
+	\item einfache Einbindung externer Bibliotheken
+	\item einfache Erweiterbarkeit
+	\item Kommunikation über Standardprotokolle
+	\end{itemize}
+	
+	\note{
+		\begin{itemize}
+			\item 
+		\end{itemize}
+	}
+
+\end{frame}
+
 \subsection{Überblick}
-\subsection{Grobkörnige Parallelität}
-\subsection{Feingranulare Parallelität}
+
+\begin{frame} {Systemarchitektur}{Überblick}
+	
+	Die Architektur implementiert ein MVW (Model View Whatever) Modell:
+	
+	\begin{figure}
+		\includegraphics[height=.8\textheight]{images/Architektur.png}
+	\end{figure}
+
+	\note{
+		\begin{itemize}
+			\item Model: Datenbank
+			\item View: userInterface
+			\item Whatever hier:
+			\begin{itemize}
+			\item Controller: DataBaseManager
+			\item Businnes Logic: searchEngine
+			\end{itemize}
+		\end{itemize}
+	}
+
+\end{frame}
+
+\subsection{Komponenten}
+
+\begin{frame} {Systemarchitektur}{Komponenten}
+	
+	Es sind insgesamt vier Hauptkomponenten zu erkennen:
+	
+	\begin{columns}
+		\column{0.45\textwidth}
+	\begin{itemize}
+	\item das UserInterface
+	\item der DataBaseManager
+	\item die SearchEngine
+	\item die Datenbank
+	\end{itemize}
+
+		\column{0.6\textwidth}
+			\begin{figure}
+				\includegraphics[width=\textwidth]{images/Architektur.png}
+			\end{figure}
+	\end{columns}
+
+	\note{
+		\begin{itemize}
+			\item 
+		\end{itemize}
+	}
+
+\end{frame}
+
+\begin{frame} {Systemarchitektur}{Kommunikation der Komponenten}
+	
+	Die Kommunikation der Komponenten findet statt über
+	
+	\begin{itemize}
+	\item HTTP: als Schnittstelle vom UserInterface zum dataBaseManager (REST-API)
+	\item Unix-Sockets: zur Interprozesskommunikation zwischen dataBaseManager und searchEngine
+	\item HTTP: als Schnittstelle vom dataBaseManager zur Datenbank
+	\end{itemize}
+	
+	Die Schnittstellen sind klar definiert und die Kommunikation findet immer über den dataBaseManager statt.
+	
+	\skippingparagraph
+	Das Datenformat der ausgetauschten Nachrichten ist JSON.
+	
+	
+
+	\note{
+		\begin{itemize}
+			\item REST-API: Representational State Transfer: Die Bezeichnung ?Representational State Transfer? soll den Übergang vom aktuellen Zustand zum nächsten Zustand (state) einer Applikation verbildlichen. Dieser Zustandsübergang erfolgt durch den Transfer der Daten, die den nächsten Zustand repräsentieren.
+		\end{itemize}
+	}
+
+\end{frame}
+
+\subsection{Programmiersysteme}
+
+\begin{frame} {Systemarchitektur}{Auswahl der Programmiersysteme}
+	
+	Für die Realisierung der einzelnen Komponenten wurden unterschiedliche Technologien verwendet:
+	
+	\begin{itemize}
+	\item C/C++ für die searchEngine
+		\begin{itemize}
+		\item beste Performance für kritische Datenverarbeitung
+		\item gute Parallelisierungsmöglichkeiten für Number Crunching
+		\item gute Bibliotheksunterstützung in der Geo-Data Community
+		\end{itemize}
+
+	\item HTML/React für das userInterface
+		\begin{itemize}
+		\item Standard-Webtechnologien zur Realisierung des View
+		\item Sehr gute, leicht zu bedienende Darstellungskomponenten
+		\item Leichte Erweiterbarkeit und iterative Realisierungsmöglichkeit
+		\item Vorwissen für GUI-Realisierung
+		\end{itemize}
+
+	\item Node.js/Javascript für den dataBaseManager
+		\begin{itemize}
+		\item Leichte Integration der Schnittstellen zu anderen Komponenten
+		\item Native Unterstützung des JSON-Datenformats
+		\item leichtgewichtiger Webserver
+		\item sehr gute Unterstützung zum Interfacing der Datenbank
+		\end{itemize}
+	\end{itemize}
+	\note{
+		\begin{itemize}
+			\item 
+		\end{itemize}
+	}
+
+\end{frame}
+
+\subsection{Erreichung der Architekturziele}
+
+\begin{frame} {Systemarchitektur}{Architekturziele}
+	
+	Wurden die Architekturziele erreicht?
+	\skippingparagraph
+	
+	\begin{tabular}{lc}
+		\pause inhärent parallel &  \textcolor{green}{\Checkmark}\\ 
+		\pause lose gekoppelte Komponenten &  \textcolor{green}{\Checkmark}\\ 
+		\pause einfache Einbindung externer Bibliotheken &  \textcolor{green}{\Checkmark}\\ 
+		\pause einfache Erweiterbarkeit &  \textcolor{green}{\Checkmark}\\ 
+		\pause Kommunikation über Standardprotokolle &  \textcolor{green}{\Checkmark}
+	\end{tabular} 
+
+
+	\note{
+		\begin{itemize}
+			\item 
+		\end{itemize}
+	}
+
+\end{frame}
+
 
 \section{Komponente "`searchEngine"'}
 
@@ -263,7 +391,7 @@
 
 \subsection{Datenbankauswahl}
 
-	\begin{frame}{Ein GeoJSON Objekt zur Ablage in die Datenbank}{}
+	\begin{frame} {Ein GeoJSON Objekt zur Ablage in die Datenbank}{}
 			
 		\smaller\lstinputlisting[style=JSStyle, linebackgroundcolor={%
 			\btLstHL<2|handout:0>{18}%
@@ -280,7 +408,7 @@
 	
 	\section{Komponente "'landingClient"'}
 	
-	\begin{frame}{Benutzeroberfläche}
+	\begin{frame} {Benutzeroberfläche}
 		\begin{figure}[ht]
 			\includegraphics[width=\textwidth]{../Bericht/drawings/LandingClient_Screen1.png}
 			\caption{Beispiel Screenshot aus der Weboberfläche zur Bedienung des Systems}
