@@ -685,102 +685,270 @@
 
 \section{Komponente "`databaseManager"'}
 
+\begin{frame} {dataBaseManager}{Überblick}
+	
+	\begin{columns}
+		\column{0.5\textwidth}
+		Die in einem separaten Prozess ablaufende Komponente \texttt{dataBaseManager} abstrahiert
+		\begin{itemize}
+		\item alle notwendigen Datenbankzugriffe
+		\item einen Controller im MVC-Modell
+			\begin{itemize}
+			\item nimmt Benutzeranfragen entgegen
+			\item verteilt Tasks an die searchEngine
+			\item stellt Daten für die View bereit
+			\end{itemize}
+		\item realisiert einen Merge für Überlappende Landebahnen
+		\end{itemize}
+
+		\column{0.55\textwidth}
+			\begin{figure}
+				\includegraphics[width=\textwidth]{images/databaseManager_Komponenten.png}
+			\end{figure}
+	\end{columns}
+	
+
+	\note{
+		\begin{itemize}
+			\item Der Merge ist nicht Kernaufgabe des dataBaseManager, sondern ist hauptsächlich wegen seiner intensiven Datenbankzugriffe hier hinein gekommen.
+		\end{itemize}
+	}
+
+\end{frame}
+
+
 \subsection{Datenbankauswahl}
 
-	\begin{frame} {Ein GeoJSON Objekt zur Ablage in die Datenbank}{}
-			
-		\smaller\lstinputlisting[style=JSStyle, linebackgroundcolor={%
-			\btLstHL<2|handout:0>{18}%
-			\btLstHL<3|handout:0>{19,20}% 
-		}]{snippets/databaseObject.js}
-		
-	\end{frame}
+\begin{frame} {Datenbankauswahl}{Warum MongoDB?}
+
+	\begin{tikzpicture}[remember picture,overlay]  
+	  \node [xshift=-3.3cm,yshift=-.8cm] at (current page.north east)
+	    {\includegraphics[width=4cm]{images/MongoDB_Logo.png}};
+	\end{tikzpicture}
 	
+	Die Wahl der Datenbank fiel auf MongoDB.
+	
+	Gründe für MongoDB.
+	\begin{itemize}
+	\item direkte Unterstützung von GeoJSON
+	\item ermöglicht \emph{2D-Sphere-Index}-Index
+	\item Geospatial Query Operators möglich:
+		\begin{itemize}
+		\item Alle Landebahnen im Umkreis von x km
+		\item Alle Objekte mit Schnittpunkten mit Objekt X
+		\item Abfrage Operator \texttt{\$geoIntersects}
+		\end{itemize}
+	\item gute Unterstützung für parallele Architekturen
+	\item sehr gute Unterstützung durch Node.js
+	\end{itemize}
+
+	\note{
+		\begin{itemize}
+			\item parallele Architekturen wie 
+			\item sharding
+			\item sind aktuell sicherlich sehr gut verzichtbar
+		\end{itemize}
+	}
+
+\end{frame}
 
 
-	\subsection{Express-Server App}
+
+
+\subsection{Express-Server App}
+
+\begin{frame} {REST-API}{Express-Server}
 	
-	\subsection{Postprocessing - Merge}
+	Die Funktionen des dataBaseManagers werden über eine REST-API per HTTP zur Verfügung gestellt.
 	
-	\section{Komponente "'landingClient"'}
+	Es werden mehrere Endpunkte für HTTP-Requests zur Verfügung gestellt.
 	
-	\begin{frame} {Benutzeroberfläche}
-		\begin{figure}[ht]
-			\includegraphics[width=\textwidth]{../Bericht/drawings/LandingClient_Screen1.png}
-			\caption{Beispiel Screenshot aus der Weboberfläche zur Bedienung des Systems}
-		\end{figure}
-	\end{frame}
+	\begin{itemize}
+		\item GET auf \texttt{/}: HTML-Seite und JavaScript für den Client
+		\item POST auf \texttt{/api/fileInfo/}: Dateiinformationen des über einen Dateinamen spezifizierten GeoTIFF
+		\item POST auf \texttt{/api/fileInfo/extent}: konvexes Umfangspolygon 
+		\item POST auf \texttt{/api/commands/}: Nimmt einen Task entgegen
+		\begin{itemize}
+			\item \texttt{SCAN}: Durchmustert einen Bereich nach Notlandefeldern. 
+			\item \texttt{SAVE\_2\_M\_FILE}: Speichert GeoTIFF in Textdatei
+		\end{itemize}
+		\item DELETE auf \texttt{/api/commands/drop}: löscht Datenbank
+		\item POST auf \texttt{/api/queries/}: liefert Einträge der Datenbank
+	\end{itemize}
+
+	\note{
+		\begin{itemize}
+			\item 
+		\end{itemize}
+	}
+
+\end{frame}
+
+\begin{frame} {Inter Process Communication (IPC)}{Unix-Sockets}
 	
-	\subsection{Überblick}
+	Die dataBaseManagerApp startet eine Instanz der searchEngine in einem eigenen Prozess.
 	
-	\subsection{Features und Bedienung}
+	Es wird ein UNIX-Socket geöffnet um bidirektional zwischen den beiden Anwendungen zu kommunizieren.
 	
-	\section{Ausblick und weitere Ideen}
+\begin{itemize}
+	\item DBM $\rightarrow$ SE \texttt{SCAN}: Durchmusterung eines Datensatzausschnitts. Parameter als JSON.
+	\item DBM $\rightarrow$ SE \texttt{SAVE\_2\_M\_FILE}: Speichert GeoTIFF in Textdatei.
+	\item SE $\rightarrow$ DBM \texttt{landingPlane}: SE hat potentielle Landebahn gefunden. Übergabe von minimaler und maximaler Bahn.
+	\item SE $\rightarrow$ DBM \texttt{taskReceipt}: Fertigstellung eines Durchmusterungs-Auftrags. 
+\end{itemize}
+
+
+	\note{
+	\begin{itemize}
+		\item DBM $\rightarrow$ SE \texttt{SCAN}: Es wird eine Durchmusterung eines Datensatzausschnitts in Auftrag gegeben. Die Parameter werden als JSON durchgereicht.
+		\item DBM $\rightarrow$ SE \texttt{SAVE\_2\_M\_FILE}: Speichert einen Bereich eines GeoTIFF Datensatzes in einer Matlab/GNU Octave kompatiblen Textdatei.
+		\item SE $\rightarrow$ DBM \texttt{landingPlane}: Die SE hat eine neue potentielle Landebahn gefunden und übergibt sie über ein JSON-Objekt an den DBM um sie in der Datenbank zu persistieren. Für jede gefundene potentielle Bahn werden zwei Objekte übergeben: Die Bahn maximaler Ausdehung, so dass die geforderten Suchkriterien gerade noch eingehalten werden und eine innerhalb dieser Bahn liegende Teilbahn, welche minimale Varianz aufweist und gerade noch die geforderte Mindestlänge erreicht.
+		\item SE $\rightarrow$ DBM \texttt{taskReceipt}: Mit einem Task-Receipt meldet die SE dem DBM die Fertigstellung eines Auftrags. Damit kann der DBM nachhalten ob und welche Aufträge noch ausstehen und gegebenenfalls den Client aktiv informieren (Push). Aktuell wird diese Möglichkeit jedoch noch nicht genutzt.
+	\end{itemize}
+	}
+
+\end{frame}
+
+\subsection{Postprocessing - Merge}
+
+\begin{frame} {Optionales Postprocessing}{Merge-Task}
 	
-	\subsection{Erreichung der Architekturziele}
+	Es hat sich gezeigt, dass häufig viele nebeneinander liegende Landebahnen gefunden werden, die sich gegenseitig überlappen.
 	
-	\begin{frame} {Systemarchitektur}{Architekturziele}
-		
-		Wurden die Architekturziele erreicht?
-		\skippingparagraph
-		
-		\begin{tabular}{lc}
-			\pause inhärent parallel &  \textcolor{green}{\Checkmark}\\ 
-			\pause lose gekoppelte Komponenten &  \textcolor{green}{\Checkmark}\\ 
-			\pause einfache Einbindung externer Bibliotheken &  \textcolor{green}{\Checkmark}\\ 
-			\pause einfache Erweiterbarkeit &  \textcolor{green}{\Checkmark}\\ 
-			\pause Kommunikation über Standardprotokolle &  \textcolor{green}{\Checkmark}
-		\end{tabular} 
+	Die Darstellung als einzelne Landebahnen ist unübersichtlich. Daher ist es sinnvoll überlappende Bahnen zusammen zu fassen.
 	
-	
-		\note{
-			\begin{itemize}
-				\item 
-			\end{itemize}
-		}
-	
-	\end{frame}
-		
-	\subsection{Parallele Bearbeitung mehrerer Kacheln per MPI}
-	
-	\subsection{Richtungskorrektur des GeoTIFF}
-	\begin{frame} {\texttt{GeoTIFFHandler}}{Implementierungsschwäche}
-		
 		\begin{columns}
 			\column{0.5\textwidth}
-		
-			Aktuelle Schwäche der Implementierung:
-			\begin{itemize}
-			\item Aktuelle implizite Annahme: GeoTIFF-Raster ist perfekt nach Süden und Osten ausgerichtet.
-			\item Verzerrungen durch Projektion der Kugel in die Ebene ist \emph{nicht} winkeltreu
-			\item Richtungsinformationen weichen leicht von Geo-Koordinaten ab. 
-			\end{itemize}
-	
-			\column{0.6\textwidth}
 				\begin{figure}
-					\includegraphics[width=\textwidth]{images/NRW_Extent.png}
+					\includegraphics[height=0.5\textheight]{images/planesToMerge.png}
+				\end{figure}
+				
+			\column{0.5\textwidth}
+				\begin{figure}
+					\includegraphics[height=0.5\textheight]{images/mergedPlanes.png}
 				\end{figure}
 		\end{columns}
+		
+
+	\note{
+		\begin{itemize}
+			\item 
+		\end{itemize}
+	}
+
+\end{frame}
+
+\begin{frame} {Postprocessing}{Merge Proof of concept}
 	
+	Innerhalb der Quelltextbasis des dataBaseManagers wurde ein unabhängiger Merge-Task implementiert.
 	
-		\note{
-			\begin{itemize}
-				\item Richtungs-Abweichungen betragen wenige Grad 
-				\item Für diesen Proof-of-concept wurde das toleriert
-				\item Korrektur der richtungen über weitere \texttt{GDAL}-Routinen relativ leicht möglich
-				\item $\Rightarrow$ Trade-off zwischen Genauigkeit und Rechenleistung notwendig
-			\end{itemize}
-		}
+	Dieser Task läuft vollkommen unabhängig von den anderen Komponenten als reines Postprocessing ab.
 	
-	\end{frame}
+	\pause
+	Der Algorithmus ist sehr einfach gehalten.
+	\begin{itemize}
+	\item Suche nacheinander alle unbearbeiteten Bahnen aus der DB
+	\item für jede gefundene unbearbeitete Bahn:
+		\begin{itemize}
+		\item Starte DB-Abfrage nach überlappenden Bahnen
+		\item Fasse alle überlappenden Bereiche zusammen
+		\item Markiere Original-Bahn als Bearbeitet
+		\item Lösche kleinere komplexe Polygone aus der DB
+		\end{itemize}
+	\end{itemize}
 	
+	\pause
+	Aktuell muss dieser Merge-Lauf noch manuell gestartet werden und ist aufgrund der vielen Datenbankzugriffe vergleichsweise langsam.
+
+	\note{
+		\begin{itemize}
+			\item 
+		\end{itemize}
+	}
+
+\end{frame}
+
+
+
+\section{Komponente "'landingClient"'}
+
+\begin{frame} {Benutzeroberfläche}
+	\begin{figure}[ht]
+		\includegraphics[width=\textwidth]{../Bericht/drawings/LandingClient_Screen1.png}
+		\caption{Beispiel Screenshot aus der Weboberfläche zur Bedienung des Systems}
+	\end{figure}
+\end{frame}
+
+\subsection{Überblick}
+
+\subsection{Features und Bedienung}
+
+\section{Ausblick und weitere Ideen}
+
+\subsection{Erreichung der Architekturziele}
+
+\begin{frame} {Systemarchitektur}{Architekturziele}
 	
+	Wurden die Architekturziele erreicht?
+	\skippingparagraph
 	
-	\subsection{Push für Webclient}
+	\begin{tabular}{lc}
+		\pause inhärent parallel &  \textcolor{green}{\Checkmark}\\ 
+		\pause lose gekoppelte Komponenten &  \textcolor{green}{\Checkmark}\\ 
+		\pause einfache Einbindung externer Bibliotheken &  \textcolor{green}{\Checkmark}\\ 
+		\pause einfache Erweiterbarkeit &  \textcolor{green}{\Checkmark}\\ 
+		\pause Kommunikation über Standardprotokolle &  \textcolor{green}{\Checkmark}
+	\end{tabular} 
+
+
+	\note{
+		\begin{itemize}
+			\item 
+		\end{itemize}
+	}
+
+\end{frame}
 	
-	\subsection{Merge als nachgeschalteter Prozess aus dem Speicher}
+\subsection{Parallele Bearbeitung mehrerer Kacheln per MPI}
+
+\subsection{Richtungskorrektur des GeoTIFF}
+\begin{frame} {\texttt{GeoTIFFHandler}}{Implementierungsschwäche}
 	
-	\subsection{Kollisionsabfrage mit Objekten aus OSM}
+	\begin{columns}
+		\column{0.5\textwidth}
+	
+		Aktuelle Schwäche der Implementierung:
+		\begin{itemize}
+		\item Aktuelle implizite Annahme: GeoTIFF-Raster ist perfekt nach Süden und Osten ausgerichtet.
+		\item Verzerrungen durch Projektion der Kugel in die Ebene ist \emph{nicht} winkeltreu
+		\item Richtungsinformationen weichen leicht von Geo-Koordinaten ab. 
+		\end{itemize}
+
+		\column{0.6\textwidth}
+			\begin{figure}
+				\includegraphics[width=\textwidth]{images/NRW_Extent.png}
+			\end{figure}
+	\end{columns}
+
+
+	\note{
+		\begin{itemize}
+			\item Richtungs-Abweichungen betragen wenige Grad 
+			\item Für diesen Proof-of-concept wurde das toleriert
+			\item Korrektur der richtungen über weitere \texttt{GDAL}-Routinen relativ leicht möglich
+			\item $\Rightarrow$ Trade-off zwischen Genauigkeit und Rechenleistung notwendig
+		\end{itemize}
+	}
+
+\end{frame}
+
+
+
+\subsection{Push für Webclient}
+
+\subsection{Merge als nachgeschalteter Prozess aus dem Speicher}
+
+\subsection{Kollisionsabfrage mit Objekten aus OSM}
 	
 \end{document}
 
