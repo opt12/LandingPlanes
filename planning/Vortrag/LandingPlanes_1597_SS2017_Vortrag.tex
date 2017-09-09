@@ -320,21 +320,96 @@
 
 \end{frame}
 
-\subsection{Erreichung der Architekturziele}
+\subsection{Parallelität}
 
-\begin{frame} {Systemarchitektur}{Architekturziele}
+\begin{frame} {Systemarchitektur}{Parallelität}
 	
-	Wurden die Architekturziele erreicht?
-	\skippingparagraph
-	
-	\begin{tabular}{lc}
-		\pause inhärent parallel &  \textcolor{green}{\Checkmark}\\ 
-		\pause lose gekoppelte Komponenten &  \textcolor{green}{\Checkmark}\\ 
-		\pause einfache Einbindung externer Bibliotheken &  \textcolor{green}{\Checkmark}\\ 
-		\pause einfache Erweiterbarkeit &  \textcolor{green}{\Checkmark}\\ 
-		\pause Kommunikation über Standardprotokolle &  \textcolor{green}{\Checkmark}
-	\end{tabular} 
+	In der vorgestellten Architektur ist Raum für
+	\begin{itemize}
+	\item grobkörnige Parallelität
+		\begin{itemize}
+		\item jede vorgestellte Komponente läuft unabhängig von den anderen
+		\item Aufteilung auf verschiedene Maschinen möglich
+		\item parallele Abarbeitung in mehreren Prozessen auf einer Maschine
+		\end{itemize}
+	\item feingranulare Parallelität
+		\begin{itemize}
+		\item die rechenintensive Durchmusterung kann leicht parallelisiert werden
+		\item \texttt{pthreads} ist gut geeignet, da gemeinsame Datenbasis genutzt werden kann
+		\end{itemize}
+	\end{itemize}
 
+	\note{
+		\begin{itemize}
+		\item durch die verwendeten Protokolle ist Aufteilung auf verschiedene Maschinen möglich
+		\end{itemize}
+	}
+
+\end{frame}
+
+
+\section{Komponentenüberblick}
+\begin{frame} {Komponentenübersicht}{}
+	
+Überblick über die Implementierung der einzelnen Komponenten.
+
+	\begin{itemize}
+	\item searchEngine mit Durchmusterung
+		\begin{itemize}
+		\item Überblick über die Datenformate und Vorverarbeitung
+		\item Details zum Durchmusterungsalgorithmus und dessen Parallelisierung
+		\end{itemize}
+	\item dataBaseManager und Datenbank
+	\item landingClient als User Interface
+	\end{itemize}
+	
+	Alle Komponenten sollen vorgestellt werden.\\
+	Der wichtigste Einzelaspekt ist die Durchmusterung und deren Parallelisierung.
+
+	\note{
+		\begin{itemize}
+			\item 
+		\end{itemize}
+	}
+
+\end{frame}
+
+\subsection{Komponente "`searchEngine"'}
+
+\begin{frame} {Komponente "`searchEngine"'}{Überblick}
+	
+	Die Komponente searchEngine realisiert die "Geschäftslogik"' der Applikation.\\
+	
+	Die Komponente ist in zwei Hauptbestandteile aufgeteilt:
+	
+		\begin{columns}
+			\column{0.4\textwidth}
+			\begin{itemize}
+			\item Datenmanagement und Job Scheduling
+			\item Durchmusterung / Number Crunching
+			\end{itemize}
+	
+			\column{0.75\textwidth}
+				\begin{figure}
+					\includegraphics[width=\textwidth]{images/searchEngine_Komponenten.png}
+				\end{figure}
+		\end{columns}
+	
+	
+	\note{
+		\begin{itemize}
+			\item 
+		\end{itemize}
+	}
+
+\end{frame}
+
+\begin{frame} {Komponente "`searchEngine"'}{Threading innerhalb der Komponente}
+	
+	Innerhalb der searchEngine wird exzessiv Gebrauch von Multi-Threading gemacht\\
+	\begin{figure}
+		\includegraphics[width=\textwidth]{images/searchEngine_Threading.png}
+	\end{figure}
 
 	\note{
 		\begin{itemize}
@@ -345,15 +420,236 @@
 \end{frame}
 
 
-\section{Komponente "`searchEngine"'}
 
 \subsection{Datenformate und Verarbeitung}
+\begin{frame} {Datenformate und Verarbeitung}{}
+	
+	Es gibt drei wichtige Datenformate für die Anwendung:
+	\begin{itemize}
+	\item GeoTIFF
+	\item JSON - JavaScript Object Notation
+	\item GeoJSON
+	\end{itemize}
+	
+	Kurzer Überblick über die Eigenschaften
+
+	\note{
+		\begin{itemize}
+			\item Vor der weiteren Betrachtung von Details der Implementierung ist es notwendig
+			\item Eigenschaften und Grundlagen der verwendeten Datenformate 
+			\item zu erklären
+		\end{itemize}
+	}
+
+\end{frame}
+
 \subsubsection{GeoTIFF}
+
+\begin{frame} {GeoTIFF}{Überblick -- Grundlagen}
+	
+	\begin{itemize}
+	\item 	GeoTIFF basiert auf TIFF, einem verlustfrei komprimierenden Rasterformat für Bilder.
+	\item 	TIFF kann beliebige Größen annehmen.
+	\item 	TIFF bietet im Dateiformat die Möglichkeit zu jedem einzelnen Pixel beliebige zusätzliche Informationen zu speichern.
+	\end{itemize}
+	
+	\pause
+	
+	\begin{itemize}
+	\item 	GeoTIFF bindet jedes Pixel eindeutig an einen Koordinatenpunkt auf der Erdoberfläche.
+	\item 	Es werden Daten wie Höhe, Temperatur, Bewuchs, \ldots als Informationen in die Pixel kodiert.
+	\item 	Enthält entweder Sidecar-Files oder Metadaten mit Informationen zur Projektion. Damit gelingt die eindeutige Zuordnung von Pixeln auf Geo-Koordinaten.
+	\end{itemize}
+
+	\note{
+		\begin{itemize}
+			\item 
+		\end{itemize}
+	}
+
+\end{frame}
+
+\begin{frame} {GeoTIFF}{Beispiel-Datensatz}
+	
+	Ein Beispiel der hier verwendeten Höhendatensätze:
+	
+	\only<1>{
+		Die Angaben zur Projektion:
+		\lstinputlisting[style=JSStyle]{snippets/DTM_Hamburg_20m.prj}
+		
+		Die Angaben zur Skalierung:
+		\lstinputlisting[style=JSStyle]{snippets/DTM_Hamburg_20m.tfw}
+	}
+	
+	\only<2>{
+	Die Übersicht über das im GeoTIFF erfasste Gebiet.
+	\begin{figure}
+		\includegraphics[height=0.75\textheight]{images/Gebiet_HH.png}
+	\end{figure}
+	\smaller{\smaller{Höhen sind als Farbwerte umgesetzt.}}
+	}
+
+	\note{
+		\begin{itemize}
+			\item 
+		\end{itemize}
+	}
+
+\end{frame}
+
+
 \subsubsection{Speicherformat: GeoJSON}
+
+\begin{frame} {JSON und GeoJSON}{Überblick}
+	
+	\begin{columns}
+		\column{0.60\textwidth}
+		JSON als Datenformat für
+		\begin{itemize}
+		\item Taskbeschreibungen bei der IPC
+		\item Beschreibung gefundener Bahnen über REST-API
+		\item GeoJSON zur Speicherung in der Datenbank
+		\item GeoJSON zur Darstellung in OpenStreetMap
+		\end{itemize}
+	
+		\column{0.40\textwidth}
+			\smaller\smaller\lstinputlisting[style=JSStyle]{snippets/taskDescription.json}
+	\end{columns}
+
+	\note{
+		\begin{itemize}
+			\item Beispiel eines Durchmusterungsauftrags an die searchEngine
+		\end{itemize}
+	}
+
+\end{frame}
+
+
 \subsection{GeoTIFFHandler}
-\subsubsection{Datenextraktion}
-\subsubsection{Koordinatensysteme}
+
+\begin{frame} {GeoTIFF-Handler}{vollständige Abstraktion zur Weiterverwendung bei der Durchmusterung}
+	
+	Die Klasse \texttt{GeoTiffHandler} abstrahiert vollständig von dem zugrundeliegenden Datenformat:
+	\begin{itemize}
+	\item Durchmusterung rein auf Pixeln
+	\item notwendige Metainformationen (Pixelgröße) werden geliefert
+	\item Koordinatentransformationen durch Service-Routinen
+	\item automatische Speicherverwaltung und (wenn nötig) Kachelung
+	\end{itemize}
+
+	\note{
+		\begin{itemize}
+			\item Richtungs-Abweichungen betragen wenige Grad 
+			\item Für diesen Proof-of-concept wurde das toleriert
+			\item Korrektur der richtungen über weitere \texttt{GDAL}-Routinen relativ leicht möglich
+			\item $\Rightarrow$ Trade-off zwischen Genauigkeit und Rechenleistung notwendig
+		\end{itemize}
+	}
+
+\end{frame}
+
+\begin{frame} {GeoTIFF}{Verarbeitung}
+	
+	Es ist nicht notwendig die Einlese- und Verarbeitungsroutinen selber zu schreiben.
+	
+	Es gibt eine OpenSource-Bibliothek \texttt{libtiff}, welche alle Funktionen zur Verfügung stellt.
+	
+	Weitergehende Bibliothek: \texttt{LargeTiffTools} mit \texttt{tifffastcrop}
+	\begin{itemize}
+	\item sehr schnelles Einlesen von Teilbildern
+	\item es werden nur so viele Daten gelesen wie unbedingt notwendig
+	\end{itemize}
+	
+
+	\note{
+		\begin{itemize}
+			\item 
+		\end{itemize}
+	}
+
+\end{frame}
+
+\begin{frame} {GeoTIFF}{automatische Kachelung bei kleinem Speicher}
+	
+	Bestimmung der Einlesegröße nach vorhandenem Speicher:	
+	\begin{columns}
+		\column{0.55\textwidth}
+		\begin{itemize}
+		\item Aufteilung auf Kacheln, die in den gemeinsamen Speicher passen
+		\item Überlappung der Kacheln in den Randbereichen
+			\begin{itemize}
+			\item Minimum: 1 Mindestlänge der gesuchten Bahn
+			\end{itemize}
+		\end{itemize}
+
+		\column{0.42\textwidth}
+			\begin{figure}
+				\includegraphics[width=\textwidth]{images/UeberlappungKacheln.png}
+			\end{figure}
+	\end{columns}
+
+	\note{
+		\begin{itemize}
+			\item 
+		\end{itemize}
+	}
+
+\end{frame}
+
+
+\begin{frame} {GeoTIFF}{Verarbeitung - Koordinatentransformationen}
+	
+	Zur Einordnung der GeoTIFF Daten auf der Erdoberfläche werden Routinen aus der \texttt{GDAL}-Bibliothek verwendet
+	
+	\begin{itemize}
+	\item \texttt{gdalinfo} als Dienstrogramm zur Abfrage der Metadaten eines GeoTIFF
+	\item Umrechnung von Geo-Koordinaten im \texttt{WGS84}-System in Pixel-Koordinaten
+	\item Umrechnung von Pixel-Koordinaten in  Geo-Koordinaten im \texttt{WGS84}-System
+	\end{itemize}
+	
+
+	\note{
+		\begin{itemize}
+			\item Live-Demo mit \texttt{~/dev/LandingPlanes/terrain gdalinfo "DTM Hamburg 20m.tif" json}
+			\item ?GeoTIFF Projections Transform List? listet über 40 verschiedene, offensichtlich gängige Projektionen für GeoTIFF Datensätze auf.
+		\end{itemize}
+	}
+
+\end{frame}
+
 \subsubsection{Das \texttt{GeoTIFFHandler}-Objekt}
+
+\begin{frame} {\texttt{GeoTiffHandler}}{Datenabstraktion}
+	
+		\texttt{GeoTiffHandler} liefert für die Durchmusterung zwei wesentliche Datenstrukturen:
+		
+		\smaller{\lstinputlisting[style=myCStyle]{snippets/datasetInfo.c}}
+		
+		\smaller{\lstinputlisting[style=myCStyle]{snippets/tilingCharacteristics.c}}
+		
+	\note{
+		\begin{itemize}
+			\item 
+		\end{itemize}
+	}
+
+\end{frame}
+
+\begin{frame} {\texttt{GeoTiffHandler}}{API}
+	
+		\texttt{GeoTiffHandler} stellt eine einfache API bereit:
+		
+		\smaller{\lstinputlisting[style=myCStyle]{snippets/geoTiffHandlerAPI.c}}
+				
+	\note{
+		\begin{itemize}
+			\item 
+		\end{itemize}
+	}
+
+\end{frame}
+
+
 
 
 \section{Komponente "'Durchmusterung"'}
@@ -421,9 +717,64 @@
 	
 	\section{Ausblick und weitere Ideen}
 	
+	\subsection{Erreichung der Architekturziele}
+	
+	\begin{frame} {Systemarchitektur}{Architekturziele}
+		
+		Wurden die Architekturziele erreicht?
+		\skippingparagraph
+		
+		\begin{tabular}{lc}
+			\pause inhärent parallel &  \textcolor{green}{\Checkmark}\\ 
+			\pause lose gekoppelte Komponenten &  \textcolor{green}{\Checkmark}\\ 
+			\pause einfache Einbindung externer Bibliotheken &  \textcolor{green}{\Checkmark}\\ 
+			\pause einfache Erweiterbarkeit &  \textcolor{green}{\Checkmark}\\ 
+			\pause Kommunikation über Standardprotokolle &  \textcolor{green}{\Checkmark}
+		\end{tabular} 
+	
+	
+		\note{
+			\begin{itemize}
+				\item 
+			\end{itemize}
+		}
+	
+	\end{frame}
+		
 	\subsection{Parallele Bearbeitung mehrerer Kacheln per MPI}
 	
 	\subsection{Richtungskorrektur des GeoTIFF}
+	\begin{frame} {\texttt{GeoTIFFHandler}}{Implementierungsschwäche}
+		
+		\begin{columns}
+			\column{0.5\textwidth}
+		
+			Aktuelle Schwäche der Implementierung:
+			\begin{itemize}
+			\item Aktuelle implizite Annahme: GeoTIFF-Raster ist perfekt nach Süden und Osten ausgerichtet.
+			\item Verzerrungen durch Projektion der Kugel in die Ebene ist \emph{nicht} winkeltreu
+			\item Richtungsinformationen weichen leicht von Geo-Koordinaten ab. 
+			\end{itemize}
+	
+			\column{0.6\textwidth}
+				\begin{figure}
+					\includegraphics[width=\textwidth]{images/NRW_Extent.png}
+				\end{figure}
+		\end{columns}
+	
+	
+		\note{
+			\begin{itemize}
+				\item Richtungs-Abweichungen betragen wenige Grad 
+				\item Für diesen Proof-of-concept wurde das toleriert
+				\item Korrektur der richtungen über weitere \texttt{GDAL}-Routinen relativ leicht möglich
+				\item $\Rightarrow$ Trade-off zwischen Genauigkeit und Rechenleistung notwendig
+			\end{itemize}
+		}
+	
+	\end{frame}
+	
+	
 	
 	\subsection{Push für Webclient}
 	

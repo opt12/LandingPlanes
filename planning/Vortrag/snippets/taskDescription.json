@@ -1,0 +1,26 @@
+{
+  "taskType": "SCAN",
+    "taskDescription": {
+    "TiffFileName": "/home/eckstein/dev/LandingPlanes/terrain/DTM Hamburg 20m.tif",
+    "mapExtent": {
+      "topLeftLat": 53.53724695097333,
+      "topLeftLng": 9.807701110839846,
+      "botRightLat": 53.48641131437415,
+      "botRightLng": 10.003051757812502
+    },
+    "scanParameters": {
+      "minLength": 2000,
+      "minWidth": 30,
+      "maxRise": 5,
+      "maxVariance": 2.1,
+      "maxVarianceLong": 2.1,
+      "maxVarianceCross": 2.3,
+      "numThreads": 8
+    },
+    "scanHeadings": [
+      45,
+      135
+    ]
+  }
+}
+
