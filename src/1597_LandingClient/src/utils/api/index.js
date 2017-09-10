@@ -2,11 +2,8 @@
 // const baseUrl = 'http://192.168.178.43:3000';
 // const baseUrl = 'http://localhost:3000';
 // const baseUrl = 'http://10.52.248.92:3000';
-// const baseUrl = 'http://localhost:3000';
-//TODO: Das klappt hier noch gar nicht. Das muss irgendwie im now-build eingetragen werden...
-const baseUrl = ( process.env.NOW || process.env.npm_config_NOW || process.argv.indexOf('--NOW') != -1) ?
-    'https://umlageserver.now.sh' :
-    'http://localhost:3000';
+const baseUrl = 'http://localhost:3000';
+// const baseUrl = 'http://192.168.42.37.:3000';
 
 const apiPrefix = 'api';
 

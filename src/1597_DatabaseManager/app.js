@@ -24,7 +24,8 @@ app.use(logger('dev'));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
-app.use(cors({ origin: ['http://localhost:3001', ], credentials: true}));
+// app.use(cors({ origin: ['http://localhost:3001', ], credentials: true}));
+app.use(cors());
 
 app.use(cookieParser());
 app.use(express.static(process.env.CLIENT_PATH || '../1597_LandingClient'));
