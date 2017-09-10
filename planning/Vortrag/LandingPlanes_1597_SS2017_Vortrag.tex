@@ -56,7 +56,7 @@
 \usepackage[T1]{fontenc}
  
 \input{structure.tex} % Include the structure.tex file which specified the document structure and layout
-
+\usepackage{struktex}
 
 % Or whatever. Note that the encoding and the font should match. If T1
 % does not look nice, try deleting the line with the fontenc.
@@ -654,6 +654,133 @@
 
 \section{Komponente "'Durchmusterung"'}
 
+\subsection{Durchmusterung der Geotiff Daten und Auffinden der Landebahnen}
+\begin{frame} {Übersicht}{}
+		 Kapselung der Suchlogik
+		 
+		 Objektorientierter Ansatz zur besseren Wartbarkeit
+		 
+		 Komponente wird in Form einer statischen Library (aus)geliefert
+\end{frame}
+
+
+\subsection{Interface der Library}
+\begin{frame} {Interface der Library}{Definition}
+
+\lstinputlisting[style=myCStyle]{snippets/Durchmusterungslibrary.c}
+
+
+\begin{tabular}{ll}
+ *actualTile & Zeiger auf das Geo-Kartenobjekt\\
+ *myGeoTiffHandler & Zeiger auf GeoTiffHandler mit Hilfsfunktionen\\
+ heading & Suchwinkel\\
+ minLength & Mindestlänge in [m]\\
+ width & Breite in [m]\\
+ commSocket & Socket für Mongo DB Kommunikation\\
+ *taskDescription & Taskbeschreibung\\
+ noDataValue & Zahlenwert für undefinierte Kartenpunkte\\
+ pixelSize & Auflösung der Rasterpunkte in [m]\\
+ \end{tabular}   
+\end{frame}
+
+\subsection{Logischer Ablauf innerhalb der Landebahn-Erkennung}
+\begin{frame}{Landebahnbestimmung}{Durchmusterungsalgorithmus in Pseudo-Code}
+\begin{figure}
+\scalebox{.37}{\begin{struktogramm}(100,200)
+  \assign{Initialisierung $tile\_worker$ Objekt}
+  \assign{berechne winkel-, steigungs- und holprigkeitsabhängige Parameter}
+\forallin{für alle Startpunkte einer Landebahn in gegebener Richtung (Thread Pool)}
+\assign{wähle den nächsten Punkt}
+\ifthenelse[15]{1}{1}
+{kurzreichweitige Steigung zum Vorgänger OK?}{\sTrue}{\sFalse}
+\ifthenelse[17]{1}{6}
+{checke Holprigkeit in Querrichtung}{\sTrue}{\sFalse}
+\change
+\ifthenelse[40]{1}{1}
+{ist die aktuelle Landebahn länger als die Mindestlänge}{\sTrue}{\sFalse}
+\assign{suche die beste Landebahn mit Mindestlänge}
+\assign{speichere beide Landebahnen in der DB}
+\assign{starte eine neue Landebahn mit aktuellem Punkt}
+\change
+\assign{starte eine neue Landebahn mit aktuellem Punkt}
+\ifend
+\ifend
+\change
+\ifthenelse[30]{1}{1}
+{ist die aktuelle Landebahn länger als die Mindestlänge}{\sTrue}{\sFalse}
+\assign{suche die beste Landebahn mit Mindestlänge}
+\assign{speichere beide Landebahnen in der DB}
+\assign{starte eine neue Landebahn mit aktuellem Punkt}
+\change
+\assign{starte eine neue Landebahn mit aktuellem Punkt}
+\ifend
+\assign{starte eine neue Landebahn mit aktuellem Punkt}
+\ifend
+\forallinend
+\end{struktogramm}}
+\label{nasshnlogisch}
+\end{figure}
+\end{frame}
+
+\subsection{Initialisierung}
+\begin{frame}{Ueberschrift1}{Ueberschrift2}
+	\begin{tabular}{l}
+		\pause - Instanziierung Workerobjekt\\ 
+		\pause - Initialisierung von Schrittvektoren (winkelabhängig)\\
+		\pause - Initialisierung von orthogonalen Schrittvektoren (Breite)\\
+     	\pause - Bestimmung des Startpunktes zur Durchmusterung\\
+		\pause - Bestimmung Anzahl zusammenhängender Punkte einer validen Bahn\\
+	\end{tabular} 
+\end{frame}
+
+\subsection{Durchmusterung}
+\begin{frame}{U1}{U2}
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\draw[help lines, color=gray!30, dashed] (0,0) grid (4.9,4.9);
+\draw[->,ultra thick] (0,5)--(5,5) node[right]{$x$};
+\draw[->,ultra thick] (0,5)--(0,0) node[left]{$y$};
+\draw[-,ultra thick] (5,5)--(5,0) node[left]{};
+\draw[-,ultra thick] (0,0)--(5,0) node[right]{};
+
+\draw[->,ultra thick,dashed,red] (4,5)--(5,4) node[left]{$1$};
+\draw[->,ultra thick,dashed,red] (3,5)--(5,3) node[left]{$2$};
+\draw[->,ultra thick,dashed,red] (0,5)--(5,0) node[right]{$3$};
+
+\draw[->,ultra thick,dashed,red] (0,3)--(3,0) node[below]{$4$};
+
+\draw[->,ultra thick,dashed,red] (0,1)--(1,0) node[below]{$5$};
+
+\draw[-,ultra thick,dashed,blue] (5,5.5)--(-0.5,5.5) node[left]{};
+\draw[->,ultra thick,dashed,blue] (-0.5,5.5)--(-0.5,0) node[left]{};
+\end{tikzpicture}
+\end{figure}
+\end{frame}
+
+\subsection{Durchmusterung}
+\begin{frame}{U1}{U2}
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\draw[help lines, color=gray!30, dashed] (0,0) grid (4.9,4.9);
+\draw[->,ultra thick] (0,5)--(5,5) node[right]{$x$};
+\draw[->,ultra thick] (0,5)--(0,0) node[left]{$y$};
+
+\draw[-,ultra thick] (5,5)--(5,0) node[left]{};
+\draw[-,ultra thick] (0,0)--(5,0) node[right]{};
+
+\draw[->,ultra thick,dashed,red] (0,5)--(0,0) node[below]{$1$};
+\draw[->,ultra thick,dashed,red] (1,5)--(1,0) node[below]{$2$};
+\draw[->,ultra thick,dashed,red] (3,5)--(3,0) node[below]{$3$};
+\draw[->,ultra thick,dashed,red] (5,5)--(5,0) node[below]{$4$};
+
+
+\draw[->,ultra thick,dashed,blue] (-0,5.5)--(5,5.5) node[left]{};
+\end{tikzpicture}
+\end{figure}
+\end{frame}
+
 \subsection{posix Threads Definition}
 \begin{frame} {posix Threads}{Definition - Standard}
 	
@@ -706,15 +833,23 @@
 	}
 
 \end{frame}
-\subsection{Durchmusterung der Geotiff Daten und Auffinden der Landebahnen}
-
-\subsection{Interface der Library}
-
-\subsection{Logischer Ablauf innerhalb der Landebahn-Erkennung}
-
-\subsection{Initialisierung}
 
 \subsection{Parallelverarbeitung mittels p\_threads zum Finden der Landebahnen}
+\begin{frame}{U1}{U2}
+$\Rightarrow$ Master /Worker
+	
+$\Rightarrow$ Peer
+	
+$\Rightarrow$ Pipeline
+	
+	$\Rightarrow$ Thread-Pool
+			\skippingparagraph
+		\begin{tabular}{l}
+		\pause - Ressourcenschonend\\
+		 \pause - identische Initialisierung\\
+		  \pause - ideal zur Performanz-Untersuchung\\
+	\end{tabular} 
+\end{frame}
 
 \subsection{Detaillierte Beschreibung des Suchalgorithmus}
 
