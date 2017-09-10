@@ -320,21 +320,96 @@
 
 \end{frame}
 
-\subsection{Erreichung der Architekturziele}
+\subsection{Parallelität}
 
-\begin{frame} {Systemarchitektur}{Architekturziele}
+\begin{frame} {Systemarchitektur}{Parallelität}
 	
-	Wurden die Architekturziele erreicht?
-	\skippingparagraph
-	
-	\begin{tabular}{lc}
-		\pause inhärent parallel &  \textcolor{green}{\Checkmark}\\ 
-		\pause lose gekoppelte Komponenten &  \textcolor{green}{\Checkmark}\\ 
-		\pause einfache Einbindung externer Bibliotheken &  \textcolor{green}{\Checkmark}\\ 
-		\pause einfache Erweiterbarkeit &  \textcolor{green}{\Checkmark}\\ 
-		\pause Kommunikation über Standardprotokolle &  \textcolor{green}{\Checkmark}
-	\end{tabular} 
+	In der vorgestellten Architektur ist Raum für
+	\begin{itemize}
+	\item grobkörnige Parallelität
+		\begin{itemize}
+		\item jede vorgestellte Komponente läuft unabhängig von den anderen
+		\item Aufteilung auf verschiedene Maschinen möglich
+		\item parallele Abarbeitung in mehreren Prozessen auf einer Maschine
+		\end{itemize}
+	\item feingranulare Parallelität
+		\begin{itemize}
+		\item die rechenintensive Durchmusterung kann leicht parallelisiert werden
+		\item \texttt{pthreads} ist gut geeignet, da gemeinsame Datenbasis genutzt werden kann
+		\end{itemize}
+	\end{itemize}
 
+	\note{
+		\begin{itemize}
+		\item durch die verwendeten Protokolle ist Aufteilung auf verschiedene Maschinen möglich
+		\end{itemize}
+	}
+
+\end{frame}
+
+
+\section{Komponentenüberblick}
+\begin{frame} {Komponentenübersicht}{}
+	
+Überblick über die Implementierung der einzelnen Komponenten.
+
+	\begin{itemize}
+	\item searchEngine mit Durchmusterung
+		\begin{itemize}
+		\item Überblick über die Datenformate und Vorverarbeitung
+		\item Details zum Durchmusterungsalgorithmus und dessen Parallelisierung
+		\end{itemize}
+	\item dataBaseManager und Datenbank
+	\item landingClient als User Interface
+	\end{itemize}
+	
+	Alle Komponenten sollen vorgestellt werden.\\
+	Der wichtigste Einzelaspekt ist die Durchmusterung und deren Parallelisierung.
+
+	\note{
+		\begin{itemize}
+			\item 
+		\end{itemize}
+	}
+
+\end{frame}
+
+\subsection{Komponente "`searchEngine"'}
+
+\begin{frame} {Komponente "`searchEngine"'}{Überblick}
+	
+	Die Komponente searchEngine realisiert die "Geschäftslogik"' der Applikation.\\
+	
+	Die Komponente ist in zwei Hauptbestandteile aufgeteilt:
+	
+		\begin{columns}
+			\column{0.4\textwidth}
+			\begin{itemize}
+			\item Datenmanagement und Job Scheduling
+			\item Durchmusterung / Number Crunching
+			\end{itemize}
+	
+			\column{0.75\textwidth}
+				\begin{figure}
+					\includegraphics[width=\textwidth]{images/searchEngine_Komponenten.png}
+				\end{figure}
+		\end{columns}
+	
+	
+	\note{
+		\begin{itemize}
+			\item 
+		\end{itemize}
+	}
+
+\end{frame}
+
+\begin{frame} {Komponente "`searchEngine"'}{Threading innerhalb der Komponente}
+	
+	Innerhalb der searchEngine wird exzessiv Gebrauch von Multi-Threading gemacht\\
+	\begin{figure}
+		\includegraphics[width=\textwidth]{images/searchEngine_Threading.png}
+	\end{figure}
 
 	\note{
 		\begin{itemize}
@@ -345,15 +420,236 @@
 \end{frame}
 
 
-\section{Komponente "`searchEngine"'}
 
 \subsection{Datenformate und Verarbeitung}
+\begin{frame} {Datenformate und Verarbeitung}{}
+	
+	Es gibt drei wichtige Datenformate für die Anwendung:
+	\begin{itemize}
+	\item GeoTIFF
+	\item JSON - JavaScript Object Notation
+	\item GeoJSON
+	\end{itemize}
+	
+	Kurzer Überblick über die Eigenschaften
+
+	\note{
+		\begin{itemize}
+			\item Vor der weiteren Betrachtung von Details der Implementierung ist es notwendig
+			\item Eigenschaften und Grundlagen der verwendeten Datenformate 
+			\item zu erklären
+		\end{itemize}
+	}
+
+\end{frame}
+
 \subsubsection{GeoTIFF}
+
+\begin{frame} {GeoTIFF}{Überblick -- Grundlagen}
+	
+	\begin{itemize}
+	\item 	GeoTIFF basiert auf TIFF, einem verlustfrei komprimierenden Rasterformat für Bilder.
+	\item 	TIFF kann beliebige Größen annehmen.
+	\item 	TIFF bietet im Dateiformat die Möglichkeit zu jedem einzelnen Pixel beliebige zusätzliche Informationen zu speichern.
+	\end{itemize}
+	
+	\pause
+	
+	\begin{itemize}
+	\item 	GeoTIFF bindet jedes Pixel eindeutig an einen Koordinatenpunkt auf der Erdoberfläche.
+	\item 	Es werden Daten wie Höhe, Temperatur, Bewuchs, \ldots als Informationen in die Pixel kodiert.
+	\item 	Enthält entweder Sidecar-Files oder Metadaten mit Informationen zur Projektion. Damit gelingt die eindeutige Zuordnung von Pixeln auf Geo-Koordinaten.
+	\end{itemize}
+
+	\note{
+		\begin{itemize}
+			\item 
+		\end{itemize}
+	}
+
+\end{frame}
+
+\begin{frame} {GeoTIFF}{Beispiel-Datensatz}
+	
+	Ein Beispiel der hier verwendeten Höhendatensätze:
+	
+	\only<1>{
+		Die Angaben zur Projektion:
+		\lstinputlisting[style=JSStyle]{snippets/DTM_Hamburg_20m.prj}
+		
+		Die Angaben zur Skalierung:
+		\lstinputlisting[style=JSStyle]{snippets/DTM_Hamburg_20m.tfw}
+	}
+	
+	\only<2>{
+	Die Übersicht über das im GeoTIFF erfasste Gebiet.
+	\begin{figure}
+		\includegraphics[height=0.75\textheight]{images/Gebiet_HH.png}
+	\end{figure}
+	\smaller{\smaller{Höhen sind als Farbwerte umgesetzt.}}
+	}
+
+	\note{
+		\begin{itemize}
+			\item 
+		\end{itemize}
+	}
+
+\end{frame}
+
+
 \subsubsection{Speicherformat: GeoJSON}
+
+\begin{frame} {JSON und GeoJSON}{Überblick}
+	
+	\begin{columns}
+		\column{0.60\textwidth}
+		JSON als Datenformat für
+		\begin{itemize}
+		\item Taskbeschreibungen bei der IPC
+		\item Beschreibung gefundener Bahnen über REST-API
+		\item GeoJSON zur Speicherung in der Datenbank
+		\item GeoJSON zur Darstellung in OpenStreetMap
+		\end{itemize}
+	
+		\column{0.40\textwidth}
+			\smaller\smaller\lstinputlisting[style=JSStyle]{snippets/taskDescription.json}
+	\end{columns}
+
+	\note{
+		\begin{itemize}
+			\item Beispiel eines Durchmusterungsauftrags an die searchEngine
+		\end{itemize}
+	}
+
+\end{frame}
+
+
 \subsection{GeoTIFFHandler}
-\subsubsection{Datenextraktion}
-\subsubsection{Koordinatensysteme}
+
+\begin{frame} {GeoTIFF-Handler}{vollständige Abstraktion zur Weiterverwendung bei der Durchmusterung}
+	
+	Die Klasse \texttt{GeoTiffHandler} abstrahiert vollständig von dem zugrundeliegenden Datenformat:
+	\begin{itemize}
+	\item Durchmusterung rein auf Pixeln
+	\item notwendige Metainformationen (Pixelgröße) werden geliefert
+	\item Koordinatentransformationen durch Service-Routinen
+	\item automatische Speicherverwaltung und (wenn nötig) Kachelung
+	\end{itemize}
+
+	\note{
+		\begin{itemize}
+			\item Richtungs-Abweichungen betragen wenige Grad 
+			\item Für diesen Proof-of-concept wurde das toleriert
+			\item Korrektur der richtungen über weitere \texttt{GDAL}-Routinen relativ leicht möglich
+			\item $\Rightarrow$ Trade-off zwischen Genauigkeit und Rechenleistung notwendig
+		\end{itemize}
+	}
+
+\end{frame}
+
+\begin{frame} {GeoTIFF}{Verarbeitung}
+	
+	Es ist nicht notwendig die Einlese- und Verarbeitungsroutinen selber zu schreiben.
+	
+	Es gibt eine OpenSource-Bibliothek \texttt{libtiff}, welche alle Funktionen zur Verfügung stellt.
+	
+	Weitergehende Bibliothek: \texttt{LargeTiffTools} mit \texttt{tifffastcrop}
+	\begin{itemize}
+	\item sehr schnelles Einlesen von Teilbildern
+	\item es werden nur so viele Daten gelesen wie unbedingt notwendig
+	\end{itemize}
+	
+
+	\note{
+		\begin{itemize}
+			\item 
+		\end{itemize}
+	}
+
+\end{frame}
+
+\begin{frame} {GeoTIFF}{automatische Kachelung bei kleinem Speicher}
+	
+	Bestimmung der Einlesegröße nach vorhandenem Speicher:	
+	\begin{columns}
+		\column{0.55\textwidth}
+		\begin{itemize}
+		\item Aufteilung auf Kacheln, die in den gemeinsamen Speicher passen
+		\item Überlappung der Kacheln in den Randbereichen
+			\begin{itemize}
+			\item Minimum: 1 Mindestlänge der gesuchten Bahn
+			\end{itemize}
+		\end{itemize}
+
+		\column{0.42\textwidth}
+			\begin{figure}
+				\includegraphics[width=\textwidth]{images/UeberlappungKacheln.png}
+			\end{figure}
+	\end{columns}
+
+	\note{
+		\begin{itemize}
+			\item 
+		\end{itemize}
+	}
+
+\end{frame}
+
+
+\begin{frame} {GeoTIFF}{Verarbeitung - Koordinatentransformationen}
+	
+	Zur Einordnung der GeoTIFF Daten auf der Erdoberfläche werden Routinen aus der \texttt{GDAL}-Bibliothek verwendet
+	
+	\begin{itemize}
+	\item \texttt{gdalinfo} als Dienstrogramm zur Abfrage der Metadaten eines GeoTIFF
+	\item Umrechnung von Geo-Koordinaten im \texttt{WGS84}-System in Pixel-Koordinaten
+	\item Umrechnung von Pixel-Koordinaten in  Geo-Koordinaten im \texttt{WGS84}-System
+	\end{itemize}
+	
+
+	\note{
+		\begin{itemize}
+			\item Live-Demo mit \texttt{~/dev/LandingPlanes/terrain gdalinfo "DTM Hamburg 20m.tif" json}
+			\item ?GeoTIFF Projections Transform List? listet über 40 verschiedene, offensichtlich gängige Projektionen für GeoTIFF Datensätze auf.
+		\end{itemize}
+	}
+
+\end{frame}
+
 \subsubsection{Das \texttt{GeoTIFFHandler}-Objekt}
+
+\begin{frame} {\texttt{GeoTiffHandler}}{Datenabstraktion}
+	
+		\texttt{GeoTiffHandler} liefert für die Durchmusterung zwei wesentliche Datenstrukturen:
+		
+		\smaller{\lstinputlisting[style=myCStyle]{snippets/datasetInfo.c}}
+		
+		\smaller{\lstinputlisting[style=myCStyle]{snippets/tilingCharacteristics.c}}
+		
+	\note{
+		\begin{itemize}
+			\item 
+		\end{itemize}
+	}
+
+\end{frame}
+
+\begin{frame} {\texttt{GeoTiffHandler}}{API}
+	
+		\texttt{GeoTiffHandler} stellt eine einfache API bereit:
+		
+		\smaller{\lstinputlisting[style=myCStyle]{snippets/geoTiffHandlerAPI.c}}
+				
+	\note{
+		\begin{itemize}
+			\item 
+		\end{itemize}
+	}
+
+\end{frame}
+
+
 
 
 \section{Komponente "'Durchmusterung"'}
@@ -442,47 +738,270 @@
 
 \section{Komponente "`databaseManager"'}
 
+\begin{frame} {dataBaseManager}{Überblick}
+	
+	\begin{columns}
+		\column{0.5\textwidth}
+		Die in einem separaten Prozess ablaufende Komponente \texttt{dataBaseManager} abstrahiert
+		\begin{itemize}
+		\item alle notwendigen Datenbankzugriffe
+		\item einen Controller im MVC-Modell
+			\begin{itemize}
+			\item nimmt Benutzeranfragen entgegen
+			\item verteilt Tasks an die searchEngine
+			\item stellt Daten für die View bereit
+			\end{itemize}
+		\item realisiert einen Merge für Überlappende Landebahnen
+		\end{itemize}
+
+		\column{0.55\textwidth}
+			\begin{figure}
+				\includegraphics[width=\textwidth]{images/databaseManager_Komponenten.png}
+			\end{figure}
+	\end{columns}
+	
+
+	\note{
+		\begin{itemize}
+			\item Der Merge ist nicht Kernaufgabe des dataBaseManager, sondern ist hauptsächlich wegen seiner intensiven Datenbankzugriffe hier hinein gekommen.
+		\end{itemize}
+	}
+
+\end{frame}
+
+
 \subsection{Datenbankauswahl}
 
-	\begin{frame} {Ein GeoJSON Objekt zur Ablage in die Datenbank}{}
-			
-		\smaller\lstinputlisting[style=JSStyle, linebackgroundcolor={%
-			\btLstHL<2|handout:0>{18}%
-			\btLstHL<3|handout:0>{19,20}% 
-		}]{snippets/databaseObject.js}
+\begin{frame} {Datenbankauswahl}{Warum MongoDB?}
+
+	\begin{tikzpicture}[remember picture,overlay]  
+	  \node [xshift=-3.3cm,yshift=-.8cm] at (current page.north east)
+	    {\includegraphics[width=4cm]{images/MongoDB_Logo.png}};
+	\end{tikzpicture}
+	
+	Die Wahl der Datenbank fiel auf MongoDB.
+	
+	Gründe für MongoDB.
+	\begin{itemize}
+	\item direkte Unterstützung von GeoJSON
+	\item ermöglicht \emph{2D-Sphere-Index}-Index
+	\item Geospatial Query Operators möglich:
+		\begin{itemize}
+		\item Alle Landebahnen im Umkreis von x km
+		\item Alle Objekte mit Schnittpunkten mit Objekt X
+		\item Abfrage Operator \texttt{\$geoIntersects}
+		\end{itemize}
+	\item gute Unterstützung für parallele Architekturen
+	\item sehr gute Unterstützung durch Node.js
+	\end{itemize}
+
+	\note{
+		\begin{itemize}
+			\item parallele Architekturen wie 
+			\item sharding
+			\item sind aktuell sicherlich sehr gut verzichtbar
+		\end{itemize}
+	}
+
+\end{frame}
+
+
+
+
+\subsection{Express-Server App}
+
+\begin{frame} {REST-API}{Express-Server}
+	
+	Die Funktionen des dataBaseManagers werden über eine REST-API per HTTP zur Verfügung gestellt.
+	
+	Es werden mehrere Endpunkte für HTTP-Requests zur Verfügung gestellt.
+	
+	\begin{itemize}
+		\item GET auf \texttt{/}: HTML-Seite und JavaScript für den Client
+		\item POST auf \texttt{/api/fileInfo/}: Dateiinformationen des über einen Dateinamen spezifizierten GeoTIFF
+		\item POST auf \texttt{/api/fileInfo/extent}: konvexes Umfangspolygon 
+		\item POST auf \texttt{/api/commands/}: Nimmt einen Task entgegen
+		\begin{itemize}
+			\item \texttt{SCAN}: Durchmustert einen Bereich nach Notlandefeldern. 
+			\item \texttt{SAVE\_2\_M\_FILE}: Speichert GeoTIFF in Textdatei
+		\end{itemize}
+		\item DELETE auf \texttt{/api/commands/drop}: löscht Datenbank
+		\item POST auf \texttt{/api/queries/}: liefert Einträge der Datenbank
+	\end{itemize}
+
+	\note{
+		\begin{itemize}
+			\item 
+		\end{itemize}
+	}
+
+\end{frame}
+
+\begin{frame} {Inter Process Communication (IPC)}{Unix-Sockets}
+	
+	Die dataBaseManagerApp startet eine Instanz der searchEngine in einem eigenen Prozess.
+	
+	Es wird ein UNIX-Socket geöffnet um bidirektional zwischen den beiden Anwendungen zu kommunizieren.
+	
+\begin{itemize}
+	\item DBM $\rightarrow$ SE \texttt{SCAN}: Durchmusterung eines Datensatzausschnitts. Parameter als JSON.
+	\item DBM $\rightarrow$ SE \texttt{SAVE\_2\_M\_FILE}: Speichert GeoTIFF in Textdatei.
+	\item SE $\rightarrow$ DBM \texttt{landingPlane}: SE hat potentielle Landebahn gefunden. Übergabe von minimaler und maximaler Bahn.
+	\item SE $\rightarrow$ DBM \texttt{taskReceipt}: Fertigstellung eines Durchmusterungs-Auftrags. 
+\end{itemize}
+
+
+	\note{
+	\begin{itemize}
+		\item DBM $\rightarrow$ SE \texttt{SCAN}: Es wird eine Durchmusterung eines Datensatzausschnitts in Auftrag gegeben. Die Parameter werden als JSON durchgereicht.
+		\item DBM $\rightarrow$ SE \texttt{SAVE\_2\_M\_FILE}: Speichert einen Bereich eines GeoTIFF Datensatzes in einer Matlab/GNU Octave kompatiblen Textdatei.
+		\item SE $\rightarrow$ DBM \texttt{landingPlane}: Die SE hat eine neue potentielle Landebahn gefunden und übergibt sie über ein JSON-Objekt an den DBM um sie in der Datenbank zu persistieren. Für jede gefundene potentielle Bahn werden zwei Objekte übergeben: Die Bahn maximaler Ausdehung, so dass die geforderten Suchkriterien gerade noch eingehalten werden und eine innerhalb dieser Bahn liegende Teilbahn, welche minimale Varianz aufweist und gerade noch die geforderte Mindestlänge erreicht.
+		\item SE $\rightarrow$ DBM \texttt{taskReceipt}: Mit einem Task-Receipt meldet die SE dem DBM die Fertigstellung eines Auftrags. Damit kann der DBM nachhalten ob und welche Aufträge noch ausstehen und gegebenenfalls den Client aktiv informieren (Push). Aktuell wird diese Möglichkeit jedoch noch nicht genutzt.
+	\end{itemize}
+	}
+
+\end{frame}
+
+\subsection{Postprocessing - Merge}
+
+\begin{frame} {Optionales Postprocessing}{Merge-Task}
+	
+	Es hat sich gezeigt, dass häufig viele nebeneinander liegende Landebahnen gefunden werden, die sich gegenseitig überlappen.
+	
+	Die Darstellung als einzelne Landebahnen ist unübersichtlich. Daher ist es sinnvoll überlappende Bahnen zusammen zu fassen.
+	
+		\begin{columns}
+			\column{0.5\textwidth}
+				\begin{figure}
+					\includegraphics[height=0.5\textheight]{images/planesToMerge.png}
+				\end{figure}
+				
+			\column{0.5\textwidth}
+				\begin{figure}
+					\includegraphics[height=0.5\textheight]{images/mergedPlanes.png}
+				\end{figure}
+		\end{columns}
 		
-	\end{frame}
+
+	\note{
+		\begin{itemize}
+			\item 
+		\end{itemize}
+	}
+
+\end{frame}
+
+\begin{frame} {Postprocessing}{Merge Proof of concept}
 	
+	Innerhalb der Quelltextbasis des dataBaseManagers wurde ein unabhängiger Merge-Task implementiert.
+	
+	Dieser Task läuft vollkommen unabhängig von den anderen Komponenten als reines Postprocessing ab.
+	
+	\pause
+	Der Algorithmus ist sehr einfach gehalten.
+	\begin{itemize}
+	\item Suche nacheinander alle unbearbeiteten Bahnen aus der DB
+	\item für jede gefundene unbearbeitete Bahn:
+		\begin{itemize}
+		\item Starte DB-Abfrage nach überlappenden Bahnen
+		\item Fasse alle überlappenden Bereiche zusammen
+		\item Markiere Original-Bahn als Bearbeitet
+		\item Lösche kleinere komplexe Polygone aus der DB
+		\end{itemize}
+	\end{itemize}
+	
+	\pause
+	Aktuell muss dieser Merge-Lauf noch manuell gestartet werden und ist aufgrund der vielen Datenbankzugriffe vergleichsweise langsam.
+
+	\note{
+		\begin{itemize}
+			\item 
+		\end{itemize}
+	}
+
+\end{frame}
 
 
-	\subsection{Express-Server App}
+
+\section{Komponente "'landingClient"'}
+
+\begin{frame} {Benutzeroberfläche}
+	\begin{figure}[ht]
+		\includegraphics[width=\textwidth]{../Bericht/drawings/LandingClient_Screen1.png}
+		\caption{Beispiel Screenshot aus der Weboberfläche zur Bedienung des Systems}
+	\end{figure}
+\end{frame}
+
+\subsection{Überblick}
+
+\subsection{Features und Bedienung}
+
+\section{Ausblick und weitere Ideen}
+
+\subsection{Erreichung der Architekturziele}
+
+\begin{frame} {Systemarchitektur}{Architekturziele}
 	
-	\subsection{Postprocessing - Merge}
+	Wurden die Architekturziele erreicht?
+	\skippingparagraph
 	
-	\section{Komponente "'landingClient"'}
+	\begin{tabular}{lc}
+		\pause inhärent parallel &  \textcolor{green}{\Checkmark}\\ 
+		\pause lose gekoppelte Komponenten &  \textcolor{green}{\Checkmark}\\ 
+		\pause einfache Einbindung externer Bibliotheken &  \textcolor{green}{\Checkmark}\\ 
+		\pause einfache Erweiterbarkeit &  \textcolor{green}{\Checkmark}\\ 
+		\pause Kommunikation über Standardprotokolle &  \textcolor{green}{\Checkmark}
+	\end{tabular} 
+
+
+	\note{
+		\begin{itemize}
+			\item 
+		\end{itemize}
+	}
+
+\end{frame}
 	
-	\begin{frame} {Benutzeroberfläche}
-		\begin{figure}[ht]
-			\includegraphics[width=\textwidth]{../Bericht/drawings/LandingClient_Screen1.png}
-			\caption{Beispiel Screenshot aus der Weboberfläche zur Bedienung des Systems}
-		\end{figure}
-	\end{frame}
+\subsection{Parallele Bearbeitung mehrerer Kacheln per MPI}
+
+\subsection{Richtungskorrektur des GeoTIFF}
+\begin{frame} {\texttt{GeoTIFFHandler}}{Implementierungsschwäche}
 	
-	\subsection{Überblick}
+	\begin{columns}
+		\column{0.5\textwidth}
 	
-	\subsection{Features und Bedienung}
-	
-	\section{Ausblick und weitere Ideen}
-	
-	\subsection{Parallele Bearbeitung mehrerer Kacheln per MPI}
-	
-	\subsection{Richtungskorrektur des GeoTIFF}
-	
-	\subsection{Push für Webclient}
-	
-	\subsection{Merge als nachgeschalteter Prozess aus dem Speicher}
-	
-	\subsection{Kollisionsabfrage mit Objekten aus OSM}
+		Aktuelle Schwäche der Implementierung:
+		\begin{itemize}
+		\item Aktuelle implizite Annahme: GeoTIFF-Raster ist perfekt nach Süden und Osten ausgerichtet.
+		\item Verzerrungen durch Projektion der Kugel in die Ebene ist \emph{nicht} winkeltreu
+		\item Richtungsinformationen weichen leicht von Geo-Koordinaten ab. 
+		\end{itemize}
+
+		\column{0.6\textwidth}
+			\begin{figure}
+				\includegraphics[width=\textwidth]{images/NRW_Extent.png}
+			\end{figure}
+	\end{columns}
+
+
+	\note{
+		\begin{itemize}
+			\item Richtungs-Abweichungen betragen wenige Grad 
+			\item Für diesen Proof-of-concept wurde das toleriert
+			\item Korrektur der richtungen über weitere \texttt{GDAL}-Routinen relativ leicht möglich
+			\item $\Rightarrow$ Trade-off zwischen Genauigkeit und Rechenleistung notwendig
+		\end{itemize}
+	}
+
+\end{frame}
+
+
+
+\subsection{Push für Webclient}
+
+\subsection{Merge als nachgeschalteter Prozess aus dem Speicher}
+
+\subsection{Kollisionsabfrage mit Objekten aus OSM}
 	
 \end{document}
 
