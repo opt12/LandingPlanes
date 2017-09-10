@@ -20,4 +20,6 @@ src/Durchmusterung/html/
 src/Durchmusterung/latex/
 
 /planning/Vortrag/LandingPlanes_1597_SS2017_Vortrag.*
+*/.idea/*
+.idea/workspace.xml
 
