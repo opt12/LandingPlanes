@@ -156,7 +156,10 @@
 
 	\note{
 		\begin{itemize}
-			\item 
+			\item ACHTUNG: Im folgenden wird häufig das Word "`planes"' verwendet. 
+			\item Es ist die Bedeutung im Sinne von "`Ebene"' gemeint.
+			\item Das es gleichzeitig auch noch "`Flugzeug"' heißt, ist Zufall
+			\item Pun intended!
 		\end{itemize}
 	}
 
@@ -189,7 +192,7 @@
 	Anforderungen an die Architektur:
 	
 	\begin{itemize}
-	\item inhärent parallel
+	\item inhärent und explizit parallel
 	\item lose gekoppelte Komponenten
 	\item einfache Einbindung externer Bibliotheken
 	\item einfache Erweiterbarkeit
@@ -431,7 +434,7 @@
 	\item GeoJSON
 	\end{itemize}
 	
-	Kurzer Überblick über die Eigenschaften
+%	Kurzer Überblick über die Eigenschaften
 
 	\note{
 		\begin{itemize}
@@ -623,9 +626,10 @@
 	
 		\texttt{GeoTiffHandler} liefert für die Durchmusterung zwei wesentliche Datenstrukturen:
 		
-		\smaller{\lstinputlisting[style=myCStyle]{snippets/datasetInfo.c}}
+		{\smaller{\lstinputlisting[style=myCStyle]{snippets/datasetInfo.c}}}
 		
-		\smaller{\lstinputlisting[style=myCStyle]{snippets/tilingCharacteristics.c}}
+
+		{\smaller{\lstinputlisting[style=myCStyle]{snippets/tilingCharacteristics.c}}}
 		
 	\note{
 		\begin{itemize}
@@ -876,7 +880,7 @@ $\Rightarrow$ Pipeline
 \begin{frame} {dataBaseManager}{Überblick}
 	
 	\begin{columns}
-		\column{0.5\textwidth}
+		\column{0.6\textwidth}
 		Die in einem separaten Prozess ablaufende Komponente \texttt{dataBaseManager} abstrahiert
 		\begin{itemize}
 		\item alle notwendigen Datenbankzugriffe
@@ -889,7 +893,7 @@ $\Rightarrow$ Pipeline
 		\item realisiert einen Merge für Überlappende Landebahnen
 		\end{itemize}
 
-		\column{0.55\textwidth}
+		\column{0.45\textwidth}
 			\begin{figure}
 				\includegraphics[width=\textwidth]{images/databaseManager_Komponenten.png}
 			\end{figure}
@@ -1060,16 +1064,183 @@ $\Rightarrow$ Pipeline
 
 \section{Komponente "'landingClient"'}
 
-\begin{frame} {Benutzeroberfläche}
-	\begin{figure}[ht]
-		\includegraphics[width=\textwidth]{../Bericht/drawings/LandingClient_Screen1.png}
-		\caption{Beispiel Screenshot aus der Weboberfläche zur Bedienung des Systems}
+\subsection{Überblick}
+
+\begin{frame} {Komponente "`landingClient"'}{GUI auf Basis moderner Webtechnologien}
+	
+	Als Benutzeroberfläche wurde ein Webclient auf Basis von React/Redux implementiert.
+	
+	Gründe für die Implementierung eines Webclient:
+	\begin{itemize}
+	\item Viele vorgefertigte Komponenten zur Kartendarstellung
+	\item Läuft auf jedem modernen Browser
+	\item Geräteunabhängigkeit
+	\item Betriebssystemunabhängigkeit
+	\item kein Vorwissen in der Arbeitsgruppe zur QT-Programmierung
+	\end{itemize}
+
+	\note{
+		\begin{itemize}
+			\item 
+		\end{itemize}
+	}
+
+\end{frame}
+
+
+\begin{frame} {Komponente "`landingClient"'}{Benutzeroberfläche}
+	\begin{figure}
+		\includegraphics[width=\textwidth]{images/LandingClient_Screen1.png}
 	\end{figure}
 \end{frame}
 
-\subsection{Überblick}
+\begin{frame} {Komponente "`landingClient"'}{verwendete Technologien}
+	
+	Verwendete Technologien:
+	\begin{itemize}
+	\item React-Framework \hfill \includegraphics[height=0.7cm]{images/React_Logo.png}
+	\item Redux-State-Management \hfill \includegraphics[height=0.7cm]{images/ReduxLogo.png}
+	\item Bootstrap HTML-Framework \hfill \includegraphics[height=0.7cm]{images/bootstrapLogo.png}
+	\item Leaflet mit OpenStreetMap-Karten \hfill \includegraphics[height=0.7cm]{images/LeafletLogo.png}
+	\end{itemize}
+
+	\note{
+		\begin{itemize}
+			\item 
+		\end{itemize}
+	}
+
+\end{frame}
+
+\begin{frame} {Komponente "`landingClient"'}{Grundlegende Funktionsweise}
+	
+	Grunbdlegende Arbeitsweise des \texttt{landingClient}:
+	\begin{itemize}
+	\item asynchrone HTTP-Kommunikation mit der REST-API des \texttt{dataBaseManager}
+	\item Absetzen von Kommandos und Anfragen per JSON
+	\item lokaler State-Container (REDUX-Store)
+		\begin{itemize}
+		\item Daten über ausgewählte GeoTIFF-Datei
+		\item Daten über Landebahnen aus der Datenbank
+		\end{itemize}
+	\item lokales Filtern der angezeigten Daten
+	\item lokales Rendering der Landebahnen auf einer Karte
+	\end{itemize}
+
+	\note{
+		\begin{itemize}
+			\item Hier kommt gleich eine Demo, die das in Live zeigt.
+		\end{itemize}
+	}
+
+\end{frame}
+
+\begin{frame} {Komponente "`landingClient"'}{State-Container (REDUX-Store)}
+	
+	\begin{figure}
+		\includegraphics[width=\textwidth]{images/ReduxStore_1.png}
+	\end{figure}
+
+
+	\note{
+		\begin{itemize}
+			\item 
+		\end{itemize}
+	}
+
+\end{frame}
 
 \subsection{Features und Bedienung}
+
+\begin{frame} {Komponente "`landingClient"'}{Features und Bedienung}
+	
+	Auswahl der GeoTIFF-Datei:
+	
+	\begin{figure}
+		\includegraphics[width=0.7\textwidth]{images/LandingClient_Screen_Start.png}
+	\end{figure}
+
+	\pause		
+	Anzeige der Ausdehnung des Datensatzes:
+	\begin{figure}
+		\includegraphics[width=0.7\textwidth]{images/LandingClient_Screen_Ueberblick.png}
+	\end{figure}
+	
+
+	\note{
+		\begin{itemize}
+			\item Wir machen gleich eine Live Demo
+		\end{itemize}
+	}
+
+\end{frame}
+
+\begin{frame} {Komponente "`landingClient"'}{Features und Bedienung}
+	
+	"'Workflow"':
+	
+	\begin{figure}
+		\includegraphics[width=\textwidth]{images/LandingClient_Parameter.png}
+	\end{figure}
+
+	\begin{itemize}
+	\item Wähle Datei aus
+	\item Suche zu durchmusternden Ausschnitt 
+	\item Lege Durchmusterungs-Parameter fest
+	\item (Bestimme Anzahl Threads)
+	\item Rufe Ergebnisse ab oder Verschiebe Karte
+	\item Benutze die Filter
+	\end{itemize}
+
+	\note{
+		\begin{itemize}
+			\item 
+		\end{itemize}
+	}
+
+\end{frame}
+
+\subsection{Kommunikation mit dem dataBaseManager}
+
+\begin{frame} {Komponente "`landingClient"'}{Kommunikation mit dem \texttt{dataBaseManager}}
+	
+	Der \texttt{landingClient} fragt bei diesen Gelegenheiten Daten beim \texttt{dataBaseManager} an:
+	
+	\begin{itemize}
+	\item Änderung des dargestellten Kartenausschnitts
+	\item Änderung des Filters für Merged- und Raw-Planes
+	\item Maueller Abruf per "`Request Results"'
+	\end{itemize}
+	
+	\pause
+	Es werden immer nur die Landebahnen innerhalb des \\
+	aktuell sichtbaren Ausschnitts übertragen.
+	
+	Beim Abruf von "`Merged-Planes"' werden \\
+	die Rohbahnen nicht mit übertragen.
+	
+	Das Filtern nach Richtungen erfolgt lokal.
+	
+	\pause
+	\skippingparagraph
+	Aktuell wird noch kein Push-neuer Landebahnen vom \texttt{dataBaseManager} zum \texttt{landingClient} hin unterstützt.
+	
+	Das ließe sich über WebSockets realisieren.
+
+	\note{
+		\begin{itemize}
+			\item React sorgt im Hintergrund dafür, dass beim Bewegen der Karte nicht zu viele ansichten gerendert werden, sondern nur diejeneigen, für die es sich auch lohnt.
+			\item Virtual-DOM
+			\item 
+			\item Beim Abruf von "`Merged-Planes"' werden die Rohbahnen nicht mit übertragen. 
+			\item Wenn eine Bahn noch nicht bearbeitet wurde (merge), dann wird sie trotzdem übertrage. $\Rightarrow$ Es gehen keine daten verloren.
+		\end{itemize}
+	}
+
+\end{frame}
+
+
+
 
 \section{Ausblick und weitere Ideen}
 
@@ -1081,7 +1252,7 @@ $\Rightarrow$ Pipeline
 	\skippingparagraph
 	
 	\begin{tabular}{lc}
-		\pause inhärent parallel &  \textcolor{green}{\Checkmark}\\ 
+		\pause inhärent und explizit parallel &  \textcolor{green}{\Checkmark}\\ 
 		\pause lose gekoppelte Komponenten &  \textcolor{green}{\Checkmark}\\ 
 		\pause einfache Einbindung externer Bibliotheken &  \textcolor{green}{\Checkmark}\\ 
 		\pause einfache Erweiterbarkeit &  \textcolor{green}{\Checkmark}\\ 
@@ -1099,8 +1270,30 @@ $\Rightarrow$ Pipeline
 	
 \subsection{Parallele Bearbeitung mehrerer Kacheln per MPI}
 
+\begin{frame} {Weitere Parallelisierung}{Parallele Bearbeitung mehrerer Kacheln per MPI}
+	
+	Bei wirklich großen Datensätzen bietet sich eine weitere Parallelisierung per MPI an.
+	
+	Einzelne Kacheln können unabhängig voneinander auf verschiedenen MPI-Knoten durchmustert werden.
+	
+	\begin{figure}
+		\includegraphics[height=0.5\textheight]{images/UeberlappungKacheln.png}
+	\end{figure}
+	
+	Innerhalb jedes MPI-Knoten kann der lokal parallelisierte (\texttt{pthreads}) Durchmusterungscode verwendet werden.
+
+	\note{
+		\begin{itemize}
+			\item 
+		\end{itemize}
+	}
+
+\end{frame}
+
+
+
 \subsection{Richtungskorrektur des GeoTIFF}
-\begin{frame} {\texttt{GeoTIFFHandler}}{Implementierungsschwäche}
+\begin{frame} {{Richtungskorrektur des GeoTIFF}}{Implementierungsschwäche}
 	
 	\begin{columns}
 		\column{0.5\textwidth}
@@ -1130,13 +1323,166 @@ $\Rightarrow$ Pipeline
 
 \end{frame}
 
+\begin{frame} {{Richtungskorrektur des GeoTIFF}}{Implementierungsschwäche}
+
+	Es ergibt sich eine geringe Abweichung von der korrekten Himmelsrichtung.
+	
+	\begin{figure}
+		\includegraphics[height=0.5\textheight]{images/GeilenkirchenHeading.png}
+	\end{figure}
+
+	Die Landebahn der Geilenkirchen Airbase \\
+	hat eine Ausrichtung von 09/27.
+	
+	Eine Durchmusterung findet \\
+	leicht schief dazu liegende potentielle Landebahnen.
+
+
+
+\end{frame}
+
+\begin{frame} {{Richtungskorrektur des GeoTIFF}}{Möglichkeit zur Korrektur}
+
+	Die Abweichung beträgt hier ungefähr 3\degree.
+	
+	Bei korrigierter Durchmusterungsrichtung kommen Karte und gefundene Bahnen zur Deckung.
+	
+	\begin{figure}
+		\includegraphics[height=0.7\textheight]{images/GeilenkirchenHeading_corrected.png}
+	\end{figure}
+
+
+\end{frame}
+
+\begin{frame} {{Richtungskorrektur des GeoTIFF}}{Implementierungsschwäche}
+		In der \texttt{GDAL}-Library, die zum Einlesen der GeoTIFF Daten verwendet wird, finden sich auch passende Funktionen zur Richtungskorrektur.
+		
+		Zwei Möglichkeiten:
+		\begin{itemize}
+		\item einmalige Korrektur der Richtung, wenn die Durchmusterung neu aufsetzt
+		\item kontinuierliche Richtungskorrektur beim Fortschreiten der Durchmusterung von Pixel zu Pixel
+		\end{itemize}
+		
+		Beide Methoden lassen sich in die \texttt{GeoTiffHandler}-API integrieren.
+		
+		Es liegt ein Trade-Off zwischen höherem Rechenaufwand und notwendiger Genauigkeit vor.
+	
+
+\end{frame}
+
 
 
 \subsection{Push für Webclient}
+\begin{frame} {Push für \texttt{landingClient}}{}
+	
+%	Aktuell muss der Client von sich aus die Datenbank abfragen.
+%	
+%	Es wird keine Nachricht an den Client verschickt, wenn neue Landebahnen verfügbar sind.
+	
+	
+	\begin{columns}
+		\column{0.7\textwidth}
+		
+		Websockets:
+		\begin{itemize}
+		\item Es wird eine persistente Verbindung zwischen Client und Server hergestellt
+		\item Über diese Verbindung sind bidirektionale Nachrichten möglich
+		\item Der Server muss zusätzlichen Status verwalten (Verbindung pro Client)
+		\end{itemize}
+		
+%		Aktuell war Funktionalität nicht notwendig, da häufig genug angefragt wird.
+		
+		Die Status-Verwaltung auf dem Server macht diesen deutlich schwergewichtiger.
+	
+		\column{0.3\textwidth}
+			\begin{figure}
+				\includegraphics[height=0.4\textheight]{images/WebSockets-Diagram.png}
+			\end{figure}
+			\smaller{\source{Websocket-Diagramm aus \url{https://www.pubnub.com/blog/2015-01-05-websockets-vs-rest-api-understanding-the-difference/}}}
+	\end{columns}
+
+	
+
+
+	\note{
+		\begin{itemize}
+			\item 
+		\end{itemize}
+	}
+
+\end{frame}
+
+
 
 \subsection{Merge als nachgeschalteter Prozess aus dem Speicher}
 
+\begin{frame} {Merge Optimierung}{Merge als nachgeschalteter Prozess aus dem Speicher}
+	
+	Merge-Prozess läuft manuell angestoßen direkt auf der Datenbank.
+	
+	Die Performanz ist aufgrund vieler DB-Zugriffe sehr schlecht.
+	
+	\pause
+	
+	Verbesserungspotential:
+	\begin{itemize}
+	\item Implementiere Filterstufe in \texttt{dataBaseManager}
+	\item Rohdaten werden vollständig an die DB durchgereicht
+	\item Alle Bahnen eines Durchmusterungslaufs werden zusätzlich im Speicher gehalten
+	\item Die Bahnen im Speicher werden direkt gemerged bevor sie geschrieben werden
+	\item Nach jedem Durchmusterungslauf zusätzlicher Lauf über DB mit schon gemergeden Flächen
+	\end{itemize}
+	
+	\pause
+	Erwartete Performanz-Steigerung um Größenordnungen, da kein DB-zugriff mehr benötigt wird.
+
+	\note{
+		\begin{itemize}
+			\item 
+		\end{itemize}
+	}
+
+\end{frame}
+
+
 \subsection{Kollisionsabfrage mit Objekten aus OSM}
+
+\begin{frame} {Kollisionsabfrage mit Objekten aus OSM}{\texttt{Overpass API}}
+	
+
+	
+	
+	\begin{columns}
+	\column{0.6\textwidth}
+
+	OpenStreetMap beitet seine \texttt{Overpass API} an, um für weitere Informationen für bestimmte Bereiche abzufragen.
+			
+	Dazu gehören Informationen zur Oberflächenbeschaffenheit:
+	\begin{itemize}
+	\item \texttt{natural = water}
+	\item \texttt{natural = grassland}
+	\item \texttt{natural = tree\_row}
+	\item \ldots
+	\end{itemize}
+	
+	Diese Informationen können zusammen mit der \texttt{\$geoIntersects}-Abfrage auf der MongoDB die potentiellen Landeflächen bewerten.
+
+	\column{0.4\textwidth}
+		\begin{figure}
+			\includegraphics[width=\textwidth]{images/OSM_Overpass_API.png}
+		\end{figure}
+	\end{columns}
+	
+
+
+	\note{
+		\begin{itemize}
+			\item 
+		\end{itemize}
+	}
+
+\end{frame}
+
 	
 \end{document}
 

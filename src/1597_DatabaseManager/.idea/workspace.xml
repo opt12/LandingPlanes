@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="496dd1ff-0def-4666-9cae-af1f6f398a06" name="Default" comment="- Debug-Ausgaben im DatabaseManager unterdrückt&#10;- in 1597_Fakedurchmusterung.cpp wird nur noch ein einzelner Thread erzeugt (Das waren vorher 8, also soviele, wie Kerne vorhanden)&#10;- Ergänzungen im Makefile, so dass es bei mir auch baut (search path for /usr/">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../1597_LandingClient/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../1597_LandingClient/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../1597_LandingClient/src/utils/api/index.js" afterPath="$PROJECT_DIR$/../1597_LandingClient/src/utils/api/index.js" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -543,7 +542,7 @@
       <workItem from="1504022809830" duration="4925000" />
       <workItem from="1504077001062" duration="4018000" />
       <workItem from="1505050026336" duration="1449000" />
-      <workItem from="1505052720214" duration="94000" />
+      <workItem from="1505052720214" duration="179000" />
     </task>
     <task id="LOCAL-00001" summary="- Der erste Versuch für einen Node.js basierten DataBase-Manager, der dann alle Kommunikation mit der Datenbank und dem Webclient übernimmt&#10;- Der Database manager startet den 1597_searchEngineWrapper Prozess und öffnet einen Unix Socket dorthin">
       <created>1500321975489</created>
@@ -682,7 +681,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="179303000" />
+    <option name="totallyTimeSpent" value="179388000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -695,9 +694,8 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="1919" y="-11" width="1682" height="1062" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24984913" sideWeight="0.48333332" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24984913" sideWeight="0.48333332" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32903227" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32777777" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />

@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c1a91e04-982f-4b32-9628-adff4ce078ad" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../1597_DatabaseManager/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../1597_DatabaseManager/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/utils/api/index.js" afterPath="$PROJECT_DIR$/src/utils/api/index.js" />
-    </list>
+    <list default="true" id="c1a91e04-982f-4b32-9628-adff4ce078ad" name="Default" comment="" />
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
     <ignored path="$PROJECT_DIR$/tmp/" />
@@ -53,8 +50,8 @@
       <file leaf-file-name="index.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/utils/api/index.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="90">
-              <caret line="5" column="29" lean-forward="false" selection-start-line="5" selection-start-column="29" selection-end-line="5" selection-end-column="29" />
+            <state relative-caret-position="252">
+              <caret line="14" column="31" lean-forward="true" selection-start-line="14" selection-start-column="31" selection-end-line="14" selection-end-column="31" />
               <folding>
                 <element signature="n#!!doc" expanded="true" />
               </folding>
@@ -640,7 +637,7 @@
       <workItem from="1504077003776" duration="1219000" />
       <workItem from="1505050008747" duration="16000" />
       <workItem from="1505051138604" duration="1447000" />
-      <workItem from="1505052733120" duration="81000" />
+      <workItem from="1505052733120" duration="162000" />
     </task>
     <task id="LOCAL-00001" summary="- added a lot (new Receipts Form and stuff)">
       <created>1486849845496</created>
@@ -842,7 +839,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="436525000" />
+    <option name="totallyTimeSpent" value="436606000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1919" y="-11" width="1682" height="1062" extended-state="6" />
@@ -1335,8 +1332,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/utils/api/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="5" column="29" lean-forward="false" selection-start-line="5" selection-start-column="29" selection-end-line="5" selection-end-column="29" />
+        <state relative-caret-position="252">
+          <caret line="14" column="31" lean-forward="true" selection-start-line="14" selection-start-column="31" selection-end-line="14" selection-end-column="31" />
           <folding>
             <element signature="n#!!doc" expanded="true" />
           </folding>
