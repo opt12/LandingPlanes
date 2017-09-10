@@ -3,7 +3,8 @@
 \documentclass[
 	xcolor=dvipsnames,
 %	handout,
-	hideallsubsections
+	hideallsubsections,
+	xcolor=table
 ]{beamer} %xcolor=dvipsnames
 %\documentclass[xcolor=dvipsnames, handout]{beamer} %xcolor=dvipsnames
 
@@ -849,24 +850,363 @@ $\Rightarrow$ Pipeline
 		 \pause - identische Initialisierung\\
 		  \pause - ideal zur Performanz-Untersuchung\\
 	\end{tabular} 
+	\skippingparagraph
+	Gesteuert via Semaphor
+\end{frame}
+
+\subsection{Parallelverarbeitung mittels p\_threads zum Finden der Landebahnen}
+\begin{frame}{U1}{U2}
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\draw[help lines, color=gray!30, dashed] (0,0) grid (4.9,4.9);
+\draw[->,ultra thick] (0,5)--(5,5) node[right]{$x$};
+\draw[->,ultra thick] (0,5)--(0,0) node[left]{$y$};
+\draw[-,ultra thick] (5,5)--(5,0) node[left]{};
+\draw[-,ultra thick] (0,0)--(5,0) node[right]{};
+
+\draw[->,ultra thick,dashed,red] (4,5)--(5,4) node[left]{$1$};
+\draw[->,ultra thick,dashed,red] (3,5)--(5,3) node[left]{$2$};
+\draw[->,ultra thick,dashed,red] (0,5)--(5,0) node[right]{$3$};
+
+\draw[->,ultra thick,dashed,red] (0,3)--(3,0) node[below]{$4$};
+
+\draw[->,ultra thick,dashed,red] (0,1)--(1,0) node[below]{$5$};
+
+\draw[-,ultra thick,dashed,blue] (5,5.5)--(-0.5,5.5) node[left]{};
+\draw[->,ultra thick,dashed,blue] (-0.5,5.5)--(-0.5,0) node[left]{};
+
+
+\end{tikzpicture}
+\end{figure}
+
+		\begin{itemize}
+			\item blaue Linie entspricht dem Master
+			\item rot sind die unabhängigen Threads
+		\end{itemize}
+
 \end{frame}
 
 \subsection{Detaillierte Beschreibung des Suchalgorithmus}
+\begin{frame}{U1}{U2}
+	\begin{tabular}{l}
+		\pause - hat der aktuelle Punkt gültige Höheninformationen?\\
+		\pause - ist die Steigung zu seinem Vorgänger OK? (Holprigkeit)\\
+		\pause - sind innerhalb von $\frac{1}{2}B$ in orthogonaler Richtung die Steitungen OK?\\
+		\pause - ist die Holprigkeit aller orthogonaler Punkte gültig?\\
+	\end{tabular} 
+	\skippingparagraph
+    Sind alle diese Punkte erfüllt, wird der Punkt in eine Liste aufgenommen
+    
+    Dies wird so lange wiederholt, bis 
+    		\begin{itemize}
+			\item der Kartenrand erreicht ist
+			\item oder ein Punkt das Kriterium erfüllt
+		\end{itemize}
+    
+ \end{frame}
+ 
+ \subsection{Detaillierte Beschreibung des Suchalgorithmus}
+\begin{frame}{U1}{U2}
 
-\subsection{Klassen und Objekte}
 
-\subsection{Verwendete Datenstrukturen}
+    Sind alle diese Punkte erfüllt, werden zwei Landebahnen bestimmt:
+   	\skippingparagraph 
+	\begin{tabular}{l}
+		\pause - die längstmögliche, die die max. Steigung nicht überschreitet\\
+		\pause - die (Sub)Fläche mit der kleinsten Varianz über alle Punkte\\
+	\end{tabular} 
+		\skippingparagraph
+	Die beiden gefundenen Bahnen werden in der MongoDB abgelegt
+    
+ \end{frame}
+ 
+ 
+ 
+\subsection{Verwendete Datenstrukturen - Performanz}
+\begin{frame}{U1}{U2}
+Augenmerk lag auf der Verwendung von wenig komplexen Datenstrukturen
 
-\subsubsection{Einfluss der Datenstrukturen auf die Performanz}
+benutzt werden
+
+	\begin{tabular}{ll}
+		\pause - \texttt{vector< pair<int,int> >} & Referenz auf die Kartenpunkte\\
+		\pause -  \texttt{int access\_single\_element(int\ x, int\ y)}& mapping 2D $\rightarrow$ 1D\\
+	\end{tabular} 
+	
+   	\skippingparagraph 	
+
+In der Durchmusterung sind alle Datenstrukturen in der Komplexitätsklasse $O(1)$ zu finden
+	
+	
+\end{frame}
+ 
 
 \subsection{Bestimmung des Speedups in Abhängigkeit des Parallelisierungsgrades}
-
+\begin{frame}{U1}{U2}
+\begin{figure}
+\scalebox{.37}{
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline 
+Richtung & Bahnen & \cellcolor{red!25}  Threads & \cellcolor{red!25}  v CPUs & \cellcolor{red!25}  Zeitbedarf [ms] & Standardabweichung [ms] \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 & \cellcolor{red!25}  1 & 1 & \cellcolor{red!25}  11409 & 510 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 & \cellcolor{red!25}  2 & 1 & \cellcolor{red!25}  11049& 216 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 & \cellcolor{red!25}  4 & 1 & \cellcolor{red!25} 11586 & 220 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 & \cellcolor{red!25}  8 & 1 & \cellcolor{red!25}  11230 & 240 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 & \cellcolor{red!25}  64 & 1 & \cellcolor{red!25}  10886 & 621 \\ 
+\hline 
+W$\rightarrow$O (90$^\circ$) & 1606 & 1 & 1 & 10442 & 239 \\ 
+\hline 
+W$\rightarrow$O (90$^\circ$) & 1606 & 64 & 1 & 10094 & 284 \\ 
+\hline 
+NNO$\rightarrow$SSW (45$^\circ$) & 704 & 1 & 1 & 18147 & 327 \\ 
+\hline 
+NNO$\rightarrow$SSW (45$^\circ$) & 704 & 64 & 1 & 18423 & 701 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 & 1 & 2 & 8488 & 46 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 & 2 & 2 & 5397 & 178 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 & 4 & 2 & 5545 & 161 \\ 
+\hline 
+W$\rightarrow$O (90$^\circ$) & 1606 & 1 & 2 & 8668 & 453 \\ 
+\hline 
+W$\rightarrow$O (90$^\circ$) & 1606 & 2 & 2 & 5778 & 292 \\ 
+\hline 
+NNO$\rightarrow$SSW (45$^\circ$) & 704 & 1 & 2 & 15208 & 216 \\ 
+\hline 
+NNO$\rightarrow$SSW (45$^\circ$) & 704 & 64 & 2 & 8976 & 327 \\ 
+\hline
+N$\rightarrow$S (0$^\circ$) & 734 & 1 & 4 & 8823 & 83 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 & 2 & 4 & 4642 & 77 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 & 4 & 4 & 2973 & 17 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 & 8 & 4 & 3571 & 432 \\ 
+\hline 
+W$\rightarrow$O (90$^\circ$) & 1606 & 8 & 4 & 3335 & 72 \\ 
+\hline 
+NNO$\rightarrow$SSW (45$^\circ$) & 704 & 8 & 4 & 5406 & 442 \\ 
+\hline
+N$\rightarrow$S (0$^\circ$) & 734 & 16 & 8 & 2733 & 56 \\ 
+\hline 
+\end{tabular}
+}
+\end{figure}
+ \end{frame}
+ 
+ \begin{frame}{U1}{U2}
+\begin{figure}
+\scalebox{.37}{
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline 
+Richtung & Bahnen & \cellcolor{red!25}  Threads & \cellcolor{red!25}  v CPUs & \cellcolor{red!25}  Zeitbedarf [ms] & Standardabweichung [ms] \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 &  1 & 1 & 11409 & 510 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 &  2 & 1 &   11049& 216 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 &  4 & 1 &  11586 & 220 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 &  8 & 1 &   11230 & 240 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 &  64 & 1 &   10886 & 621 \\ 
+\hline 
+W$\rightarrow$O (90$^\circ$) & 1606 & 1 & 1 & 10442 & 239 \\ 
+\hline 
+W$\rightarrow$O (90$^\circ$) & 1606 & 64 & 1 & 10094 & 284 \\ 
+\hline 
+NNO$\rightarrow$SSW (45$^\circ$) & 704 & 1 & 1 & 18147 & 327 \\ 
+\hline 
+NNO$\rightarrow$SSW (45$^\circ$) & 704 & 64 & 1 & 18423 & 701 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 & \cellcolor{red!25} 1 & 2 & \cellcolor{red!25} 8488 & 46 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 & \cellcolor{red!25} 2 & 2 & \cellcolor{red!25} 5397 & 178 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 &\cellcolor{red!25}  4 & 2 & \cellcolor{red!25} 5545 & 161 \\ 
+\hline 
+W$\rightarrow$O (90$^\circ$) & 1606 & 1 & 2 & 8668 & 453 \\ 
+\hline 
+W$\rightarrow$O (90$^\circ$) & 1606 & 2 & 2 & 5778 & 292 \\ 
+\hline 
+NNO$\rightarrow$SSW (45$^\circ$) & 704 & 1 & 2 & 15208 & 216 \\ 
+\hline 
+NNO$\rightarrow$SSW (45$^\circ$) & 704 & 64 & 2 & 8976 & 327 \\ 
+\hline
+N$\rightarrow$S (0$^\circ$) & 734 & 1 & 4 & 8823 & 83 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 & 2 & 4 & 4642 & 77 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 & 4 & 4 & 2973 & 17 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 & 8 & 4 & 3571 & 432 \\ 
+\hline 
+W$\rightarrow$O (90$^\circ$) & 1606 & 8 & 4 & 3335 & 72 \\ 
+\hline 
+NNO$\rightarrow$SSW (45$^\circ$) & 704 & 8 & 4 & 5406 & 442 \\ 
+\hline
+N$\rightarrow$S (0$^\circ$) & 734 & 16 & 8 & 2733 & 56 \\ 
+\hline 
+\end{tabular}
+}
+\end{figure}
+ \end{frame}
+ 
+ \begin{frame}{U1}{U2}
+\begin{figure}
+\scalebox{.37}{
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline 
+Richtung & Bahnen & \cellcolor{red!25}  Threads & \cellcolor{red!25}  v CPUs & \cellcolor{red!25}  Zeitbedarf [ms] & Standardabweichung [ms] \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 &  1 & 1 & 11409 & 510 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 &  2 & 1 &   11049& 216 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 &  4 & 1 &  11586 & 220 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 &  8 & 1 &   11230 & 240 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 &  64 & 1 &   10886 & 621 \\ 
+\hline 
+W$\rightarrow$O (90$^\circ$) & 1606 & 1 & 1 & 10442 & 239 \\ 
+\hline 
+W$\rightarrow$O (90$^\circ$) & 1606 & 64 & 1 & 10094 & 284 \\ 
+\hline 
+NNO$\rightarrow$SSW (45$^\circ$) & 704 & 1 & 1 & 18147 & 327 \\ 
+\hline 
+NNO$\rightarrow$SSW (45$^\circ$) & 704 & 64 & 1 & 18423 & 701 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 &  1 & 2 & 8488 & 46 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 &  2 & 2 & 5397 & 178 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 &  4 & 2 &  5545 & 161 \\ 
+\hline 
+W$\rightarrow$O (90$^\circ$) & 1606 & 1 & 2 & 8668 & 453 \\ 
+\hline 
+W$\rightarrow$O (90$^\circ$) & 1606 & 2 & 2 & 5778 & 292 \\ 
+\hline 
+NNO$\rightarrow$SSW (45$^\circ$) & 704 & 1 & 2 & 15208 & 216 \\ 
+\hline 
+NNO$\rightarrow$SSW (45$^\circ$) & 704 & 64 & 2 & 8976 & 327 \\ 
+\hline
+N$\rightarrow$S (0$^\circ$) & 734 & \cellcolor{red!25} 1 & 4 & \cellcolor{red!25} 8823 & 83 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 & \cellcolor{red!25} 2 & 4 & \cellcolor{red!25} 4642 & 77 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 & \cellcolor{red!25} 4 & 4 & \cellcolor{red!25} 2973 & 17 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 & \cellcolor{red!25} 8 & 4 & \cellcolor{red!25} 3571 & 432 \\ 
+\hline 
+W$\rightarrow$O (90$^\circ$) & 1606 & 8 & 4 & 3335 & 72 \\ 
+\hline 
+NNO$\rightarrow$SSW (45$^\circ$) & 704 & 8 & 4 & 5406 & 442 \\ 
+\hline
+N$\rightarrow$S (0$^\circ$) & 734 & 16 & 8 & 2733 & 56 \\ 
+\hline 
+\end{tabular}
+}
+\end{figure}
+ \end{frame}
+ 
+ 
+  \begin{frame}{U1}{U2}
+\begin{figure}
+\scalebox{.37}{
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline 
+Richtung & Bahnen & \cellcolor{red!25}  Threads & \cellcolor{red!25}  v CPUs & \cellcolor{red!25}  Zeitbedarf [ms] & Standardabweichung [ms] \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 &  1 & 1 & 11409 & 510 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 &  2 & 1 &   11049& 216 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 &  4 & 1 &  11586 & 220 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 &  8 & 1 &   11230 & 240 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 &  64 & 1 &   10886 & 621 \\ 
+\hline 
+W$\rightarrow$O (90$^\circ$) & 1606 & 1 & 1 & 10442 & 239 \\ 
+\hline 
+W$\rightarrow$O (90$^\circ$) & 1606 & 64 & 1 & 10094 & 284 \\ 
+\hline 
+NNO$\rightarrow$SSW (45$^\circ$) & 704 & 1 & 1 & 18147 & 327 \\ 
+\hline 
+NNO$\rightarrow$SSW (45$^\circ$) & 704 & 64 & 1 & 18423 & 701 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 &  1 & 2 & 8488 & 46 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 &  2 & 2 & 5397 & 178 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 &  4 & 2 &  5545 & 161 \\ 
+\hline 
+W$\rightarrow$O (90$^\circ$) & 1606 & 1 & 2 & 8668 & 453 \\ 
+\hline 
+W$\rightarrow$O (90$^\circ$) & 1606 & 2 & 2 & 5778 & 292 \\ 
+\hline 
+NNO$\rightarrow$SSW (45$^\circ$) & 704 & 1 & 2 & 15208 & 216 \\ 
+\hline 
+NNO$\rightarrow$SSW (45$^\circ$) & 704 & 64 & 2 & 8976 & 327 \\ 
+\hline
+N$\rightarrow$S (0$^\circ$) & 734 &  1 & 4 &  8823 & 83 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 &  2 & 4 &  4642 & 77 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 & 4 & 4 & 2973 & 17 \\ 
+\hline 
+N$\rightarrow$S (0$^\circ$) & 734 &  8 & 4 & 3571 & 432 \\ 
+\hline 
+W$\rightarrow$O (90$^\circ$) & 1606 & 8 & 4 & 3335 & 72 \\ 
+\hline 
+NNO$\rightarrow$SSW (45$^\circ$) & 704 & 8 & 4 & 5406 & 442 \\ 
+\hline
+N$\rightarrow$S (0$^\circ$) & 734 & \cellcolor{red!25} 16 & 8 & \cellcolor{red!25} 2733 & 56 \\ 
+\hline 
+\end{tabular}
+}
+\end{figure}
+ \end{frame}
 \subsubsection{Erläuterung des Messverfahren}
 
 \subsubsection{Messergebnisse}
 
 \subsubsection{Diskussion der Messergebnisse}
+\begin{frame}
+\begin{tikzpicture} 
+\begin{axis}[ 
+  xlabel=Anzahl CPU, ylabel=Speedup, legend style={at={(axis cs:8.3,1)},anchor=south east}] 
+  \addplot[color=red,mark=x] coordinates { 
+  (1,1) 
+  (2,2.11) 
+  (4,3.84) 
+  (8,4.2)   
+  }; 
+    \addplot[color=blue,mark=x] coordinates { 
+  (1,1) 
+  (2,1.8) 
+  (4,3.13)    
+  }; 
+    \addplot[color=green,mark=x] coordinates { 
+  (1,1) 
+  (2,2.02) 
+  (4,3.35)    
+  }; 
+    \addlegendentry{Nord-Süd}
+  \addlegendentry{Ost-West}
+    \addlegendentry{Nordnordwest-Südsüdost}
+  \end{axis} 
 
+  \end{tikzpicture}
+\end{frame}
 \subsection{Analyse mittels Profiler}
 
 \subsection{Einfluss von Compiler Direktiven (speziell Optimizer)}
