@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="496dd1ff-0def-4666-9cae-af1f6f398a06" name="Default" comment="- Debug-Ausgaben im DatabaseManager unterdrückt&#10;- in 1597_Fakedurchmusterung.cpp wird nur noch ein einzelner Thread erzeugt (Das waren vorher 8, also soviele, wie Kerne vorhanden)&#10;- Ergänzungen im Makefile, so dass es bei mir auch baut (search path for /usr/" />
+    <list default="true" id="496dd1ff-0def-4666-9cae-af1f6f398a06" name="Default" comment="- Debug-Ausgaben im DatabaseManager unterdrückt&#10;- in 1597_Fakedurchmusterung.cpp wird nur noch ein einzelner Thread erzeugt (Das waren vorher 8, also soviele, wie Kerne vorhanden)&#10;- Ergänzungen im Makefile, so dass es bei mir auch baut (search path for /usr/">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../1597_LandingClient/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../1597_LandingClient/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../1597_LandingClient/src/utils/api/index.js" afterPath="$PROJECT_DIR$/../1597_LandingClient/src/utils/api/index.js" />
+    </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
     <ignored path="$PROJECT_DIR$/tmp/" />
@@ -22,8 +25,8 @@
       <file leaf-file-name="cmdDataBase.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/commands/cmdDataBase.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="362">
-              <caret line="80" column="5" lean-forward="true" selection-start-line="80" selection-start-column="5" selection-end-line="80" selection-end-column="5" />
+            <state relative-caret-position="1440">
+              <caret line="80" column="5" lean-forward="false" selection-start-line="80" selection-start-column="5" selection-end-line="80" selection-end-column="5" />
               <folding />
             </state>
           </provider>
@@ -42,7 +45,7 @@
       <file leaf-file-name="landingPlanes.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/models/landingPlanes.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="297">
+            <state relative-caret-position="828">
               <caret line="46" column="39" lean-forward="false" selection-start-line="46" selection-start-column="39" selection-end-line="46" selection-end-column="39" />
               <folding>
                 <marker date="1504074524576" expanded="true" signature="2429:2445" ph="{&quot;LandingPlanes&quot;: LandingPlanes...}" />
@@ -74,8 +77,8 @@
       <file leaf-file-name="app.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="522">
-              <caret line="29" column="72" lean-forward="false" selection-start-line="29" selection-start-column="54" selection-end-line="29" selection-end-column="72" />
+            <state relative-caret-position="252">
+              <caret line="14" column="20" lean-forward="true" selection-start-line="14" selection-start-column="20" selection-end-line="14" selection-end-column="20" />
               <folding />
             </state>
           </provider>
@@ -94,7 +97,7 @@
       <file leaf-file-name="cmdFileInfo.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/commands/cmdFileInfo.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="726">
+            <state relative-caret-position="810">
               <caret line="45" column="4" lean-forward="false" selection-start-line="45" selection-start-column="4" selection-end-line="45" selection-end-column="4" />
               <folding>
                 <marker date="1504026497188" expanded="true" signature="1382:1426" ph="{...}" />
@@ -186,7 +189,6 @@
         <option value="$PROJECT_DIR$/config/config.example.js" />
         <option value="$PROJECT_DIR$/../1597_searchEngineWrapper/Debug/src/subdir.mk" />
         <option value="vm:981" />
-        <option value="$PROJECT_DIR$/app.js" />
         <option value="$PROJECT_DIR$/ipc/ipc.js" />
         <option value="$PROJECT_DIR$/../1597_searchEngineWrapper/src/1597_FakeDurchmusterung.cpp" />
         <option value="$PROJECT_DIR$/routes/ipcReceiver.js" />
@@ -201,6 +203,7 @@
         <option value="$PROJECT_DIR$/models/landingPlanes.js" />
         <option value="$PROJECT_DIR$/routes/commands.js" />
         <option value="$PROJECT_DIR$/commands/cmdDataBase.js" />
+        <option value="$PROJECT_DIR$/app.js" />
       </list>
     </option>
   </component>
@@ -243,6 +246,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -327,7 +331,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
       <pane id="Scope" />
     </panes>
   </component>
@@ -363,7 +366,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Node.js.bin/cleanUpDbrunner">
+  <component name="RunManager" selected="Node.js.bin/www">
     <configuration default="false" name="start" type="js.build_tools.npm" factoryName="npm" temporary="true" nameIsGenerated="true">
       <package-json value="$PROJECT_DIR$/package.json" />
       <command value="run" />
@@ -539,6 +542,8 @@
       <workItem from="1503954414104" duration="1367000" />
       <workItem from="1504022809830" duration="4925000" />
       <workItem from="1504077001062" duration="4018000" />
+      <workItem from="1505050026336" duration="1449000" />
+      <workItem from="1505052720214" duration="94000" />
     </task>
     <task id="LOCAL-00001" summary="- Der erste Versuch für einen Node.js basierten DataBase-Manager, der dann alle Kommunikation mit der Datenbank und dem Webclient übernimmt&#10;- Der Database manager startet den 1597_searchEngineWrapper Prozess und öffnet einen Unix Socket dorthin">
       <created>1500321975489</created>
@@ -677,7 +682,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="177760000" />
+    <option name="totallyTimeSpent" value="179303000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -690,13 +695,14 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="1919" y="-11" width="1682" height="1062" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24984913" sideWeight="0.49203822" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24984913" sideWeight="0.48333332" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32903227" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32777777" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.30222222" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="npm" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24984913" sideWeight="0.5079618" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.30222222" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="npm" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24984913" sideWeight="0.51666665" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24945416" sideWeight="0.7290553" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32777777" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
@@ -994,7 +1000,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="216">
           <caret line="12" column="30" lean-forward="false" selection-start-line="12" selection-start-column="30" selection-end-line="12" selection-end-column="30" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1002,10 +1007,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="504">
           <caret line="28" column="3" lean-forward="false" selection-start-line="28" selection-start-column="3" selection-end-line="28" selection-end-column="3" />
-          <folding>
-            <marker date="1504026497192" expanded="true" signature="90:138" ph="{&quot;start&quot;: &quot;node ./bin/www --tiffpath=/home/eckstein/dev/LandingPlanes/terrain --wrapper=../1597_searchEngineWrapper/Debug/1597_searchEngineWrapper --clientpath='../1597_LandingClient'&quot;...}" />
-            <marker date="1504026497192" expanded="true" signature="906:934" ph="{&quot;body-parser&quot;: &quot;~1.17.1&quot;...}" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1013,15 +1015,12 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1170">
           <caret line="65" column="4" lean-forward="false" selection-start-line="65" selection-start-column="4" selection-end-line="65" selection-end-column="4" />
-          <folding>
-            <marker date="1504026497192" expanded="true" signature="3477:3480" ph="{&quot;getDbEntries&quot;: getDbEntries...}" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/models/landingPlanes.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="297">
+        <state relative-caret-position="828">
           <caret line="46" column="39" lean-forward="false" selection-start-line="46" selection-start-column="39" selection-end-line="46" selection-end-column="39" />
           <folding>
             <marker date="1504074524576" expanded="true" signature="2429:2445" ph="{&quot;LandingPlanes&quot;: LandingPlanes...}" />
@@ -1047,7 +1046,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/commands/cmdFileInfo.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="726">
+        <state relative-caret-position="810">
           <caret line="45" column="4" lean-forward="false" selection-start-line="45" selection-start-column="4" selection-end-line="45" selection-end-column="4" />
           <folding>
             <marker date="1504026497188" expanded="true" signature="1382:1426" ph="{...}" />
@@ -1065,8 +1064,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/commands/cmdDataBase.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="362">
-          <caret line="80" column="5" lean-forward="true" selection-start-line="80" selection-start-column="5" selection-end-line="80" selection-end-column="5" />
+        <state relative-caret-position="1440">
+          <caret line="80" column="5" lean-forward="false" selection-start-line="80" selection-start-column="5" selection-end-line="80" selection-end-column="5" />
           <folding />
         </state>
       </provider>
@@ -1097,8 +1096,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="522">
-          <caret line="29" column="72" lean-forward="false" selection-start-line="29" selection-start-column="54" selection-end-line="29" selection-end-column="72" />
+        <state relative-caret-position="252">
+          <caret line="14" column="20" lean-forward="true" selection-start-line="14" selection-start-column="20" selection-end-line="14" selection-end-column="20" />
           <folding />
         </state>
       </provider>
