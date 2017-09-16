@@ -660,12 +660,15 @@
 \section{Komponente "'Durchmusterung"'}
 
 \subsection{Durchmusterung der Geotiff Daten und Auffinden der Landebahnen}
-\begin{frame} {Übersicht}{}
-		 Kapselung der Suchlogik
-		 
-		 Objektorientierter Ansatz zur besseren Wartbarkeit
-		 
-		 Komponente wird in Form einer statischen Library (aus)geliefert
+\begin{frame} {Übersicht}{Ziele der Entwicklung}
+
+\begin{itemize}
+	\item  Kapselung der Suchlogik 
+	\item  beinhaltet domänenspezifische Anforderungen
+	\item  Objektorientierter Ansatz zur besseren Wartbarkeit
+	\item  Komponente wird in Form einer statischen Library (aus)geliefert
+\end{itemize}
+
 \end{frame}
 
 
@@ -685,50 +688,58 @@
  *taskDescription & Taskbeschreibung\\
  noDataValue & Zahlenwert für undefinierte Kartenpunkte\\
  pixelSize & Auflösung der Rasterpunkte in [m]\\
- \end{tabular}   
+ \end{tabular}  
+ 	\note{
+		\begin{itemize}
+			\item nicht Wundern: Größe wie vertikale und horizontale kurzreichweitige sowie Gesamtsteigung Steigung in der Taskdeskription als Parameter
+			\item ist etwas unsauber, könnte man leicht ändern
+		\end{itemize}
+	} 
 \end{frame}
 
 \subsection{Logischer Ablauf innerhalb der Landebahn-Erkennung}
 \begin{frame}{Landebahnbestimmung}{Durchmusterungsalgorithmus in Pseudo-Code}
 \begin{figure}
-\scalebox{.37}{\begin{struktogramm}(100,200)
+\scalebox{.41}{\begin{struktogramm}(200,150)
   \assign{Initialisierung $tile\_worker$ Objekt}
   \assign{berechne winkel-, steigungs- und holprigkeitsabhängige Parameter}
 \forallin{für alle Startpunkte einer Landebahn in gegebener Richtung (Thread Pool)}
 \assign{wähle den nächsten Punkt}
 \ifthenelse[15]{1}{1}
 {kurzreichweitige Steigung zum Vorgänger OK?}{\sTrue}{\sFalse}
-\ifthenelse[17]{1}{6}
+\ifthenelse[17]{2}{6}
 {checke Holprigkeit in Querrichtung}{\sTrue}{\sFalse}
 \change
 \ifthenelse[40]{1}{1}
 {ist die aktuelle Landebahn länger als die Mindestlänge}{\sTrue}{\sFalse}
 \assign{suche die beste Landebahn mit Mindestlänge}
 \assign{speichere beide Landebahnen in der DB}
-\assign{starte eine neue Landebahn mit aktuellem Punkt}
+%\assign{starte eine neue Landebahn mit aktuellem Punkt}
 \change
-\assign{starte eine neue Landebahn mit aktuellem Punkt}
+%\assign{starte eine neue Landebahn mit aktuellem Punkt}
 \ifend
+\assign{starte eine neue Landebahn mit aktuellem Punkt}
 \ifend
 \change
 \ifthenelse[30]{1}{1}
 {ist die aktuelle Landebahn länger als die Mindestlänge}{\sTrue}{\sFalse}
 \assign{suche die beste Landebahn mit Mindestlänge}
 \assign{speichere beide Landebahnen in der DB}
-\assign{starte eine neue Landebahn mit aktuellem Punkt}
+%\assign{starte eine neue Landebahn mit aktuellem Punkt}
 \change
-\assign{starte eine neue Landebahn mit aktuellem Punkt}
+%\assign{starte eine neue Landebahn mit aktuellem Punkt}
 \ifend
 \assign{starte eine neue Landebahn mit aktuellem Punkt}
 \ifend
 \forallinend
 \end{struktogramm}}
 \label{nasshnlogisch}
+\caption{Nassi-Shneiderman-Diagramm der Suchstrategie}
 \end{figure}
 \end{frame}
 
 \subsection{Initialisierung}
-\begin{frame}{Ueberschrift1}{Ueberschrift2}
+\begin{frame}{Landebahnbestimmung}{logischer Ablauf}
 	\begin{tabular}{l}
 		\pause - Instanziierung Workerobjekt\\ 
 		\pause - Initialisierung von Schrittvektoren (winkelabhängig)\\
@@ -738,8 +749,8 @@
 	\end{tabular} 
 \end{frame}
 
-\subsection{Durchmusterung}
-\begin{frame}{U1}{U2}
+\subsection{systematisches Durchlaufen der Geodaten}
+\begin{frame}{Startpunkte der Bahnen}{freier Winkel}
 \begin{figure}
 \centering
 \begin{tikzpicture}
@@ -763,8 +774,8 @@
 \end{figure}
 \end{frame}
 
-\subsection{Durchmusterung}
-\begin{frame}{U1}{U2}
+%\subsection{Durchmusterung}
+\begin{frame}{Startpunkte der Bahnen}{orthogonales System}
 \begin{figure}
 \centering
 \begin{tikzpicture}
@@ -794,7 +805,8 @@
 	
 	\begin{tabular}{l}
 		\pause - POSIX - Portable Operating System Interface\\ 
-		\pause - Abstraktion zwischen Hardware und Threading\\
+		\pause - Abstraktionschicht zwischen Hardware und Software\\ 
+		         (insbesondere für Threading)\\
 		\pause - erste Standardisierung 1988 (IEEE Std 1003.1-1988)\\
      	\pause - aktuellste Version IEEE Std 1003.1,2016 Edition \\
 		\pause - nahezu  alle gängigen OS unterstützem p\_thread\\
@@ -811,7 +823,7 @@
 
 \subsection{posix Threads Umfang}
 
-\begin{frame} {posix Threads}{Standard- was gehört dazu}
+\begin{frame} {posix Threads}{Standard - was gehört dazu}
 	
 	Was ist im Standard definiert?
 	\skippingparagraph
@@ -824,7 +836,7 @@
 		\pause - Synchronistation\\
 	\end{tabular} 
 	\skippingparagraph
-	Was ist nicht enthalten?
+	\pause Was ist nicht enthalten?
 		\skippingparagraph
 	\begin{tabular}{l}
 		\pause - Semaphoren\\ 
@@ -840,14 +852,14 @@
 \end{frame}
 
 \subsection{Parallelverarbeitung mittels p\_threads zum Finden der Landebahnen}
-\begin{frame}{U1}{U2}
-$\Rightarrow$ Master /Worker
+\begin{frame}{Programmiermodlle mit Threads}{}
+\pause $\Rightarrow$ Master -  Worker / Slave
 	
-$\Rightarrow$ Peer
+\pause $\Rightarrow$ Peer
 	
-$\Rightarrow$ Pipeline
+\pause $\Rightarrow$ Pipeline
 	
-	$\Rightarrow$ Thread-Pool
+\pause $\Rightarrow$ Thread-Pool
 			\skippingparagraph
 		\begin{tabular}{l}
 		\pause - Ressourcenschonend\\
@@ -856,10 +868,19 @@ $\Rightarrow$ Pipeline
 	\end{tabular} 
 	\skippingparagraph
 	Gesteuert via Semaphor
+	
+		\note{
+		\begin{itemize}
+			\item Master / worker: Alle Aufgaben werden an einen neuen Thread vergeben. Master hat Kontrolle
+			\item Peer: Master hat keinen Einfluss mehr. Nicht geblockt. Thread Gruppe arbeitet eigenständig ab
+			\item Pipeline: Stufenweises abarbeiten. Jede Stufe ein Thread
+			\item Thread-Pool: ähnlich Master - Worker, aber ein Pool von Threads die nacheinander Aufgaben beim master abholen.
+		\end{itemize}
+	}
 \end{frame}
 
 \subsection{Parallelverarbeitung mittels p\_threads zum Finden der Landebahnen}
-\begin{frame}{U1}{U2}
+\begin{frame}{paralleles Suchen der Landebahnen}{Thread-Pool}
 \begin{figure}
 \centering
 \begin{tikzpicture}
@@ -892,15 +913,15 @@ $\Rightarrow$ Pipeline
 \end{frame}
 
 \subsection{Detaillierte Beschreibung des Suchalgorithmus}
-\begin{frame}{U1}{U2}
+\begin{frame}{Detaillierte Beschreibung des Suchalgorithmus}{Vorclustern}
 	\begin{tabular}{l}
 		\pause - hat der aktuelle Punkt gültige Höheninformationen?\\
 		\pause - ist die Steigung zu seinem Vorgänger OK? (Holprigkeit)\\
-		\pause - sind innerhalb von $\frac{1}{2}B$ in orthogonaler Richtung die Steitungen OK?\\
+		\pause - sind innerhalb von $\frac{1}{2}B$ in orthogonaler Richtung die Steigungen OK?\\
 		\pause - ist die Holprigkeit aller orthogonaler Punkte gültig?\\
 	\end{tabular} 
 	\skippingparagraph
-    Sind alle diese Punkte erfüllt, wird der Punkt in eine Liste aufgenommen
+   \pause Sind alle diese Punkte erfüllt, wird der Punkt in eine Liste aufgenommen
     
     Dies wird so lange wiederholt, bis 
     		\begin{itemize}
@@ -910,8 +931,8 @@ $\Rightarrow$ Pipeline
     
  \end{frame}
  
- \subsection{Detaillierte Beschreibung des Suchalgorithmus}
-\begin{frame}{U1}{U2}
+%\subsection{Detaillierte Beschreibung des Suchalgorithmus}
+\begin{frame}{Detaillierte Beschreibung des Suchalgorithmus}{Optimierung innerhalb des Clusters}
 
 
     Sind alle diese Punkte erfüllt, werden zwei Landebahnen bestimmt:
@@ -921,7 +942,7 @@ $\Rightarrow$ Pipeline
 		\pause - die (Sub)Fläche mit der kleinsten Varianz über alle Punkte\\
 	\end{tabular} 
 		\skippingparagraph
-	Die beiden gefundenen Bahnen werden in der MongoDB abgelegt
+	Die beiden gefundenen Bahnen werden in der Mongo-DB abgelegt
     
  \end{frame}
  
