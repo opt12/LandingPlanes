@@ -949,26 +949,30 @@
  
  
 \subsection{Verwendete Datenstrukturen - Performanz}
-\begin{frame}{U1}{U2}
-Augenmerk lag auf der Verwendung von wenig komplexen Datenstrukturen
+\begin{frame}{Verwendete Datenstrukturen}{Performanz}
+Augenmerk lag auf der Verwendung von wenig komplexen Datenstrukturen und Funktionen
 
-benutzt werden
 
 	\begin{tabular}{ll}
-		\pause - \texttt{vector< pair<int,int> >} & Referenz auf die Kartenpunkte\\
-		\pause -  \texttt{int access\_single\_element(int\ x, int\ y)}& mapping 2D $\rightarrow$ 1D\\
+	
+		\pause - \tiny\texttt{vector< pair<int,int> >} & \tiny Referenz auf die Kartenpunkte\\
+		\pause - \tiny\texttt{int access\_single\_element(int\ x, int\ y)}&\tiny mapping 2D $\rightarrow$ 1D\\
 	\end{tabular} 
 	
    	\skippingparagraph 	
 
-In der Durchmusterung sind alle Datenstrukturen in der Komplexit‰tsklasse $O(1)$ zu finden
+Auﬂer dem Allokieren des Vektorspeichers sind die Operationen der Hauptschleife unabh‰ngig von $n$
 	
 	
+\end{frame}
+
+\subsubsection{Erl‰uterung des Messverfahren}
+\begin{frame}{Speedup in Abh‰ngigkeit des Parallelisierungsgrades}{Messverfahren}
 \end{frame}
  
 
 \subsection{Bestimmung des Speedups in Abh‰ngigkeit des Parallelisierungsgrades}
-\begin{frame}{U1}{U2}
+\begin{frame}{Speedup in Abh‰ngigkeit des Parallelisierungsgrades}{Messergebnisse 1 vCPU}
 \begin{figure}
 \scalebox{.37}{
 \begin{tabular}{|c|c|c|c|c|c|}
@@ -1026,7 +1030,7 @@ N$\rightarrow$S (0$^\circ$) & 734 & 16 & 8 & 2733 & 56 \\
 \end{figure}
  \end{frame}
  
- \begin{frame}{U1}{U2}
+ \begin{frame}{Speedup in Abh‰ngigkeit des Parallelisierungsgrades}{Messergebnisse 2 vCPU}
 \begin{figure}
 \scalebox{.37}{
 \begin{tabular}{|c|c|c|c|c|c|}
@@ -1084,7 +1088,7 @@ N$\rightarrow$S (0$^\circ$) & 734 & 16 & 8 & 2733 & 56 \\
 \end{figure}
  \end{frame}
  
- \begin{frame}{U1}{U2}
+ \begin{frame}{Speedup in Abh‰ngigkeit des Parallelisierungsgrades}{Messergebnisse 4 vCPU}
 \begin{figure}
 \scalebox{.37}{
 \begin{tabular}{|c|c|c|c|c|c|}
@@ -1143,7 +1147,7 @@ N$\rightarrow$S (0$^\circ$) & 734 & 16 & 8 & 2733 & 56 \\
  \end{frame}
  
  
-  \begin{frame}{U1}{U2}
+  \begin{frame}{Speedup in Abh‰ngigkeit des Parallelisierungsgrades}{Messergebnisse 8 vCPU}
 \begin{figure}
 \scalebox{.37}{
 \begin{tabular}{|c|c|c|c|c|c|}
@@ -1199,13 +1203,13 @@ N$\rightarrow$S (0$^\circ$) & 734 & \cellcolor{red!25} 16 & 8 & \cellcolor{red!2
 \end{tabular}
 }
 \end{figure}
- \end{frame}
-\subsubsection{Erl‰uterung des Messverfahren}
 
-\subsubsection{Messergebnisse}
+8 CPUs eventuell nicht verwertbar, da VM Software Warnung anzeigte.
+ \end{frame}
+
 
 \subsubsection{Diskussion der Messergebnisse}
-\begin{frame}
+\begin{frame}{Speedup in Abh‰ngigkeit des Parallelisierungsgrades}{visuelle Darstellung}
 \begin{tikzpicture} 
 \begin{axis}[ 
   xlabel=Anzahl CPU, ylabel=Speedup, legend style={at={(axis cs:8.3,1)},anchor=south east}] 
