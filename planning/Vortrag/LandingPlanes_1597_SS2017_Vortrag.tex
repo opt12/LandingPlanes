@@ -968,6 +968,16 @@ Außer dem Allokieren des Vektorspeichers sind die Operationen der Hauptschleife 
 
 \subsubsection{Erläuterung des Messverfahren}
 \begin{frame}{Speedup in Abhängigkeit des Parallelisierungsgrades}{Messverfahren}
+    		\begin{itemize}
+			\item innerhalb VM (Virtualbox)
+			\item Host:  Intel i7-4770K , 3.5 Ghz, 16 GB RAM Windows 7 64 bit
+			\item Guest: Centos Linux 7.0, 6 GB RAM
+			\item Variation der virtuellen CPUs des Guest Systems
+			\item Poolgröße über das UI vorgegeben
+			\item pro Parameterset 4 unabhängige Läuft (Mittelwert + Standardabweichung)
+			
+		\end{itemize}
+ 
 \end{frame}
  
 
@@ -1240,8 +1250,23 @@ N$\rightarrow$S (0$^\circ$) & 734 & \cellcolor{red!25} 16 & 8 & \cellcolor{red!2
 \subsection{Analyse mittels Profiler}
 \begin{frame}
 
+    		\begin{itemize}
+    		\item Laufzeitanalyse mittels gproof
+    		\item größter Laufzeitanteil für die Zugriffsfunktion (Random Memory acceess)
+    		\item zweitgrößter Anteil ist die Bestimmung der varianzminimalen Landebahn
+    		\item intuitiv so zu erwarten
+    		\item Potential für inneres Threading beim Auffinden der Landebahn
+    		\end{itemize}
+
 \end{frame}
 \subsection{Einfluss von Compiler Direktiven (speziell Optimizer)}
+\begin{frame}
+Bevor Codeausführung mittels Parallelverarbeitung zur Beschleunigung gebracht werden soll, lohnt es sich meist, durch geeignete Compilerdirektiven die serielle Codeausführung zu beschleunigen.
+
+Der Code wurde mit einem gcc Version 4.8.5 devtoolset version 4 compiliert. Per default findet dabei eine Übersetzung ohne eingeschalteten Optimizer statt. 
+Durch die Benutzung des -O3 Optimizer Direktivs ist eine Codebeschleunigung von 1300~\% (11 sec vs. 147 sec) beobachtet worden. 
+Eine Übersicht über die verwendeten Optimierungsschritte sind unter \footnote{\url{https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html}} einzusehen.
+\end{frame}
 
 \section{Komponente "`databaseManager"'}
 
