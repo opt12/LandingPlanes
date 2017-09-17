@@ -131,6 +131,10 @@
 		\begin{itemize}
 			\item In den \textbackslash note Abschnitt kommen Vortragsnotizen
 			\item \ldots
+			\item ACHTUNG: Im folgenden wird häufig das Word "`planes"' verwendet. 
+			\item Es ist die Bedeutung im Sinne von "`Ebene"' gemeint.
+			\item Das es gleichzeitig auch noch "`Flugzeug"' heißt, ist Zufall
+			\item Pun intended!
 		\end{itemize}
 			
 	Kein Vortrag ohne Katzenfotos!
@@ -166,10 +170,12 @@
 
 	\note{
 		\begin{itemize}
-			\item ACHTUNG: Im folgenden wird häufig das Word "`planes"' verwendet. 
-			\item Es ist die Bedeutung im Sinne von "`Ebene"' gemeint.
-			\item Das es gleichzeitig auch noch "`Flugzeug"' heißt, ist Zufall
-			\item Pun intended!
+         \item bei totalem Triebwerksausfall und kein Flughafen
+         \item natürlich unterschiedlich für Ultraleichtflugzeug und A380
+         \item Ausrichtungswinkel entscheident bei Windverhältnissen. Seitenwind ungeliebt
+         \item TIFF speichert ohne Informationsverlust
+         \item POSIX Threads
+         \item Laufzeitgewinn gegenüber sequentiellem Lauf
 		\end{itemize}
 	}
 
@@ -678,6 +684,15 @@
 	\item  Komponente wird in Form einer statischen Library (aus)geliefert
 \end{itemize}
 
+	\note{
+		\begin{itemize}
+			\item Kapselung wichtig für Wartung und Erweiterbarkeit
+			\item zentralisierte Behandlung der Requirements
+			\item leichtes benutzen an anderer Stelle
+			\item sicherlich noch ausbaufähig
+		\end{itemize}
+	}
+
 \end{frame}
 
 
@@ -702,6 +717,10 @@
 		\begin{itemize}
 			\item nicht Wundern: Größe wie vertikale und horizontale kurzreichweitige sowie Gesamtsteigung Steigung in der Taskdeskription als Parameter
 			\item ist etwas unsauber, könnte man leicht ändern
+			\item natürlich könnte die Komponente auch selbst lernen, Geodaten einzulesen. Aber dann wäre sie zu mächtig
+			\item ebenso mit dem GeoTiffHandler
+			\item Socket für Mongo DB wird übergeben. Identifizierung des Suchlaufs über Taskdescription
+			\item noDataValue beschreibt sozusagen den Wert für NULL
 		\end{itemize}
 	} 
 \end{frame}
@@ -745,6 +764,13 @@
 \label{nasshnlogisch}
 \caption{Nassi-Shneiderman-Diagramm der Suchstrategie}
 \end{figure}
+ 	\note{
+		\begin{itemize}
+			\item TileWorkerObjekt ist nicht der Thread Worker, sondern ist assoziert zu dem übergebenen Kachelobjekt
+			\item Schleife soll andeuten, wo hier Threadpool ins Spiel kommt
+			
+		\end{itemize}
+	} 
 \end{frame}
 
 \subsection{Initialisierung}
@@ -756,6 +782,14 @@
      	\pause - Bestimmung des Startpunktes zur Durchmusterung\\
 		\pause - Bestimmung Anzahl zusammenhängender Punkte einer validen Bahn\\
 	\end{tabular} 
+	 	\note{
+		\begin{itemize}
+			\item Wie schon erwähnt das Workerobjekt hängt an der übergebenen Kachel, nicht am Thread
+			\item Beim Startpunkt geht es darum, sicherzustellen, dass die gesamte Kachel auch wirklich in vorgegebener Richtung durchmustert wird
+			\item bei konstanten Punktabständen kann man genau festlegen, wie viele zusammenhängende Punkte benötigt werden, damit die Längen- und Breitendimension passt. Das erspart ständige Entfernungsberechnungen
+			
+		\end{itemize}
+	} 
 \end{frame}
 
 \subsection{systematisches Durchlaufen der Geodaten}
@@ -781,6 +815,16 @@
 \draw[->,ultra thick,dashed,blue] (-0.5,5.5)--(-0.5,0) node[left]{};
 \end{tikzpicture}
 \end{figure}
+	 	\note{
+		\begin{itemize}
+			\item blauer Vektor zeigt sozusagen die Wanderung des Startpunktes
+			\item man erkennt, dass die Durchmusterungsstrecken nicht gleich lang sind
+			\item von Bahn 1 bis 3 zunehmende Länge, von 3 - 5 wieder abnehmende Längen
+			\item unterschiedlich lange Laufzeit (hängt natürlich noch davon ab, wie viele Cluster gefunden werden, in denen ideale Bahnen gefunden werden)
+			
+			
+		\end{itemize}
+	} 
 \end{frame}
 
 %\subsection{Durchmusterung}
@@ -804,6 +848,15 @@
 \draw[->,ultra thick,dashed,blue] (-0,5.5)--(5,5.5) node[left]{};
 \end{tikzpicture}
 \end{figure}
+	 	\note{
+		\begin{itemize}
+			\item blauer Vektor zeigt auch hier die Wanderung
+			 \item nur an einer Seite
+			 \item alle Strecken gleichlang
+			\item unterschiedlich lange Laufzeit trotzdem möglich (hängt natürlich noch davon ab, wie viele Cluster gefunden werden, in denen ideale Bahnen gefunden werden)
+			
+		\end{itemize}
+	} 
 \end{frame}
 
 \subsection{posix Threads Definition}
@@ -824,7 +877,12 @@
 
 	\note{
 		\begin{itemize}
-			\item 
+			\item Ausführungsmodell ist unabhängig von einer Sprache, allerdings C / C++ am bekanntesten.
+			\item Erlaubt überlappende Programmausführung
+			\item Entstehung ist historisch bedingt. In den Anfangszeiten haben Hardwarehersteller eigene Lösungen bereitgestellt, die aber stark unterschiedlich waren. Es war kaum möglich, portierbare Software zu entwickeln.
+			\item heute stellen die Hardwarehersteller zusätzlich zu properitären Lösungen pthread zur Verfügung
+			\item Vorteil: Thread Erzeugung ca. 10 - 100 Mal schneller als Prozess zu forken
+			\item natürlich nicht Windows bzw. nicht nativ, aber es gibt  Pthreads-w32 und mingw als add on support
 		\end{itemize}
 	}
 
@@ -854,7 +912,10 @@
 	
 	\note{
 		\begin{itemize}
-			\item 
+			\item typisch: pthread_create, pthread_exit, pthread_cancel, pthread_join , pthread_detach
+			\item mutex: pthread_mutex_init, pthread_mutex_destroy, pthread_mutex_lock, pthread_mutex_trylock, pthread_mutex_unlock 
+			\item condition variables: pthread_cond_init, pthread_cond_destroy, werden benutzt um Threadverhalten in Datenabhängigkeit zu steuern (ohne teures Polling)
+			\item Empfehlung: Kurs 01727 Mitautor anwesend 
 		\end{itemize}
 	}
 
