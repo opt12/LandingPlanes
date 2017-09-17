@@ -916,6 +916,7 @@
 			\item mutex: pthread_mutex_init, pthread_mutex_destroy, pthread_mutex_lock, pthread_mutex_trylock, pthread_mutex_unlock 
 			\item condition variables: pthread_cond_init, pthread_cond_destroy, werden benutzt um Threadverhalten in Datenabhängigkeit zu steuern (ohne teures Polling)
 			\item Empfehlung: Kurs 01727 Mitautor anwesend 
+			\was nicht inbegriffen sind Semaphoren. Eine Art Mutex, die allerdings einen Zähler beinhaltet. Mutex ist quasi ein binäres Semaphor
 		\end{itemize}
 	}
 
@@ -977,9 +978,16 @@
 
 		\begin{itemize}
 			\item blaue Linie entspricht dem Master
-			\item rot sind die unabhängigen Threads
+			\item rot sind die unabhängigen Threads des Pools
+			\item Herausgabe neuer Startpunkte ist über ein Mutex synchronisiert
 		\end{itemize}
-
+		\note{
+		\begin{itemize}
+			\item blaue Linie entspricht dem Master
+			\item rot sind die unabhängigen Threads des Pools
+			\item Herausgabe neuer Startpunkte ist über ein Mutex synchronisiert
+		\end{itemize}
+	}
 \end{frame}
 
 \subsection{Detaillierte Beschreibung des Suchalgorithmus}
@@ -996,9 +1004,9 @@
     Dies wird so lange wiederholt, bis 
     		\begin{itemize}
 			\item der Kartenrand erreicht ist
-			\item oder ein Punkt das Kriterium erfüllt
+			\item oder ein Punkt diese Kriterien nicht erfüllt
 		\end{itemize}
-    
+
  \end{frame}
  
 %\subsection{Detaillierte Beschreibung des Suchalgorithmus}
@@ -1013,7 +1021,13 @@
 	\end{tabular} 
 		\skippingparagraph
 	Die beiden gefundenen Bahnen werden in der Mongo-DB abgelegt
-    
+        		\note{
+		\begin{itemize}
+			\item es kann vorkommen, dass es innerhalb der Fläche keine valide Bahn gibt
+			\item z.B. Holprigkeit ist immer kurz unter dem Limit, damit ist die Gesamtsteigung dann plötzlich zu groß
+			
+		\end{itemize}
+	}
  \end{frame}
  
  
@@ -1033,7 +1047,14 @@ Augenmerk lag auf der Verwendung von wenig komplexen Datenstrukturen und Funktio
 
 Außer dem Allokieren des Vektorspeichers sind die Operationen der Hauptschleife unabhängig von $n$
 	
-	
+	        		\note{
+		\begin{itemize}
+			\item Eigentlich weitergefasst. Nicht nur Datenstrukturen, sondern Komplexität bei den Routinen der Hauptschleifen
+			\item Vektor ist random access Zugriff und unabhängig zur Größe. Außer der Allokator, je nachdem, wie man einfügt.
+			\item Kartenpunkte werden als 1 Dim Array übergeben. Die Berechnung der Position aus 2D Koordinaten ist unabhängig von Größe der Datenmenge
+			
+		\end{itemize}
+	}
 \end{frame}
 
 \subsubsection{Erläuterung des Messverfahren}
@@ -1047,7 +1068,16 @@ Außer dem Allokieren des Vektorspeichers sind die Operationen der Hauptschleife 
 			\item pro Parameterset 4 unabhängige Läuft (Mittelwert + Standardabweichung)
 			
 		\end{itemize}
- 
+ 	        		\note{
+		\begin{itemize}
+			\item natürlich interessant ist die Laufzeit: sowohl sequentiell als auch parallel
+			\item Messungen innerhalb einer VM 
+			\item Variation der CPUs der VM
+			\item CPU Modell aus dem Jahr 2013 also schon alt
+			\item 4 Kerne 
+			
+		\end{itemize}
+	}
 \end{frame}
  
 
@@ -1108,6 +1138,14 @@ N$\rightarrow$S (0$^\circ$) & 734 & 16 & 8 & 2733 & 56 \\
 \end{tabular}
 }
 \end{figure}
+     		\note{
+		\begin{itemize}
+			\item zunächst 1 CPU für VM
+			\item CPU wird zwischen unserer Software und Guest OS geteilt
+			\item zu viele threads schaden aber bislang auch nicht
+			
+		\end{itemize}
+	}
  \end{frame}
  
  \begin{frame}{Speedup in Abhängigkeit des Parallelisierungsgrades}{Messergebnisse 2 vCPU}
@@ -1166,6 +1204,14 @@ N$\rightarrow$S (0$^\circ$) & 734 & 16 & 8 & 2733 & 56 \\
 \end{tabular}
 }
 \end{figure}
+     		\note{
+		\begin{itemize}
+			\item interessant: Speedup schon im seriellen Betrieb
+			\item Grund wohl: relative Anteil des OS nimmt ab
+			\item 2 fach parallel hat schon einen Speedup
+			
+		\end{itemize}
+	}
  \end{frame}
  
  \begin{frame}{Speedup in Abhängigkeit des Parallelisierungsgrades}{Messergebnisse 4 vCPU}
@@ -1224,6 +1270,12 @@ N$\rightarrow$S (0$^\circ$) & 734 & 16 & 8 & 2733 & 56 \\
 \end{tabular}
 }
 \end{figure}
+     		\note{
+		\begin{itemize}
+			\item hier wird schon der overhead sichtbar. Auch der master brauch ja Rechenzeit, um den Startpunkt zu verschieben
+			
+		\end{itemize}
+	}
  \end{frame}
  
  
@@ -1285,6 +1337,11 @@ N$\rightarrow$S (0$^\circ$) & 734 & \cellcolor{red!25} 16 & 8 & \cellcolor{red!2
 \end{figure}
 
 8 CPUs eventuell nicht verwertbar, da VM Software Warnung anzeigte.
+     		\note{
+		\begin{itemize}
+			\item hier keine zuverlässige Aussage mehr möglich. VM Host zeigte Warnung an
+		\end{itemize}
+	}
  \end{frame}
 
 
@@ -1315,6 +1372,15 @@ N$\rightarrow$S (0$^\circ$) & 734 & \cellcolor{red!25} 16 & 8 & \cellcolor{red!2
   \end{axis} 
 
   \end{tikzpicture}
+  
+       		\note{
+		\begin{itemize}
+			\item Speedup skaliert anfangs gut
+			\item ab einem gewissen Punkt wird er kleiner
+			\item ab einem gewissen Punkt dominieren die Varianzberechungen 
+			\item außerdem stehen dich die Threads bei den kurzen Bahnen am Ende in den "Füßen rum"
+		\end{itemize}
+	}
 \end{frame}
 
 \subsection{Analyse mittels Profiler}
@@ -1327,6 +1393,14 @@ N$\rightarrow$S (0$^\circ$) & 734 & \cellcolor{red!25} 16 & 8 & \cellcolor{red!2
     		\item intuitiv so zu erwarten
     		\item Potential für inneres Threading beim Auffinden der Landebahn
     		\end{itemize}
+    		
+    		       		\note{
+		\begin{itemize}
+			\item gproof erzeugt   während des Laufes eine Statistik, die man später ansehen kann
+			\item interessant für Performanceverbesserungen
+			
+		\end{itemize}
+	}
 
 \end{frame}
 \subsection{Einfluss von Compiler Direktiven (speziell Optimizer)}
@@ -1338,6 +1412,13 @@ N$\rightarrow$S (0$^\circ$) & 734 & \cellcolor{red!25} 16 & 8 & \cellcolor{red!2
     		\item -O3 Direktiv aktiviert Optimizer 
     		\end{itemize}
     		
+    	\note{
+		\begin{itemize}
+			\item gproof erzeugt   während des Laufes eine Statistik, die man später ansehen kann
+			\item interessant für Performanceverbesserungen
+			
+		\end{itemize}
+	}
 \end{frame}
 \begin{frame}{Einfluss des Optimizers}
 
@@ -1352,9 +1433,17 @@ N$\rightarrow$S (0$^\circ$) & 734 & \cellcolor{red!25} 16 & 8 & \cellcolor{red!2
     		  		\item  Beschleunigung der Codeausführung\\ 
     		  		     um 1300~\% (11 s vs. 147 s)
     		  		\end{itemize}
-	%\begin{tabular}{l}
-%		\pause - Beschleunigung der Codeausführung um 1300~\% (11 s vs. 147 s) \\
-%	\end{tabular} 
+    	\note{
+		\begin{itemize}
+			\item Optimizer hat großen Einfluss
+			\item z.B. toten Code entfernen
+			\item multiple statische Operationen zusammenfassen
+			\item Schleifenoptimierung (herausziehen von Konstanten)
+			\item Zielmaschinenbefehlssatz ausnutzen (bitshift statt diivsion durch 2)
+			
+			
+		\end{itemize}
+	}
 \end{frame}
 \section{Komponente "`databaseManager"'}
 
