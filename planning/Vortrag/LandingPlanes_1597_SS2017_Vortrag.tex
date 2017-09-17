@@ -773,7 +773,7 @@
 	} 
 \end{frame}
 
-\subsection{Initialisierung}
+\subsection*{Initialisierung}
 \begin{frame}{Landebahnbestimmung}{logischer Ablauf}
 	\begin{tabular}{l}
 		\pause - Instanziierung Workerobjekt\\ 
@@ -888,7 +888,7 @@
 
 \end{frame}
 
-\subsection{posix Threads Umfang}
+\subsection*{posix Threads Umfang}
 
 \begin{frame} {posix Threads}{Standard - was gehört dazu}
 	
@@ -950,7 +950,6 @@
 	}
 \end{frame}
 
-\subsection{Parallelverarbeitung mittels p\_threads zum Finden der Landebahnen}
 \begin{frame}{paralleles Suchen der Landebahnen}{Thread-Pool}
 \begin{figure}
 \centering
@@ -979,7 +978,6 @@
 		\begin{itemize}
 			\item blaue Linie entspricht dem Master
 			\item rot sind die unabhängigen Threads des Pools
-			\item Herausgabe neuer Startpunkte ist über ein Mutex synchronisiert
 		\end{itemize}
 		\note{
 		\begin{itemize}
@@ -1057,7 +1055,7 @@ Außer dem Allokieren des Vektorspeichers sind die Operationen der Hauptschleife 
 	}
 \end{frame}
 
-\subsubsection{Erläuterung des Messverfahren}
+\subsection{Erläuterung des Messverfahren}
 \begin{frame}{Speedup in Abhängigkeit des Parallelisierungsgrades}{Messverfahren}
     		\begin{itemize}
 			\item innerhalb VM (Virtualbox)
