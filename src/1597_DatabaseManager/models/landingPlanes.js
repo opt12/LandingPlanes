@@ -65,7 +65,9 @@ var schema = new Schema({
         properties: {
             type: propertiesSchema,
         },
-    }
+    },
+},{
+    timestamps: true
 });
 schema.index({"geoJSON.geometry": '2dsphere'});
 
