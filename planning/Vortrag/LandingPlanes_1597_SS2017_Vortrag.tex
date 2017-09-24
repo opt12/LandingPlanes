@@ -2,7 +2,7 @@
 
 \documentclass[
 	xcolor=dvipsnames,
-%	handout,
+	handout,
 	hideallsubsections,
 	xcolor=table
 ]{beamer} %xcolor=dvipsnames
@@ -20,7 +20,7 @@
 	\setbeamercovered{transparent}
 	% or whatever (possibly just delete it)
 %	\setbeameroption{show notes} % un-comment to see the notes
-	\setbeameroption{show notes on second screen=right}
+%	\setbeameroption{show notes on second screen=right}
 }
 
 
@@ -495,21 +495,36 @@
 	
 	Ein Beispiel der hier verwendeten Höhendatensätze:
 	
-	\only<1>{
 		Die Angaben zur Projektion:
 		\lstinputlisting[style=JSStyle]{snippets/DTM_Hamburg_20m.prj}
 		
 		Die Angaben zur Skalierung:
 		\lstinputlisting[style=JSStyle]{snippets/DTM_Hamburg_20m.tfw}
-	}
 	
-	\only<2>{
+
+	\note{
+	\url{https://de.wikipedia.org/wiki/World_file}
+	Ein World-File enthält 6 Zeilen mit den 6 Parametern der Affintransformation:		
+	\begin{itemize}
+			\item a11 = x-Komponente der Pixelbreite
+			\item a21 = y-Komponente der Pixelbreite
+			\item a12 = x-Komponente der Pixelhöhe
+			\item a22 = y-Komponente der Pixelhöhe (meist negativ)
+			\item b1 = x-Koordinate des obersten linken Bildpunkts (Zentrum des Bildpunkts)
+			\item b2 = y-Koordinate des obersten linken Bildpunkts (Zentrum des Bildpunkts)
+			
+		\end{itemize}
+	}
+
+\end{frame}
+
+\begin{frame} {GeoTIFF}{Beispiel-Datensatz}
+	
 	Die Übersicht über das im GeoTIFF erfasste Gebiet.
 	\begin{figure}
 		\includegraphics[height=0.75\textheight]{images/Gebiet_HH.png}
 	\end{figure}
 	\smaller{\smaller{Höhen sind als Farbwerte umgesetzt.}}
-	}
 
 	\note{
 		\begin{itemize}
@@ -518,6 +533,9 @@
 	}
 
 \end{frame}
+
+
+
 
 
 \subsubsection{Speicherformat: GeoJSON}
