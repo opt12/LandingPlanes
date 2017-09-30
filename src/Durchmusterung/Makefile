@@ -49,6 +49,15 @@ all: checkdir ./bin/landebahn documentation ./lib/plane_library.a
 
 easylib: checkdir documentation ./lib/plane_library.a
 
+precheck:
+	ifeq ("$(wildcard /usr/include/x86_64-linux-gnu/tiff.h)","")
+    		$(error tiff.h needed. This is usually in a package libtiff-dev)
+	endif
+
+	ifeq ("$(wildcard /usr/include/gdal/gdal_priv.h)","")
+    		$(error gdal_priv.h needed. This is usually in a package libgdal-dev)
+	endif
+
 clean:
 	rm ./bin/landebahn || true
 	rm -rf latex || true
@@ -76,10 +85,10 @@ clean:
 ./lib/plane_library.a: ./obj/plane_library.o ./obj/tile_worker.o ./obj/landing_plane.o ./obj/thread_data.o
 	ar rcs ./lib/plane_library.a ./obj/plane_library.o ./obj/tile_worker.o ./obj/landing_plane.o ./obj/thread_data.o
 
-../GeoTiff_handler/src/readInTiff.o:
+../GeoTiff_handler/src/readInTiff.o: precheck
 	$(MAKE) -C ../GeoTiff_Handler/src/ -I/usr/include/gdal/
 
-../GeoTiff_handler/src/GeoTiffHandler.o:
+../GeoTiff_handler/src/GeoTiffHandler.o: precheck
 	$(MAKE) -C ../GeoTiff_Handler/src/ -I/usr/include/gdal/
 
 
