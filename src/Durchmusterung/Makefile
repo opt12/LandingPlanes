@@ -31,7 +31,7 @@ endif
 
 ifeq ("$(wildcard /usr/include/tiff.h)","")
   ifeq ("$(wildcard /usr/include/x86_64-linux-gnu/tiff.h)","")
-    $(error tiff.h needed. This is usually in a package libtiff-devel)
+    $(error tiff.h needed. This is usually in a package libtiff-devel or libtiff-dev)
   endif
 endif
 

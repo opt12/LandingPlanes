@@ -2,7 +2,7 @@ CC=g++ -std=c++11
 
 
 ifeq ("$(wildcard /usr/include/x86_64-linux-gnu/tiff.h)","")
-	$(error tiff.h needed. This is usually in a package libtiff-dev)
+	$(error tiff.h needed. This is usually in a package libtiff-dev or libtiff-devel)
 endif
 
 ifeq ("$(wildcard /usr/include/gdal/gdal_priv.h)","")
