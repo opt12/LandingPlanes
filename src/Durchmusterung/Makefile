@@ -57,7 +57,7 @@ clean:
 ./bin/landebahn: ./main/landebahn.c ./obj/landing_plane.o ./obj/tile_manager.o ./obj/tile_worker.o ./obj/thread_data.o ../GeoTiff_Handler/src/GeoTiffHandler.o ../GeoTiff_Handler/src/readInTiff.o ../1597_searchEngineWrapper/Debug/src/1597_ipc_listener.o
 	$(CC) $(CFLAGS) -o ./bin/landebahn ./main/landebahn.c ../GeoTiff_Handler/src/GeoTiffHandler.o ../GeoTiff_Handler/src/readInTiff.o ./obj/tile_manager.o ./obj/tile_worker.o ./obj/landing_plane.o ./obj/thread_data.o -I../readInTiff/src/ -I./include  -I../GeoTiff_Handler/src -I../1597_searchEngineWrapper/src/ -I/usr/include/gdal/  ../1597_searchEngineWrapper/Debug/src/1597_ipc_listener.o  -ltiff -lpthread -lgdal
 
-./obj/tile_manager.o: ./src/tile_manager.cpp ./include/tile_manager.h ../GeoTiff_handler/src/GeoTiffHandler.o
+./obj/tile_manager.o: ./src/tile_manager.cpp ./include/tile_manager.h ../GeoTiff_Handler/src/GeoTiffHandler.o
 	$(CC) $(CFLAGS) -c ./src/tile_manager.cpp -o ./obj/tile_manager.o -I../readInTiff/src/ -I./include -I../GeoTiff_Handler/src -I../1597_searchEngineWrapper/src/ -I/usr/include/gdal/
 
 ./obj/tile_worker.o: ./src/tile_worker.cpp ./include/tile_worker.h
