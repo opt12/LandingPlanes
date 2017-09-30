@@ -5,7 +5,7 @@ ifeq ("$(wildcard /usr/include/x86_64-linux-gnu/tiff.h)","")
 endif
 
 ifeq ("$(wildcard /usr/include/gdal/gdal_priv.h)","")
-    $(error gdal_priv.h needed. This is usually in a package gdal-dev)
+    $(error gdal_priv.h needed. This is usually in a package libgdal-dev)
 endif
 
 
