@@ -1,21 +1,19 @@
 CC=g++ -std=c++11
 
+ifeq ("$(wildcard /usr/include/gdal/gdal_priv.h)","")
+    $(error tiff.h needed. This is usually in a package gdal-dev)
+endif
+
 all: geotiff
 
 geotiff: readInTiff.o GeoTiffHandler.o GeoTiffHandlerTest 
 
 
 readInTiff.o: readInTiff.c
-	$(CC) -c readInTiff.c -ltiff -I../../gdal/gdal-2.2.1/gcore -I../../gdal/gdal-2.2.1/port -I../../gdal/gdal-2.2.1/ogr 
+	$(CC) -c readInTiff.c -ltiff
 
-GeoTiffHandler.o: GeoTiffHandler.cpp gdal
-	$(CC) -c GeoTiffHandler.cpp -I../../gdal/gdal-2.2.1/gcore -I../../gdal/gdal-2.2.1/port -I../../gdal/gdal-2.2.1/ogr
+GeoTiffHandler.o: GeoTiffHandler.cpp
+	$(CC) -c GeoTiffHandler.cpp -I/usr/include/gdal
 
-GeoTiffHandlerTest: GeoTiffHandlerTest.cpp readInTiff.o pcs.csv gdal
-	$(CC) -o GeoTiffHandlerTest  GeoTiffHandlerTest.cpp -I../../gdal/gdal-2.2.1/gcore -I../../gdal/gdal-2.2.1/port -I../../gdal/gdal-2.2.1/ogr GeoTiffHandler.o readInTiff.o ../../gdal/gdal-2.2.1/.libs/libgdal.so -ltiff 
-
-pcs.csv: ../../gdal/gdal-2.2.1/data/pcs.csv
-	cp  ../../gdal/gdal-2.2.1/data/pcs.csv .
-
-gdal:
-	 $(MAKE) -C ../../gdal
+GeoTiffHandlerTest: GeoTiffHandlerTest.cpp readInTiff.o
+	$(CC) -o GeoTiffHandlerTest  GeoTiffHandlerTest.cpp GeoTiffHandler.o readInTiff.o -I/usr/include/gdal -ltiff -lgdal
