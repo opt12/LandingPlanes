@@ -85,10 +85,10 @@ clean:
 ./lib/plane_library.a: ./obj/plane_library.o ./obj/tile_worker.o ./obj/landing_plane.o ./obj/thread_data.o
 	ar rcs ./lib/plane_library.a ./obj/plane_library.o ./obj/tile_worker.o ./obj/landing_plane.o ./obj/thread_data.o
 
-../GeoTiff_handler/src/readInTiff.o: precheck
+../GeoTiff_Handler/src/readInTiff.o: precheck
 	$(MAKE) -C ../GeoTiff_Handler/src/ -I/usr/include/gdal/
 
-../GeoTiff_handler/src/GeoTiffHandler.o: precheck
+../GeoTiff_Handler/src/GeoTiffHandler.o: precheck
 	$(MAKE) -C ../GeoTiff_Handler/src/ -I/usr/include/gdal/
 
 
