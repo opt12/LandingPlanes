@@ -5,16 +5,15 @@
 
 #include <fstream>
 
-string floattostring(double in)
-{
-    std::ostringstream strs;
-    strs << in;
-    return strs.str();
-}
 
+/*! \brief checks whether there are still untested starting points to be given to threads from the pool
+ *
+ *
+ *  This function checks whether there are still some starting points to be tested.
+ */
 int tile_worker::still_needed()
 {
-    int still = 1;
+    int still = 1; /// 1 means there are still values to be checked. Variable is used for return code
     pthread_mutex_lock( &mutex_start_value );
 
     if ( current_x < 0)
