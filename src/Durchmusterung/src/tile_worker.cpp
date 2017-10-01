@@ -157,7 +157,6 @@ void* thread_data::check_single_plane(void* x_void_ptr /** [in,out] pointer to t
 
     while (! my_tile_worker->get_start_values(i, j) ) // checks whether starting points for scanning are left
     {
-        pixelPair start_point;
         vector< pair<int, int> > coordlist;
 
         while (!completed)
@@ -220,12 +219,12 @@ void* thread_data::check_single_plane(void* x_void_ptr /** [in,out] pointer to t
 
                         if (!ok) // current point is not valid but it might be that current coordlist already has enough valid points
                         {
-                            my_tile_worker->check_current_landebahn(current_in_a_row, my_tile_worker->needed_points_in_a_row, i, j, coordlist, start_point);
+                            my_tile_worker->check_current_landebahn(current_in_a_row, coordlist);
                         }
                     }
                     else  // current point is not valid but it might be that current coordlist already has enough valid points
                     {
-                        my_tile_worker->check_current_landebahn(current_in_a_row, my_tile_worker->needed_points_in_a_row, i, j, coordlist, start_point); 
+                        my_tile_worker->check_current_landebahn(current_in_a_row, coordlist); 
                     }
                 }
 
@@ -234,7 +233,7 @@ void* thread_data::check_single_plane(void* x_void_ptr /** [in,out] pointer to t
             else
             {
                 //current point not def
-                my_tile_worker->check_current_landebahn(current_in_a_row, my_tile_worker->needed_points_in_a_row, i, j, coordlist, start_point); 
+                my_tile_worker->check_current_landebahn(current_in_a_row,coordlist); 
             }
 
             // move point forward
@@ -249,7 +248,7 @@ void* thread_data::check_single_plane(void* x_void_ptr /** [in,out] pointer to t
             {
                 if (j >= my_tile_worker->tile->width.y)
                 {
-                    my_tile_worker->check_current_landebahn(current_in_a_row, my_tile_worker->needed_points_in_a_row, i, j, coordlist, start_point);
+                    my_tile_worker->check_current_landebahn(current_in_a_row, coordlist);
                     break;
                 }
             }
@@ -258,7 +257,7 @@ void* thread_data::check_single_plane(void* x_void_ptr /** [in,out] pointer to t
             {
                 if ((i < 0) || (j >= my_tile_worker->tile->width.y))
                 {
-                    my_tile_worker-> check_current_landebahn(current_in_a_row, my_tile_worker->needed_points_in_a_row, i, j, coordlist, start_point);
+                    my_tile_worker-> check_current_landebahn(current_in_a_row,coordlist);
                     break;
                 }
             }
@@ -267,7 +266,7 @@ void* thread_data::check_single_plane(void* x_void_ptr /** [in,out] pointer to t
             {
                 if (i < 0)
                 {
-                    my_tile_worker->check_current_landebahn(current_in_a_row, my_tile_worker->needed_points_in_a_row, i, j, coordlist, start_point);
+                    my_tile_worker->check_current_landebahn(current_in_a_row, coordlist);
                     break;
                 }
             }
@@ -276,7 +275,7 @@ void* thread_data::check_single_plane(void* x_void_ptr /** [in,out] pointer to t
             {
                 if ((i < 0) || (j < 0))
                 {
-                    my_tile_worker->check_current_landebahn(current_in_a_row, my_tile_worker->needed_points_in_a_row, i, j, coordlist, start_point);
+                    my_tile_worker->check_current_landebahn(current_in_a_row, coordlist);
                     break;
                 }
             }
@@ -285,7 +284,7 @@ void* thread_data::check_single_plane(void* x_void_ptr /** [in,out] pointer to t
             {
                 if (j < 0)
                 {
-                    my_tile_worker->check_current_landebahn(current_in_a_row, my_tile_worker->needed_points_in_a_row, i, j, coordlist, start_point);
+                    my_tile_worker->check_current_landebahn(current_in_a_row, coordlist);
                     break;
                 }
             }
@@ -294,7 +293,7 @@ void* thread_data::check_single_plane(void* x_void_ptr /** [in,out] pointer to t
             {
                 if ((i > my_tile_worker->tile->width.x - 1) || (j < 0))
                 {
-                    my_tile_worker->check_current_landebahn(current_in_a_row, my_tile_worker->needed_points_in_a_row, i, j, coordlist, start_point);
+                    my_tile_worker->check_current_landebahn(current_in_a_row, coordlist);
                     break;
                 }
             }
@@ -303,7 +302,7 @@ void* thread_data::check_single_plane(void* x_void_ptr /** [in,out] pointer to t
             {
                 if (i > my_tile_worker->tile->width.x - 1)
                 {
-                    my_tile_worker->check_current_landebahn(current_in_a_row, my_tile_worker->needed_points_in_a_row, i, j, coordlist, start_point);
+                    my_tile_worker->check_current_landebahn(current_in_a_row, coordlist);
                     break;
                 }
             }
@@ -312,7 +311,7 @@ void* thread_data::check_single_plane(void* x_void_ptr /** [in,out] pointer to t
             {
                 if ((i > my_tile_worker->tile->width.x - 1) || (j > my_tile_worker->tile->width.y - 1))
                 {
-                    my_tile_worker->check_current_landebahn(current_in_a_row, my_tile_worker->needed_points_in_a_row, i, j, coordlist, start_point);
+                    my_tile_worker->check_current_landebahn(current_in_a_row, coordlist);
                     break;
                 }
             }
@@ -631,7 +630,7 @@ void tile_worker::calc_start_coordinates()
  *
  *  This function checks whether the current list with points can be used for searchig for landing planes. It trunactes the list afterwards
  */
-int tile_worker::check_current_landebahn(int &current_in_a_row, const int &needed_points_in_a_row, const int &current_x, const int &current_y, vector< pair<int, int> > &coordlist, pixelPair start_point)
+int tile_worker::check_current_landebahn(int &current_in_a_row /** [in,out] number of points in a row*/, vector< pair<int, int> > &coordlist /** [in,out] list with point references*/)
 {
     if (coordlist.size() > 1)
     {

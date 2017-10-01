@@ -34,7 +34,7 @@ class tile_worker {
         double short_range_slope; ///< max. allowed slope between two neighbours in plane direction
         double long_range_slope; ///< max. allowed slope between first and last point of plane
         double* not_defined; ///< if a not defined value is present is has to be set here
-        int check_current_landebahn(int &current_in_a_row, const int &needed_points_in_a_row, const int &x, const int &y, vector< pair<int, int> > &coordlist, pixelPair start_point);
+        int check_current_landebahn(int &current_in_a_row, vector< pair<int, int> > &coordlist);
         void calc_optimal_vector();
         double inc_x; ///< incremental step size in x-dimension
         double inc_y;///< incremental step size in y-dimension
