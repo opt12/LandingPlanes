@@ -1,3 +1,6 @@
+#ifndef _INCL_GLOBAL
+#define _INCL_GLOBAL
+
 #define IMPRECISION 0.000001
 
 #include <string>
@@ -12,9 +15,6 @@ using namespace std;
  *
  *  This function takes an double values as input and transforms to c++ std::string
  */
-string floattostring(double in /** [in] double value which should be converted into std::string  */ )
-{
-    std::ostringstream strs;
-    strs << in;
-    return strs.str();
-}
+string floattostring(double in /** [in] double value which should be converted into std::string  */ );
+
+#endif

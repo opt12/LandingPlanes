@@ -63,11 +63,14 @@ clean:
 	rm -rf latex || true
 	rm -rf html || true
 	rm ./obj/*.o || true
-./bin/landebahn: ./main/landebahn.c ./obj/landing_plane.o ./obj/tile_manager.o ./obj/tile_worker.o ./obj/thread_data.o ../GeoTiff_Handler/src/GeoTiffHandler.o ../GeoTiff_Handler/src/readInTiff.o ../1597_searchEngineWrapper/Debug/src/1597_ipc_listener.o
-	$(CC) $(CFLAGS) -o ./bin/landebahn ./main/landebahn.c ../GeoTiff_Handler/src/GeoTiffHandler.o ../GeoTiff_Handler/src/readInTiff.o ./obj/tile_manager.o ./obj/tile_worker.o ./obj/landing_plane.o ./obj/thread_data.o -I../readInTiff/src/ -I./include  -I../GeoTiff_Handler/src -I../1597_searchEngineWrapper/src/ -I/usr/include/gdal/  ../1597_searchEngineWrapper/Debug/src/1597_ipc_listener.o  -ltiff -lpthread -lgdal
+./bin/landebahn: ./main/landebahn.c ./obj/landing_plane.o ./obj/tile_manager.o ./obj/tile_worker.o ./obj/thread_data.o ./obj/global.o ../GeoTiff_Handler/src/GeoTiffHandler.o ../GeoTiff_Handler/src/readInTiff.o ../1597_searchEngineWrapper/Debug/src/1597_ipc_listener.o
+	$(CC) $(CFLAGS) -o ./bin/landebahn ./main/landebahn.c ../GeoTiff_Handler/src/GeoTiffHandler.o ../GeoTiff_Handler/src/readInTiff.o ./obj/tile_manager.o ./obj/tile_worker.o ./obj/landing_plane.o ./obj/thread_data.o ./obj/global.o -I../readInTiff/src/ -I./include  -I../GeoTiff_Handler/src -I../1597_searchEngineWrapper/src/ -I/usr/include/gdal/  ../1597_searchEngineWrapper/Debug/src/1597_ipc_listener.o  -ltiff -lpthread -lgdal
 
 ./obj/tile_manager.o: ./src/tile_manager.cpp ./include/tile_manager.h ../GeoTiff_Handler/src/GeoTiffHandler.o
 	$(CC) $(CFLAGS) -c ./src/tile_manager.cpp -o ./obj/tile_manager.o -I../readInTiff/src/ -I./include -I../GeoTiff_Handler/src -I../1597_searchEngineWrapper/src/ -I/usr/include/gdal/
+
+./obj/global.o: ./src/global.cpp
+	$(CC) $(CFLAGS) -c ./src/global.cpp -o ./obj/global.o 
 
 ./obj/tile_worker.o: ./src/tile_worker.cpp ./include/tile_worker.h
 	$(CC) $(CFLAGS) -c ./src/tile_worker.cpp -o ./obj/tile_worker.o -I../readInTiff/src/ -I./include -I../GeoTiff_Handler/src -I../1597_searchEngineWrapper/src/ -I/usr/include/gdal/
@@ -82,8 +85,8 @@ clean:
 ./obj/thread_data.o: ./src/thread_data.cpp ./include/thread_data.h
 	$(CC) $(CFLAGS) -c ./src/thread_data.cpp -o ./obj/thread_data.o -I./include -I../readInTiff/src/ -I../GeoTiff_Handler/src -I/usr/include/gdal -I../1597_searchEngineWrapper/src/
 
-./lib/plane_library.a: ./obj/plane_library.o ./obj/tile_worker.o ./obj/landing_plane.o ./obj/thread_data.o
-	ar rcs ./lib/plane_library.a ./obj/plane_library.o ./obj/tile_worker.o ./obj/landing_plane.o ./obj/thread_data.o
+./lib/plane_library.a: ./obj/plane_library.o ./obj/tile_worker.o ./obj/landing_plane.o ./obj/thread_data.o ./obj/global.o
+	ar rcs ./lib/plane_library.a ./obj/plane_library.o ./obj/tile_worker.o ./obj/landing_plane.o ./obj/thread_data.o ./obj/global.o
 
 ../GeoTiff_Handler/src/readInTiff.o: precheck
 	$(MAKE) -C ../GeoTiff_Handler/src/ -I/usr/include/gdal/
