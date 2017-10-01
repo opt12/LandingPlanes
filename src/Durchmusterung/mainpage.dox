@@ -1,0 +1,6 @@
+/**
+\mainpage documentation of component "Durchmusterung"
+
+In this documentation you will find all information about the component "Durchmusterung", its classes and functions. The threading with POSIX threads is included here also.
+
+*/

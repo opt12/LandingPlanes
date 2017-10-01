@@ -323,6 +323,8 @@ void tile_worker::create_landebahn_coord(pixelPair start_point /** [in] start po
         j["properties"]["mergeable"] = type;
         emitReceiptMsg(*commSocket, "landingPlane", j);
      }
+     else
+       cout << "Found plane"<<endl;
 }
 
 /*! \brief set function for orthogonal slope
@@ -473,6 +475,8 @@ tile_worker::tile_worker()
     resolution_y = 0;
     resolution_x = 0;
     commSocket= NULL;
+    current_x= 0;
+    current_y = 0;
 }
 
 /*! \brief destructor of tile_worker
@@ -516,7 +520,7 @@ void tile_worker::set_param_and_tile(const tileData* tile_in /** [in] pointer to
  */
 void tile_worker::set_x_resolution(double resolution_x /** [in] resolution in x dimension*/)
 {
-    this->resolution_x = resolution_x;
+    this->resolution_x = fabs(resolution_x);
 }
 
 
@@ -528,7 +532,7 @@ void tile_worker::set_x_resolution(double resolution_x /** [in] resolution in x 
 
 void tile_worker::set_y_resolution(double resolution_y /** [in] resolution in y dimension*/)
 {
-    this->resolution_y = resolution_y;
+    this->resolution_y = fabs(resolution_y);
 }
 
 
