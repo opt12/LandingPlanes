@@ -57,7 +57,7 @@ tile_manager::tile_manager()
  *
  * This constructors sets all class members to specified values and already predefines the input tiff file
  */
-tile_manager::tile_manager(string tiff_input_file, double landing_plane_length, double short_range_slope, double long_range_slope, double* not_defined, double start_angle_of_plane, double angle_increment, double width_of_plane, double orthogonal_slope)
+tile_manager::tile_manager(string tiff_input_file, double landing_plane_length, double short_range_slope, double long_range_slope, double* not_defined, double start_angle_of_plane, double angle_increment, double width_of_plane, double orthogonal_slope, int num_threads)
 {
     GDALAllRegister();
     this->tiff_input_file = tiff_input_file;
@@ -70,6 +70,7 @@ tile_manager::tile_manager(string tiff_input_file, double landing_plane_length, 
     this->current_angle = start_angle_of_plane;
     this->width_of_plane = width_of_plane;
     this->orthogonal_slope = orthogonal_slope;
+    this->num_threads = num_threads;
 }
 
 /*! \brief initialization of GeoTiffHandler
@@ -90,7 +91,31 @@ int tile_manager::init_geo_handler()
     not_defined = new double();
     *not_defined = info.noDataValue;
     pixelSize = info.pixelSize;
+    count_x=info.extent.x;
+    count_y=info.extent.y; 
     return 0;
+}
+
+/*! \brief get number of fields in x dimension
+ *
+ *
+ * Returns the number of current fields in x dimension
+@retval number of fields
+ */
+int tile_manager::get_count_x()
+{
+  return count_x;
+}
+
+/*! \brief get number of fields in y dimension
+ *
+ *
+ * Returns the number of current fields in y dimension
+@retval number of fields
+ */
+int tile_manager::get_count_y()
+{
+  return count_y;
 }
 
 /*! \brief destructor of tile_manager
@@ -185,11 +210,15 @@ void tile_manager::get_tile_array(tile_worker* worker_in/** pointer to the worke
     cout << "hier ist slope " << short_range_slope << endl;
     worker_in->set_short_range_slope(short_range_slope);
     worker_in->set_long_range_slope(long_range_slope);
+    cout << "hier ist not definied "<<*not_defined<<endl;
     worker_in->set_not_defined(not_defined);
     worker_in->set_angle(current_angle);
     worker_in->set_GeoTiffHandler(&myGeoTiffHandler);
     worker_in->set_width_of_plane(width_of_plane);
     worker_in->set_orthogonal_slope(orthogonal_slope);
+
+    sem_init(&semaphore, 0, num_threads);
+    worker_in->set_semaphore(&semaphore);
     return;
 }
 

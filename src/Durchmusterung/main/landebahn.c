@@ -44,6 +44,7 @@ int file_readable(string infile /** [in] file to be checked  */)
 @param [in] -I <value> angle increment for searching
 @param [in] -W <value> width of plane in [m]
 @param [in] -O <value> orthogonal slope in percent
+@param [in] -N <value> number of threads to be used
  */
 int main(int argc, char* argv[])
 {
@@ -53,11 +54,11 @@ int main(int argc, char* argv[])
     double landing_plane_length = 0.0;
     double short_range_slope = 100;
     double long_range_slope = 100;
-    double* not_defined = NULL;
     double start_angle_of_plane = 0;
     double angle_increment = 45.0;
     double width_of_plane = 0.0;
     double orthogonal_slope = 0.0;
+    int num_thread = 1;
 
     while (arg < argc && argv[arg][0] == '-')  //while arguments present starting with '-'
     {
@@ -101,7 +102,11 @@ int main(int argc, char* argv[])
             orthogonal_slope = atof(argv[arg + 1]);
             ++arg;
         }
-
+        else if (argv[arg][1] == 'N') // num_thread
+        {
+            num_thread = atoi(argv[arg + 1]);
+            ++arg;
+        }
         ++arg;
     }
 
@@ -130,7 +135,7 @@ int main(int argc, char* argv[])
     tile_worker* worker1;
     worker1 = new tile_worker();
     tile_manager* central_manager;
-    central_manager = new tile_manager(tiff_in, landing_plane_length, short_range_slope, long_range_slope, not_defined, start_angle_of_plane, angle_increment, width_of_plane, orthogonal_slope);
+    central_manager = new tile_manager(tiff_in, landing_plane_length, short_range_slope, long_range_slope, NULL, start_angle_of_plane, angle_increment, width_of_plane, orthogonal_slope, num_thread);
 
     if (central_manager->init_geo_handler() != SUCCESS)
     {
@@ -138,10 +143,8 @@ int main(int argc, char* argv[])
         return LP_ERR_INIT_GEO ;
     }
 
-    if (not_defined != NULL)
-        cout << "not defined ist " << *not_defined << endl;
 
-    central_manager->select_area(0, std::numeric_limits<int>::max(), 0, std::numeric_limits<int>::max());
+    central_manager->select_area(0, central_manager->get_count_x() , 0, central_manager->get_count_y());
     //looping over all subtiles
     for (int i = 0; i < central_manager->get_tiles_X(); i++)
         for (int j = 0; j < central_manager->get_tiles_Y(); j++)
@@ -152,7 +155,6 @@ int main(int argc, char* argv[])
         }
 
     delete (worker1);
-    delete not_defined;
     delete (central_manager);
     return 0;
 }

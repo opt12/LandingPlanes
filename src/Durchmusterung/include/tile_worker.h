@@ -23,7 +23,7 @@ class tile_worker {
     private:
         int own_tile; ///< Check whether the tile has to be freed or if it is the job of the caller
         void report(string report);
-        int commSocket; ///< Socket to put results into (MongoDB)
+        int* commSocket; ///< Pointer to socket to put results into (MongoDB)
         double current_angle; ///< current angle of plane orientation to be scanned.
         const tileData* tile; ///< reference to the tile data (Geo data , ...)
         float access_single_element(int x, int y);

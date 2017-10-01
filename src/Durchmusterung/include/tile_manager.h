@@ -33,15 +33,21 @@ class tile_manager {
         tilingCharacteristics* tileChar; ///< pointer to instance of tilingCharacteristics
         tileData* tile; ///< pointer to instance of a tile
         rectSize pixelSize; ///< scale information from geo tiff file
+        int count_x; ///< number of fields in x dimension
+        int count_y; ///< number of fields in y dimension
+        int num_threads; ///< number of threads to be used
+        sem_t semaphore; ///< semaphore for threading
 
     public:
         tile_manager();
         ~tile_manager();
-        tile_manager(string source_file_in, double landing_plane_length, double short_range_slope, double long_range_slope, double* not_definied, double start_angle_of_plane, double angle_increment, double width_of_plane, double orthogonal_slope);
+        tile_manager(string source_file_in, double landing_plane_length, double short_range_slope, double long_range_slope, double* not_definied, double start_angle_of_plane, double angle_increment, double width_of_plane, double orthogonal_slope, int num_threads);
         void get_tile(tile_worker* worker_in, int idxX, int idxY);
         int init_geo_handler();
         int select_area(int xmin, int xmax, int ymin, int ymax);
         int get_tiles_X();
         int get_tiles_Y();
         void release_tile(int i, int j);
+        int get_count_x();
+        int get_count_y();
 };

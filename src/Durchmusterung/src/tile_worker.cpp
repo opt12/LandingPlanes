@@ -250,7 +250,8 @@ void tile_worker::report(std::string report/** [in] string to be written into te
  */
 void tile_worker::set_commSocket(int commSocket /** [in] socket for MongoDB access*/)
 {
-    this->commSocket = commSocket;
+    this->commSocket = new int();
+    *this->commSocket = commSocket;
 }
 
 /*! \brief set function for shared semaphore for parallel execution
@@ -311,14 +312,17 @@ void tile_worker::create_landebahn_coord(pixelPair start_point /** [in] start po
     pixelCoord pixend;
     pixend.x = tile->offset.x + end_point.x;
     pixend.y = tile->offset.y + end_point.y;
-    json j = myGeoTiffHandler->getGeoJsonPolygon(pixstart, pixend, width_of_plane / 2.0);
-    j["properties"] = (*taskDescription)["scanParameters"];
-    j["properties"]["actualLength"] = length_of_plane;
-    j["properties"]["actualRise"] = actualRise;
-    j["properties"]["actualVariance"] = actualVariance;
-    j["properties"]["actualHeading"] = current_angle;
-    j["properties"]["mergeable"] = type;
-    emitReceiptMsg(commSocket, "landingPlane", j);
+    if (commSocket != NULL) //otherwise the caller is not the web UI
+    {
+        json j = myGeoTiffHandler->getGeoJsonPolygon(pixstart, pixend, width_of_plane / 2.0);
+        j["properties"] = (*taskDescription)["scanParameters"];
+        j["properties"]["actualLength"] = length_of_plane;
+        j["properties"]["actualRise"] = actualRise;
+        j["properties"]["actualVariance"] = actualVariance;
+        j["properties"]["actualHeading"] = current_angle;
+        j["properties"]["mergeable"] = type;
+        emitReceiptMsg(*commSocket, "landingPlane", j);
+     }
 }
 
 /*! \brief set function for orthogonal slope
@@ -468,6 +472,7 @@ tile_worker::tile_worker()
     tile = NULL;
     resolution_y = 0;
     resolution_x = 0;
+    commSocket= NULL;
 }
 
 /*! \brief destructor of tile_worker
