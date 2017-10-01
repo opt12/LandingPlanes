@@ -1,4 +1,4 @@
-/** @landebahn.c */
+/** @file landebahn.c */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -32,6 +32,19 @@ int file_readable(string infile /** [in] file to be checked  */)
 }
 
 
+/*! \brief main function for isolated test programm
+ *
+ *
+ * This function checks whether the given input file is readable
+@param [in] -E <value> tiff file
+@param [in] -L <value> min length of plane in [m]
+@param [in] -S <value> max short range slope in percent
+@param [in] -T <value> max long range slope in percent
+@param [in] -A <value> angle for searching
+@param [in] -I <value> angle increment for searching
+@param [in] -W <value> width of plane in [m]
+@param [in] -O <value> orthogonal slope in percent
+ */
 int main(int argc, char* argv[])
 {
     int arg = 1;
