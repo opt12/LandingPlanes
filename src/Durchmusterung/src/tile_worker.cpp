@@ -206,13 +206,6 @@ void* thread_data::check_single_plane(void* x_void_ptr /** [in,out] pointer to t
 
                         if (ok)
                         {
-                            if (current_in_a_row == 0)
-                            {
-                                //save_point_for later
-                                start_point.x = i;
-                                start_point.y = j;
-                            }
-
                             ++current_in_a_row;
                             coordlist.push_back(make_pair(i, j)); // add current point
                         }
@@ -655,7 +648,11 @@ tile_worker::tile_worker()
     resolution_x = 0;
 }
 
-
+/*! \brief destructor of tile_worker
+ *
+ *
+ *  This destructor removes the object instance. If tile is instanciated from caller, it is not deleted
+ */
 tile_worker::~tile_worker()
 {
     if (own_tile)
@@ -667,14 +664,19 @@ tile_worker::~tile_worker()
 /*! \brief set parameter and tile characteristics
  *
  *
- *  The pointer member variables are set to the instances created by the tile manager
+ *  The pointer member variables are set to the instances created by the caller
  */
-void tile_worker::set_param_and_tile(tileData* tile_in)
+void tile_worker::set_param_and_tile(tileData* tile_in /** [in] pointer to external tile*/)
 {
     tile = tile_in;
 }
 
-void tile_worker::set_param_and_tile(const tileData* tile_in)
+/*! \brief set parameter and tile characteristics
+ *
+ *
+ *  The pointer member variables are set to the instances created by the caller
+ */
+void tile_worker::set_param_and_tile(const tileData* tile_in /** [in] pointer to external tile*/)
 {
     tile = tile_in;
 }
@@ -685,8 +687,7 @@ void tile_worker::set_param_and_tile(const tileData* tile_in)
  *
  *  The resolution of the geo tiff has to be given to the worker so that it can make appropriate adaptions to slope parameters
  */
-
-void tile_worker::set_x_resolution(double resolution_x)
+void tile_worker::set_x_resolution(double resolution_x /** [in] resolution in x dimension*/)
 {
     this->resolution_x = resolution_x;
 }
@@ -698,32 +699,17 @@ void tile_worker::set_x_resolution(double resolution_x)
  * The resolution of the geo tiff has to be given to the worker so that it can make appropriate adaptions to slope parameters
  */
 
-void tile_worker::set_y_resolution(double resolution_y)
+void tile_worker::set_y_resolution(double resolution_y /** [in] resolution in y dimension*/)
 {
     this->resolution_y = resolution_y;
 }
 
 
 
-
-
-/*! \brief DEBUG - print out the whole map in horizontal order
- *
- *
- *  For debug reasons this function can be used for printing out the z-coordinates. Only values larger than -32767 are printed.
- */
-void tile_worker::print_out_map()
-{
-    /*for (int i=0; i < eparam->requestedwidth*eparam->requestedlength; i++)
-    if (tile->buf[i] > -32767)
-      cout << tile->buf[i]<<endl;*/
-}
-
-//debug function
 /*! \brief DEBUG - print out the whole map in horizontal way but with single element retrieval.
  *
  *
- *  For debug reasons this function can be used for printing out the z-coordinates. Only values larger than -32767 are printed via single element retrieval.
+ *  For debug reasons this function can be used for printing out the z-coordinates. All values are printed via single element retrieval.
  */
 void tile_worker::check_element_access()
 {
@@ -731,9 +717,7 @@ void tile_worker::check_element_access()
         for (int x = 0; x < tile->width.x; x++)
         {
             float temp = access_single_element(x, y);
-
-            if (temp > -32767)
-                cout << temp << endl;
+            cout << temp << endl;
         }
 }
 
@@ -742,8 +726,10 @@ void tile_worker::check_element_access()
  *
  *
  *   This function retrieves the element with the requested x and y coordinate. If requeted element is outside the map then <float>::min() is returned.
+@retval value if valid point
+@retval numeric_limits<float>::min() if point is outside range
  */
-float tile_worker::access_single_element(int x, int y)
+float tile_worker::access_single_element(int x /** [in] x coordinate of requested field*/, int y /** [in] y coordinate of requested field*/)
 {
     if (tile->width.x * y + x < tile->width.x * tile->width.y)
         return (tile->buf[tile->width.x * y + x]);
@@ -753,82 +739,74 @@ float tile_worker::access_single_element(int x, int y)
 
 
 
-/*! \brief DEBUG wrapper for all 8 orientations
+/*! \brief public wrapper for starting the scan
  *
  *
- *   This function is a simple wrapper to check the check_steigungen function for all 8 possible dimensions
+ *   This function is a simple wrapper to call the private scan method
  */
 void tile_worker::durchmustere_kachel()
 {
-    //report("durchmustere kacheln\n");
-    //  set_angle(0);
-    check_steigungen(/*1*/);
-    /*set_angle(45);
-    check_steigungen(2);
-    set_angle(90);
-    check_steigungen(3);
-    set_angle(135);
-    check_steigungen(4);
-    set_angle(180);
-    check_steigungen(5);
-    set_angle(225);
-    check_steigungen(6);
-    set_angle(270);
-    check_steigungen(7);
-    set_angle(315);
-    check_steigungen(8);*/
+    check_steigungen();
     return;
 }
 
-void tile_worker::set_landing_plane_length(double landing_plane_length)
+/*! \brief set landing plane length
+ *
+ *
+ *  This function sets the requested minimal landing plane length to the instance object 
+ */
+void tile_worker::set_landing_plane_length(double landing_plane_length /** [in] minimal length of plane*/)
 {
     this->landing_plane_length = landing_plane_length;
 }
 
-void tile_worker::set_short_range_slope(double short_range_slope)
+/*! \brief set maximal slope of neighboured points in plane direction
+ *
+ *
+ *  This function sets the maximal allowed slope of neighboured points in the scanning direction
+ */
+void tile_worker::set_short_range_slope(double short_range_slope /** [in] maximal allowed slope in short range*/)
 {
     this->short_range_slope = short_range_slope;
 }
 
-void tile_worker::set_long_range_slope(double long_range_slope)
+/*! \brief set maximal slope of start and endpoint in plane direction
+ *
+ *
+ *  This function sets the maximal allowed slope of start- and endpoint in the scanning direction
+ */
+void tile_worker::set_long_range_slope(double long_range_slope /** [in] maximal allowed slope in long range*/)
 {
     this->long_range_slope = long_range_slope;
 }
 
-void tile_worker::set_not_defined(double* not_defined)
+/*! \brief set the undefinied value
+ *
+ *
+ *  This function sets the undefined data value. NULL if this does not exist
+ */
+void tile_worker::set_not_defined(double* not_defined /** [in] undefinied data value*/)
 {
     this->not_defined = not_defined;
 }
 
 
 
-/*! \brief central function for checking conditions
+/*! \brief central function for thread handling
  *
  *
- *   This function is currently realized by a simple approach with 8 given orientations (45° stepwise). It has included some internal validations for debug reasons. This is still under construction.
+ *   This function is creating threads until the semaphore is 0. This allows to control the number of parallel execution
  */
-
-void tile_worker::check_steigungen(/*const int direction*/ /*1: N -> S, 2: NNO -> SSW, 3: O -> W, 4: SSO -> NNW, 5: S -> N, 6: SSW -> NNO, 7: W -> O, 8: NNW -> SSO */)
+void tile_worker::check_steigungen()
 {
     calc_optimal_vector();
     calc_start_coordinates();
-    /*  int inc_x=0;
-      int inc_y=0;
-      int startx;
-      int starty;
-
-      int orth_x=0;
-      int orth_y=0;*/
-    //  int allowed_diff=0;
-    //  int needed_points_in_a_row=0;
     current_x = startx;
     current_y = starty;
 
     while (still_needed())
     {
-        //cout << "before sem"<<endl;
         sem_wait (count_sem);
-        //cout << "after sem"<<endl;
         pthread_t newthread;
         thread_data* thread_data_temp = new thread_data(this);
 
@@ -848,7 +826,6 @@ void tile_worker::check_steigungen(/*const int direction*/ /*1: N -> S, 2: NNO -
             return;
         }
 
-    //cout << "slope "<<short_range_slope<<" and reso " << resolution_y<<endl;
     return;
 }
 

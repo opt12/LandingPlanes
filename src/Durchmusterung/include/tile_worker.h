@@ -66,14 +66,12 @@ class tile_worker {
 
     public:
         friend class thread_data;
-        void* check_single_plane(void* x_void_ptr);
         tile_worker();
         tile_worker(const tileData* tile_in, double landing_plane_length, double short_range_slope, double long_range_slope, double* not_defined, double angle, GeoTiffHandler* master, double width_of_plane, double orthogonal_slope, int commSocket, const json* taskDescription,  sem_t* count_sem, rectSize pixelSize);
         ~tile_worker();
         void set_param_and_tile( tileData* tile_in);
         void set_taskDescription( const json* taskDescription);
         void set_param_and_tile (const tileData* tile_in);
-        void print_out_map();
         void check_element_access();
         void durchmustere_kachel();
         void set_x_resolution(double resolution_x);
