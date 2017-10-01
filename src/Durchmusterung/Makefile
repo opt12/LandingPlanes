@@ -105,7 +105,7 @@ checkdir:
 	mkdir obj || true
 	mkdir lib || true
 
-html/index.html: ./src/tile_manager.cpp ./src/tile_worker.cpp ./include/tile_worker.h ./include/tile_manager.h
+html/index.html: ./src/tile_manager.cpp ./src/tile_worker.cpp ./src/landing_plane.cpp ./src/plane_library.cpp ./src/thread_data.cpp  ./src/global.cpp ./include/thread_data.h ./include/plane_library.h ./include/landing_plane.h ./include/global.h ./include/tile_worker.h ./include/tile_manager.h
 ifndef DOXY_AVAIL
 	$(info "doxygen not available so no documentation created")
 else 
