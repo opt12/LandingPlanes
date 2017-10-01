@@ -17,9 +17,9 @@ class landing_plane {
         pair<int, int> getendpoint();
 
     private:
-        double length;
-        double varianz;
-        double slope;
-        pair<int, int> startpoint;
-        pair<int, int> endpoint;
+        double length; ///< lengh of plane in [m]
+        double varianz;  ///< variance of plane
+        double slope; ///< slope of plane in percentage
+        pair<int, int> startpoint; ///< start point in tile coordinates
+        pair<int, int> endpoint; ///< end point in tile coordinates
 };
