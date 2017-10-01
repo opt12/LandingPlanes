@@ -6,5 +6,5 @@ class thread_data {
         static void* check_single_plane(void* x_void_ptr);
 
     private:
-        tile_worker* my_tile_worker;
+        tile_worker* my_tile_worker; /// pointer to the tile_worker class. Read only usage by thread
 };
