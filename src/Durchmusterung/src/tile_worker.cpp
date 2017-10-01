@@ -32,32 +32,29 @@ int tile_worker::still_needed()
     return still;
 }
 
-int tile_worker::get_start_values(double &startposx, double &startposy)
+/*! \brief determine the next starting point for a landing plane scan
+ *
+ *
+ *  The current x and y values are taken and the incremental x and/or y increment is added. The return code indicates whether this point is valid or if all work is done and no starting point is left.
+@retval 0 valid point.
+@retval 1 no point left.
+ */
+int tile_worker::get_start_values(double &startposx /** [in,out] reference to the x coordinate of starting point  */, double &startposy /** [in,out] reference to the y coordinate of starting point  */)
 {
     pthread_mutex_lock( &mutex_start_value );
     startposx = current_x;
     startposy = current_y;
 
-    //current_x +=inc_x;
-    //current_y +=inc_y;
-
-    //report("point after inc "+floattostring(i)+","+floattostring(j));
-    // cout << "point "<<i<<","<<j<<endl;
-
     if (direction == 1)
     {
-        // if (current_y >= tile->width.y)
-        // {
         current_x++; //since inc_x zero increment by 1
         current_y = 0;
-        //  }
     }
 
     if (direction == 2)
     {
         current_x -= inc_x;
 
-        //current_y=0;
         if ((current_x >= tile->width.x - 1))
         {
             startx = tile->width.x - 1;
@@ -124,7 +121,6 @@ int tile_worker::get_start_values(double &startposx, double &startposy)
     pthread_mutex_unlock( &mutex_start_value );
 
     //completed check
-    //report("Corrected point "+floattostring(i)+","+floattostring(j));
     if ( current_x < 0)
         return 1;
 
@@ -141,7 +137,13 @@ int tile_worker::get_start_values(double &startposx, double &startposy)
 }
 
 
-void* thread_data::check_single_plane(void* x_void_ptr)
+/*! \brief pointer to function which is given to p_thread.
+ *
+ *
+ *  Within this function the p_thread is doing its work. First a new starting point to scan is requested by the master. If no more available, the thread is terminated. If a valid starting point is available then the thread is fetching point after point which is located in the requested plane orientation. For each point, several checks are performed e.g. slope with previous point, slope with orthogonal points, validity of data point value itself, .... if all criteria match the job parameter, then this point is added to a vector (list). This procedure is repeated until no further points are left of the current point does not fulfill the requested parameters. Then the current collected points in the vector (list) are checked whether they fulfill the min. length of the plane. If this is the case a subroutine is called for calculating the longest plane and the plane with min variance but fulfilling the min. length criteria.
+@retval NULL thread is done
+ */
+void* thread_data::check_single_plane(void* x_void_ptr /** [in,out] pointer to the tile_worker object */)
 {
     tile_worker* my_tile_worker = ((thread_data*)x_void_ptr)->my_tile_worker;
     int completed = 0;
@@ -153,7 +155,7 @@ void* thread_data::check_single_plane(void* x_void_ptr)
     int previous_y = 0;
     int previous_valid = 0;
 
-    while (! my_tile_worker->get_start_values(i, j) )
+    while (! my_tile_worker->get_start_values(i, j) ) // checks whether starting points for scanning are left
     {
         pixelPair start_point;
         vector< pair<int, int> > coordlist;
@@ -162,45 +164,42 @@ void* thread_data::check_single_plane(void* x_void_ptr)
         {
             ++checksum;
 
-            if (my_tile_worker->not_defined == NULL || *my_tile_worker->not_defined != my_tile_worker->access_single_element(i, j))
+            if (my_tile_worker->not_defined == NULL || *my_tile_worker->not_defined != my_tile_worker->access_single_element(i, j)) // checks whether current point has valid geo information
             {
-                if (previous_valid)
+                if (previous_valid) // checks whether it is not the first point in a row
                 {
-                    if (fabs(my_tile_worker->access_single_element(i, j) - my_tile_worker->access_single_element(previous_x, previous_y)) < my_tile_worker->allowed_diff)
+                    if (fabs(my_tile_worker->access_single_element(i, j) - my_tile_worker->access_single_element(previous_x, previous_y)) < my_tile_worker->allowed_diff) // check diff between neighboured points in plane direction
                     {
                         // now loop over all orthogonal elements
                         int ok = 1;
 
-                        for (int k = 0; k < 2; k++)
+                        for (int k = 0; k < 2; k++) // loop in two directions 
                         {
                             double new_x = i;
                             double new_y = j;
                             double factor = pow(-1, k);
 
-                            for (int l = 0; l < my_tile_worker->needed_orthogonal_points_in_a_row; l++)
+                            for (int l = 0; l < my_tile_worker->needed_orthogonal_points_in_a_row; l++) // loop over all needed orthogonal points
                             {
                                 double old_x = new_x;
                                 double old_y = new_y;
                                 new_x += factor * my_tile_worker->orth_x;
                                 new_y += factor * my_tile_worker->orth_y;
 
-                                if (((new_x >= 0) && (new_x < my_tile_worker->tile->width.x)) && ((new_y >= 0) && (new_y < my_tile_worker->tile->width.y)))
+                                if (((new_x >= 0) && (new_x < my_tile_worker->tile->width.x)) && ((new_y >= 0) && (new_y < my_tile_worker->tile->width.y))) // vaild range check
                                 {
-                                    if (fabs(my_tile_worker->access_single_element(new_x, new_y) - my_tile_worker->access_single_element(old_x, old_y)) > my_tile_worker->allowed_orthogonal_diff)
+                                    if (fabs(my_tile_worker->access_single_element(new_x, new_y) - my_tile_worker->access_single_element(old_x, old_y)) > my_tile_worker->allowed_orthogonal_diff) // check for orthogonal diff
                                     {
                                         ok = 0;
-                                        //report("fail1 since "+floattostring(access_single_element(new_x,new_y))+" and "+floattostring(access_single_element(old_x,old_y))+" is larger than "+floattostring(allowed_orthogonal_diff));
                                     }
 
-                                    if (fabs(my_tile_worker->access_single_element(new_x, new_y) - my_tile_worker->access_single_element(new_x - my_tile_worker->inc_x, new_y - my_tile_worker->inc_y)) > my_tile_worker->allowed_diff)
+                                    if (fabs(my_tile_worker->access_single_element(new_x, new_y) - my_tile_worker->access_single_element(new_x - my_tile_worker->inc_x, new_y - my_tile_worker->inc_y)) > my_tile_worker->allowed_diff) // check for diff in plane direction for all orthogonal neighbours
                                     {
                                         ok = 0;
-                                        //report("diff is "+floattostring(fabs(access_single_element(new_x,new_y) - access_single_element(new_x-inc_x,new_y-inc_y))));
                                     }
                                 }
                                 else
                                 {
-                                    //report("fail3");
                                     ok = 0;
                                 }
                             }
@@ -210,25 +209,23 @@ void* thread_data::check_single_plane(void* x_void_ptr)
                         {
                             if (current_in_a_row == 0)
                             {
-                                //save_point_forlater
+                                //save_point_for later
                                 start_point.x = i;
                                 start_point.y = j;
                             }
 
                             ++current_in_a_row;
-                            coordlist.push_back(make_pair(i, j));
-                            //     printf("Ein fertiger Punkt ist %d, %d\n",i,j);
+                            coordlist.push_back(make_pair(i, j)); // add current point
                         }
 
-                        if (!ok)
+                        if (!ok) // current point is not valid but it might be that current coordlist already has enough valid points
                         {
                             my_tile_worker->check_current_landebahn(current_in_a_row, my_tile_worker->needed_points_in_a_row, i, j, coordlist, start_point);
                         }
                     }
-                    else
+                    else  // current point is not valid but it might be that current coordlist already has enough valid points
                     {
-                        my_tile_worker->check_current_landebahn(current_in_a_row, my_tile_worker->needed_points_in_a_row, i, j, coordlist, start_point);
-                        //    printf("not accept sh.sl. %lf und %lf\n",access_single_element(i,j),access_single_element(previous_x,previous_y));
+                        my_tile_worker->check_current_landebahn(current_in_a_row, my_tile_worker->needed_points_in_a_row, i, j, coordlist, start_point); 
                     }
                 }
 
@@ -237,19 +234,17 @@ void* thread_data::check_single_plane(void* x_void_ptr)
             else
             {
                 //current point not def
-                previous_valid = 0;
-                current_in_a_row = 0;
-                coordlist.clear();
+                my_tile_worker->check_current_landebahn(current_in_a_row, my_tile_worker->needed_points_in_a_row, i, j, coordlist, start_point); 
             }
 
+            // move point forward
             previous_x = i;
             previous_y = j;
             i += my_tile_worker->inc_x;
             j += my_tile_worker->inc_y;
 
-            //report("point after inc "+floattostring(i)+","+floattostring(j));
-            // cout << "point "<<i<<","<<j<<endl;
-
+            
+            // now we have to check whether the new point is still in the range of valid tile. If not collected points have to be checked to have a potential valid plane
             if (my_tile_worker->direction == 1)
             {
                 if (j >= my_tile_worker->tile->width.y)
@@ -291,9 +286,6 @@ void* thread_data::check_single_plane(void* x_void_ptr)
                 if (j < 0)
                 {
                     my_tile_worker->check_current_landebahn(current_in_a_row, my_tile_worker->needed_points_in_a_row, i, j, coordlist, start_point);
-                    //j=my_tile_worker->tile->width.y-1;
-                    //i+=1;; // since inc_x zero shift by 1
-                    //previous_valid=0;
                     break;
                 }
             }
@@ -324,71 +316,52 @@ void* thread_data::check_single_plane(void* x_void_ptr)
                     break;
                 }
             }
-
-            //completed check
-            //report("Corrected point "+floattostring(i)+","+floattostring(j));
-            /*   if(i < 0)
-                break;
-
-            if ( j < 0)
-              break;
-
-             if (i > tile->width.x)
-              break;
-
-             if (j > tile->width.y)
-              break;
-            */
         }
     }
 
-    /*  my_tile_worker->report("Checksum is "+floattostring(checksum));
-      printf("Checksum is %d\n",checksum);
-
-      if (checksum == my_tile_worker->tile->width.x*my_tile_worker->tile->width.y)
-       printf("OK\n");
-      else
-        printf("FATAL\n");
-    */
+    // here the outer loop quits which indicates that no starting points are left
     sem_post(my_tile_worker->count_sem);
     /* the function must return something - NULL will do */
     return NULL;
 }
 
-
-void tile_worker::find_best_planes(vector< pair<int, int> > &coordlist)
+/*! \brief find longest valid and plane with minimal variance within the list
+ *
+ *
+ *  This function iterates over the vector of valid points to find two planes. The first one is the longest possible plane which fulfills the maximal allowed slope. The second one is the one with the minimal variance but still fulfilling the maximal allowed slope 
+ */
+void tile_worker::find_best_planes(vector< pair<int, int> > &coordlist /** [in,out] reference to the vector of valid points describing a potential plane */)
 {
     landing_plane* plane_min_varianz = NULL;
     landing_plane* plane_max_length = NULL;
 
-    for (int i = 0; i < (int) coordlist.size(); i++)
+    for (int i = 0; i < (int) coordlist.size(); i++) // loop over all points in list
     {
         double sum = 0;
         int count = 0;
 
-        for (int j = i; j < (int) coordlist.size() - 1; j++)
+        for (int j = i; j < (int) coordlist.size() - 1; j++) // loop over all points from current start point to end of list
         {
             sum += fabs(access_single_element(coordlist[j].first, coordlist[j].second) - access_single_element(coordlist[j + 1].first, coordlist[j + 1].second));
             ++count;
             double length;
             double slope;
 
-            if ((length = sqrt(pow(((coordlist[i].first - coordlist[j + 1].first) * resolution_x), 2) + pow(((coordlist[i].second - coordlist[j + 1].second) * resolution_y), 2))) >= landing_plane_length)
+            if ((length = sqrt(pow(((coordlist[i].first - coordlist[j + 1].first) * resolution_x), 2) + pow(((coordlist[i].second - coordlist[j + 1].second) * resolution_y), 2))) >= landing_plane_length) // if minimal length fulfilled
             {
-                if ((slope = fabs(access_single_element(coordlist[i].first, coordlist[i].second) - access_single_element(coordlist[j + 1].first, coordlist[j + 1].second))) <= long_range_slope * length / 100.0)
+                if ((slope = fabs(access_single_element(coordlist[i].first, coordlist[i].second) - access_single_element(coordlist[j + 1].first, coordlist[j + 1].second))) <= long_range_slope * length / 100.0) // if maximal slope fulfilled
                 {
                     double varianz = 0;
                     double mean = sum / (double) count;
 
-                    //         report("Varianz geht von "+floattostring(i)+" bis "+floattostring(j)+ " hat also count von "+floattostring(count)+", der Mittelwert ist "+floattostring(mean));
-                    for (int k = i; k < j; k++)
+                    for (int k = i; k < j; k++) // calculate variance
                     {
-                        //           report("k ist "+floattostring(access_single_element(coordlist[k].first,coordlist[k].second))+", k+1 ist "+floattostring(access_single_element(coordlist[k+1].first,coordlist[k+1].second)));
                         varianz += pow(fabs(access_single_element(coordlist[k].first, coordlist[k].second) - access_single_element(coordlist[k + 1].first, coordlist[k + 1].second)) - mean, 2);
                     }
 
                     varianz = varianz / count;
 
+                    // now compare to both yet best planes and substitute if current plane is better
                     if (plane_min_varianz == NULL)
                         plane_min_varianz = new landing_plane(length, varianz, make_pair(coordlist[i].first, coordlist[i].second), make_pair(coordlist[j - 1].first, coordlist[j - 1].second), slope);
                     else
@@ -403,8 +376,10 @@ void tile_worker::find_best_planes(vector< pair<int, int> > &coordlist)
         }
     }
 
-    if (plane_max_length != NULL)
+
+    if (plane_max_length != NULL) 
     {
+        // now transfer plane with max length to mongodb
         pixelPair startpoint, endpoint;
         startpoint.x = plane_max_length->getstartpoint().first;
         startpoint.y = plane_max_length->getstartpoint().second;
@@ -415,6 +390,7 @@ void tile_worker::find_best_planes(vector< pair<int, int> > &coordlist)
 
     if (plane_min_varianz != NULL)
     {
+        // now transfer plane with min variacne to mongodb
         pixelPair startpoint, endpoint;
         startpoint.x = plane_min_varianz->getstartpoint().first;
         startpoint.y = plane_min_varianz->getstartpoint().second;
@@ -423,19 +399,29 @@ void tile_worker::find_best_planes(vector< pair<int, int> > &coordlist)
         create_landebahn_coord(startpoint, endpoint, "false", plane_min_varianz->print_slope(), plane_min_varianz->print_varianz(), plane_min_varianz->print_length());
     }
 
+    // free memory
     delete plane_max_length;
     plane_max_length = NULL;
     delete plane_min_varianz;
     plane_min_varianz = NULL;
 }
 
-void tile_worker::set_taskDescription(const json* taskDescription)
+/*! \brief set function for taskDescription
+ *
+ *
+ *  This function sets taskDescription of object instance
+ */
+void tile_worker::set_taskDescription(const json* taskDescription /** [in] pointer to taskDescription */)
 {
     this->taskDescription = taskDescription;
 }
 
-
-void tile_worker::report(std::string report)
+/*! \brief DEBUG - writes a given string into a temp file
+ *
+ *
+ *  For debug reasons this function can be used for writing a string into a temp file
+ */
+void tile_worker::report(std::string report/** [in] string to be written into temp file*/)
 {
     std::ofstream outfile;
     outfile.open("/tmp/landingreport.txt", std::ios_base::app);
@@ -443,13 +429,22 @@ void tile_worker::report(std::string report)
     outfile.close();
 }
 
-void tile_worker::set_commSocket(int commSocket)
+/*! \brief set function for commSocket with MongoDB
+ *
+ *
+ *  This function sets commSocket of object instance
+ */
+void tile_worker::set_commSocket(int commSocket /** [in] socket for MongoDB access*/)
 {
     this->commSocket = commSocket;
 }
 
-
-void tile_worker::set_semaphore(sem_t* count_sem)
+/*! \brief set function for shared semaphore for parallel execution
+ *
+ *
+ *  This function sets the reference to the semaphore of object instance
+ */
+void tile_worker::set_semaphore(sem_t* count_sem /** [in] sempahore for parallel execution*/)
 {
     this->count_sem = count_sem;
 }
