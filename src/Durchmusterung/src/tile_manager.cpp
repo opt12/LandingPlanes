@@ -2,10 +2,6 @@
 #include "error.h"
 
 
-/*geoCoord tile_manager::cal_geo_from_pixel(pixelCoord pix)
-{
-return myGeoTiffHandler.pixel2Geo( pix);
-}*/
 
 
 
@@ -59,7 +55,7 @@ tile_manager::tile_manager()
 /*! \brief constructor of tile_manager
  *
  *
- * This constructors sets all class members to default and already predefines the input tiff file
+ * This constructors sets all class members to specified values and already predefines the input tiff file
  */
 tile_manager::tile_manager(string tiff_input_file, double landing_plane_length, double short_range_slope, double long_range_slope, double* not_defined, double start_angle_of_plane, double angle_increment, double width_of_plane, double orthogonal_slope)
 {
@@ -69,10 +65,6 @@ tile_manager::tile_manager(string tiff_input_file, double landing_plane_length, 
     this->short_range_slope = short_range_slope;
     this->long_range_slope = long_range_slope;
     this->not_defined = not_defined;
-
-    if (not_defined != NULL)
-        cout << "not defined in constructor " << *this->not_defined << endl;
-
     this->start_angle_of_plane = start_angle_of_plane;
     this->angle_increment = angle_increment;
     this->current_angle = start_angle_of_plane;
@@ -80,10 +72,13 @@ tile_manager::tile_manager(string tiff_input_file, double landing_plane_length, 
     this->orthogonal_slope = orthogonal_slope;
 }
 
+/*! \brief initialization of GeoTiffHandler
+ *
+ *
+ * This function initializes the GeoTiffHandler for the current tiff file
+ */
 int tile_manager::init_geo_handler()
 {
-    cout << "would like to open " << tiff_input_file << endl;
-
     if (myGeoTiffHandler.openGeoTiff(tiff_input_file.c_str()) != SUCCESS)
         return LP_ERR_INIT_GEO ;
 
@@ -94,19 +89,29 @@ int tile_manager::init_geo_handler()
 
     not_defined = new double();
     *not_defined = info.noDataValue;
+    pixelSize = info.pixelSize;
     return 0;
 }
 
-
+/*! \brief destructor of tile_manager
+ *
+ *
+ * The default destructor of tile_manager
+ */
 tile_manager::~tile_manager()
 {
     delete (tileChar);
     delete (not_defined);
 }
 
-int tile_manager::select_area(int xmin, int xmax, int ymin, int ymax)
+/*! \brief selects a sub area of the map
+ *
+ *
+ * This function let you allow to scan a sub area of the tiff file. However default behaviour should be call with max::int as xmax and ymax.
+@retval 0 OK
+ */
+int tile_manager::select_area(int xmin /** [in] min x value for area*/, int xmax /**[in] max x value for area*/, int ymin /**[in] min y value for area*/, int ymax/**[in] max y  value for area*/)
 {
-    cout << "aha" << endl;
     tileChar = new tilingCharacteristics();
     pixelCoord pix = { xmax, ymax};
     geoCoord geoBottomRight = myGeoTiffHandler.pixel2Geo( pix);
@@ -120,19 +125,20 @@ int tile_manager::select_area(int xmin, int xmax, int ymin, int ymax)
 /*! \brief read from tiff to tile_worker
  *
  *
- * This method reads in a tile from a tiff file to the internal strcutre of the tile_worker
+ * This method reads in a subtile from a tiff file to the internal strcutre of the tile_worker
  */
-void tile_manager::get_tile(tile_worker* worker_in, int x, int y)
+void tile_manager::get_tile(tile_worker* worker_in /** reference to tile_worker*/, int x  , int y /** y index of subtile*/)
 {
     get_tile_array(worker_in, x, y);
 }
+
 
 /*! \brief returns number of tiles in X
  *
  *
  * This function returns the number of tiles in x dimension
+@retval number of tiles in X
  */
-
 int tile_manager::get_tiles_X()
 {
     return tileChar->tilesInX;
@@ -143,8 +149,8 @@ int tile_manager::get_tiles_X()
  *
  *
  * This function returns the number of tiles in y dimension
+@retval number of tiles in Y
  */
-
 int tile_manager::get_tiles_Y()
 {
     return tileChar->tilesInY;
@@ -157,22 +163,8 @@ int tile_manager::get_tiles_Y()
  *
  * This method reads in a tile defined by min x and miny and the dimensions width (x dimension) and length (y dimension). Pointer to extraction parameters and tile characteristics are given to the requesting tile_worker instance and in addition stored to the tile_manager global_map, so that additional workers can reuse the occupied memory (read only).
  */
-void tile_manager::get_tile_array(tile_worker* worker_in, int idxX, int idxY)
+void tile_manager::get_tile_array(tile_worker* worker_in/** pointer to the worker object*/, int idxX /** x index of subtile to be fetched*/, int idxY /** y index of subtile to be fetched*/)
 {
-    /*  cout << "aha"<<endl;
-      tileChar = new tilingCharacteristics();
-
-      pixelCoord pix = { xmin+width, ymin+length};
-      geoCoord geoBottomRight = myGeoTiffHandler.pixel2Geo( pix);
-      pix = { xmin, ymin};
-      geoCoord geoTopLeft = myGeoTiffHandler.pixel2Geo( pix);
-      myGeoTiffHandler.getTilingInfo(geoTopLeft, geoBottomRight, 0, MAX_SIZE, tileChar);
-      cout << tileChar <<endl;
-      cout << "Tiles in Y "<<tileChar->tilesInY<<endl;
-      cout << "Tiles in X "<<tileChar->tilesInX<<endl;
-                    for(int idxX=0; idxX< tileChar->tilesInX; idxX++){
-                            for(int idxY=0; idxY< tileChar->tilesInY; idxY++){*/
-    //                              tileData* tile;
     tile = new tileData();
     cout << "Fetch tile" << idxX << " and " << idxY << endl;
     int retcode = myGeoTiffHandler.getTile(idxX, idxY, tile);
@@ -184,31 +176,11 @@ void tile_manager::get_tile_array(tile_worker* worker_in, int idxX, int idxY)
                       tile->width.x, tile->width.y, tile->buf);
     cout << "tile offset  = " << tile->offset.x << " " << tile->offset.y << endl;
     cout << "tile width = " << tile->width.x << " " << tile->width.y << endl;
-    //                         }
-    //}
-    /*
-      int retcode =  getImageInformation(info, tiff_input_file.c_str() );
-    #ifdef DEBUG
-      cout << "Retcode ist "<<retcode<<endl;
-      cout << info->spp<<endl;
-      cout << info->bitspersample<<endl;
-      cout << info->outlength<<endl;
-      cout << info->outwidth<<endl;
-    #endif
-      retcode = makeExtractFromTIFFFile(*p, info,tiff_input_file.c_str());
 
-    cout << "Check2: "<<p->requestedxmin << " und " <<p->requestedymin<<" und " <<p->requestedwidth<<" und " <<p->requestedlength<<endl;
-    #ifdef DEBUG
-      cout << "Retcode ist "<<retcode<<endl;
-      for (int i=0; i < p->requestedwidth*p->requestedlength; i++)
-        cout << info->buf[i]<<endl;
-    #endif
-      global_map_map[*p] = info;
-    */
     worker_in->set_param_and_tile(tile);
     cout << "before call to worker" << endl;
-    worker_in->set_x_resolution(20.0);
-    worker_in->set_y_resolution(20.0); // ask Felix how to retrieve this information from tiff
+    worker_in->set_x_resolution(pixelSize.x);
+    worker_in->set_y_resolution(pixelSize.y);
     worker_in->set_landing_plane_length(landing_plane_length);
     cout << "hier ist slope " << short_range_slope << endl;
     worker_in->set_short_range_slope(short_range_slope);
@@ -221,7 +193,12 @@ void tile_manager::get_tile_array(tile_worker* worker_in, int idxX, int idxY)
     return;
 }
 
-void tile_manager::release_tile(int i, int j)
+/*! \brief release the tile
+ *
+ *
+ * This method releases a tile which is no longer in use
+ */
+void tile_manager::release_tile(int i /** x index of subtile to be released*/, int j/** y index of subtile to be released*/)
 {
     myGeoTiffHandler.releaseTile(i, j);
     return;

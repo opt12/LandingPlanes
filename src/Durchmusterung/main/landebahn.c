@@ -1,3 +1,5 @@
+/** @landebahn.c */
+
 #include <stdlib.h>
 #include <stdio.h>
 #include "landebahn.h"
@@ -14,9 +16,10 @@ using namespace std;
  *
  *
  * This function checks whether the given input file is readable
+@retval 1 file can be opened
+@retval 0 file not accessible
  */
-
-int file_readable(string infile)
+int file_readable(string infile /** [in] file to be checked  */)
 {
     ifstream my_file(infile.c_str());
 
@@ -29,10 +32,12 @@ int file_readable(string infile)
         return 0;
 }
 
+
 int main(int argc, char* argv[])
 {
     int arg = 1;
     string tiff_in;
+    //set some defaults which will be overwritten
     double landing_plane_length = 0.0;
     double short_range_slope = 100;
     double long_range_slope = 100;
@@ -42,7 +47,7 @@ int main(int argc, char* argv[])
     double width_of_plane = 0.0;
     double orthogonal_slope = 0.0;
 
-    while (arg < argc && argv[arg][0] == '-')       //so lange noch Argumente da sind, die mit '-' beginnen
+    while (arg < argc && argv[arg][0] == '-')  //while arguments present starting with '-'
     {
         if (argv[arg][1] == 'E')
         {
@@ -85,12 +90,6 @@ int main(int argc, char* argv[])
             ++arg;
         }
 
-        /*     else if (argv[arg][1] == 'N') // not defined
-             {
-               not_defined = new double();
-               *not_defined = atof(argv[arg+1]);
-               ++arg;
-             }*/
         ++arg;
     }
 
@@ -106,6 +105,7 @@ int main(int argc, char* argv[])
         exit(2);
     }
 
+    // outout search parameters
     cout << "Minimum landing plane length is " << landing_plane_length << " m" << endl;
     cout << "Input file: " << tiff_in << endl;
     cout << "short range slope: " << short_range_slope << " %" << endl;
@@ -113,8 +113,7 @@ int main(int argc, char* argv[])
     cout << "start angle (relative to S->N: " << start_angle_of_plane << endl;
     cout << "angle increment: " << angle_increment << endl;
 
-    if (not_defined != NULL)
-        cout << "not defined ist " << *not_defined << endl;
+
 
     tile_worker* worker1;
     worker1 = new tile_worker();
@@ -127,17 +126,15 @@ int main(int argc, char* argv[])
         return LP_ERR_INIT_GEO ;
     }
 
-    central_manager->select_area(0, 10000, 0, 10000);
+    if (not_defined != NULL)
+        cout << "not defined ist " << *not_defined << endl;
 
+    central_manager->select_area(0, std::numeric_limits<int>::max(), 0, std::numeric_limits<int>::max());
+    //looping over all subtiles
     for (int i = 0; i < central_manager->get_tiles_X(); i++)
         for (int j = 0; j < central_manager->get_tiles_Y(); j++)
         {
-            cout << "work on kachel " << i << " " << j << endl;
             central_manager->get_tile(worker1, i, j);
-            //worker1.check_element_access();
-            //return 6;
-            //worker1.print_out_map();
-            //return 5;
             worker1->durchmustere_kachel();
             central_manager->release_tile(i, j);
         }
