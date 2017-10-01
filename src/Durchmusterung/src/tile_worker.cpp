@@ -449,15 +449,18 @@ void tile_worker::set_semaphore(sem_t* count_sem /** [in] sempahore for parallel
     this->count_sem = count_sem;
 }
 
-tile_worker::tile_worker(const tileData* tile_in, double landing_plane_length, double short_range_slope, double long_range_slope, double* not_defined, double angle, GeoTiffHandler* master, double width_of_plane, double orthogonal_slope, int commSocket, const json* taskDescription, sem_t* count_sem, rectSize  pixelSize )
+/*! \brief constructor of the tile_worker object
+ *
+ *
+ *  This constructor initializes the tile_worker object. This is a sepecific constructor which assumes that the caller already created a tile and manages it itself. All scanning parameters are used for creating the object instance
+ */
+tile_worker::tile_worker(const tileData* tile_in /** [in] pointer to geo tile */, double landing_plane_length /** [in] length of landing plane in [m]*/, double short_range_slope /** [in] max allowed short range slope for neighbour tiles*/, double long_range_slope /** [in] max allowed slope between first point of plane and last point of plane */, double* not_defined /** [in] pointer with value of the undefined value. NULL if such a value does not exist*/, double angle /** [in] angle for plane orientation */, GeoTiffHandler* master /** [in] pointer to a GeoTiffHandler object to perform conversion tasks*/, double width_of_plane /** [in] width of plane in [m] */, double orthogonal_slope /** [in] max allowed slope in orthogonal direction*/, int commSocket /** [in] commSocket for communication with MongoDB */, const json* taskDescription /** [in] pointer to taskDescription object describing the current scan*/, sem_t* count_sem /** [in] pointer to parallel execution managing semaphore*/, rectSize  pixelSize /** [in] scaling information parameter for GeoTiff object */)
 {
     own_tile = 0;
     set_param_and_tile(tile_in);
-    // cout << "before call to worker"<<endl;
     set_x_resolution(pixelSize.x);
-    set_y_resolution(pixelSize.y); // ask Felix how to retrieve this information from tiff
+    set_y_resolution(pixelSize.y);
     set_landing_plane_length(landing_plane_length);
-    // cout << "hier ist slope "<<short_range_slope<<endl;
     set_short_range_slope(short_range_slope);
     set_long_range_slope(long_range_slope);
     set_not_defined(not_defined);
@@ -468,30 +471,32 @@ tile_worker::tile_worker(const tileData* tile_in, double landing_plane_length, d
     set_commSocket(commSocket);
     set_taskDescription(taskDescription);
     set_semaphore(count_sem);
-    // report("size is "+floattostring(tile_in->width.x)+" uind " +floattostring(tile_in->width.y));
     mutex_start_value = PTHREAD_MUTEX_INITIALIZER;
     current_x = 0;
     current_y = 0;
 }
 
-void tile_worker::set_GeoTiffHandler(GeoTiffHandler* master)
+/*! \brief set function for GeoTiffHandler pointer
+ *
+ *
+ *  This function sets GeoTiffHandler pointer to object value
+ */
+void tile_worker::set_GeoTiffHandler(GeoTiffHandler* master /** [in] pointer to external GeoTiffHandler object*/)
 {
     myGeoTiffHandler = master;
 }
 
-void tile_worker::create_landebahn_coord(pixelPair start_point, pixelPair end_point, string type, double actualRise, double actualVariance, double length_of_plane)
+/*! \brief create a json describing a valid plane and push it to MongoDB
+ *
+ *
+ *  This function creates a json object for a valid plane and pushs it to the MongoDB
+ */
+void tile_worker::create_landebahn_coord(pixelPair start_point /** [in] start point of plane*/, pixelPair end_point /** [in] end point of plane*/, string type /** [in] type of plane (mergeable means it is the longest plane and can be merged later on with other planes*/, double actualRise /** [in] slope of the plane*/, double actualVariance /** [in] variance of the plane*/, double length_of_plane /** [in] length of plane in [m]*/)
 {
-    //cout << "start point "<<start_point.x<<" und " <<start_point.y<<endl;
     pixelCoord pixstart = { tile->offset.x + start_point.x, tile->offset.y + start_point.y};
-    //geoCoord start = myGeoTiffHandler->pixel2Geo( pixstart);
-    //cout <<"lb start"<<start<<endl;
     pixelCoord pixend;
     pixend.x = tile->offset.x + end_point.x;
     pixend.y = tile->offset.y + end_point.y;
-    //cout << "end point "<<end_point.x<<" und " <<end_point.y<<endl;
-    //geoCoord end = myGeoTiffHandler->pixel2Geo( pixend);
-    //cout << "lb end "<<end<<endl;
-    //report("width of plane is "+floattostring(width_of_plane));
     json j = myGeoTiffHandler->getGeoJsonPolygon(pixstart, pixend, width_of_plane / 2.0);
     j["properties"] = (*taskDescription)["scanParameters"];
     j["properties"]["actualLength"] = length_of_plane;
@@ -502,27 +507,46 @@ void tile_worker::create_landebahn_coord(pixelPair start_point, pixelPair end_po
     emitReceiptMsg(commSocket, "landingPlane", j);
 }
 
-void tile_worker::set_orthogonal_slope(double orthogonal_slope)
+/*! \brief set function for orthogonal slope
+ *
+ *
+ *  This function sets orthogonal slope to object value
+ */
+void tile_worker::set_orthogonal_slope(double orthogonal_slope /** [in] max orthogonal slope*/)
 {
     this->orthogonal_slope = orthogonal_slope;
 }
 
-void tile_worker::set_width_of_plane(double width_of_plane)
+/*! \brief set function for width of plane
+ *
+ *
+ *  This function sets width of plane
+ */
+void tile_worker::set_width_of_plane(double width_of_plane /** [in] width of plane*/)
 {
     this->width_of_plane = width_of_plane;
 }
 
-void tile_worker::set_angle(double angle)
+/*! \brief set function for angle of orientation
+ *
+ *
+ *  This function sets angle of plane orientation. Will be trimmed to a range 0 - 360 degrees
+ */
+void tile_worker::set_angle(double angle /** [in] orientation angle of plane*/)
 {
     double shift = 0;
     double newangle = angle + ceil( (-angle + shift) / 360.0 ) * 360.0;
     current_angle = newangle;
-    // report("Angle is "+floattostring(current_angle));
 }
 
+/*! \brief function for static calculation of optimal incremental vectors
+ *
+ *
+ *  This function performs a static calculation of all needed incremental vectors. Also additional values needed during scanning of area are calculated here once. All values depend on the orientation angle
+ */
 void tile_worker::calc_optimal_vector()
 {
-    // cout << "Current angle is "<<current_angle<<endl;
+ 
     inc_x = -sin(current_angle * PI / 180);
     inc_y = cos(current_angle * PI / 180);
 
@@ -532,10 +556,6 @@ void tile_worker::calc_optimal_vector()
     if (fabs(inc_y) < IMPRECISION)
         inc_y = 0.0;
 
-    //  cout << "inc x is "<<inc_x<<endl;
-    //  cout << "inc y is "<<inc_y<<endl;
-    // report("inc x is "+floattostring(inc_x));
-    //report("inc y is "+floattostring(inc_y));
     orth_x = -sin((current_angle + 90.0) * PI / 180.0);
     orth_y = cos((current_angle + 90.0) * PI / 180.0);
 
@@ -548,14 +568,16 @@ void tile_worker::calc_optimal_vector()
     needed_points_in_a_row = ceil((double) landing_plane_length / sqrt(pow(((double) resolution_x * inc_x), 2) + pow(((double) resolution_y * inc_y), 2)));
     allowed_diff = short_range_slope * sqrt(pow(resolution_x * inc_x, 2) + pow(resolution_y * inc_y, 2)) / 100.0;
     allowed_orthogonal_diff = orthogonal_slope * sqrt(pow(resolution_x * orth_x, 2) + pow(resolution_y * orth_y, 2)) / 100.0;
-    // cout << "allowed from "<<short_range_slope << " and " <<resolution_x<< " and incx " <<inc_x<<" and res y" <<resolution_y <<" and inc_y 2"<<inc_y<<endl;
     needed_orthogonal_points_in_a_row = ceil(0.5 * (double) width_of_plane / sqrt(pow(((double) resolution_x * orth_x), 2) + pow(((double) resolution_y * orth_y), 2)));
-    //report("orthogonal points in a row are "+floattostring(needed_orthogonal_points_in_a_row));
 }
 
+/*! \brief function for initialization of start point for scanning
+ *
+ *
+ *  This function determines the ideal starting point for the area scanning. It is crucial that all potential planes are included
+ */
 void tile_worker::calc_start_coordinates()
 {
-    //report("calc coord with angle "+floattostring(current_angle));
     if (current_angle >= 0.0 && current_angle < 90.0)
     {
         startx = 0;
@@ -604,26 +626,15 @@ void tile_worker::calc_start_coordinates()
     }
 }
 
-
+/*! \brief function for fundamental check whether current list of points can form a plane according to requirements
+ *
+ *
+ *  This function checks whether the current list with points can be used for searchig for landing planes. It trunactes the list afterwards
+ */
 int tile_worker::check_current_landebahn(int &current_in_a_row, const int &needed_points_in_a_row, const int &current_x, const int &current_y, vector< pair<int, int> > &coordlist, pixelPair start_point)
 {
     if (coordlist.size() > 1)
     {
-        /*
-          if (sqrt(pow(((coordlist[0].first-coordlist.back().first)*resolution_x),2)+pow(((coordlist[0].second-coordlist.back().second)*resolution_y),2)) >= landing_plane_length)
-        //   if (current_in_a_row>needed_points_in_a_row)
-           {
-        //     cout << "Landebahn gefunden "<<start_point.x<< "und " <<start_point.y <<" bis "<<current_x<<" und "<<current_y<<" current in row "<<current_in_a_row<<" und needed" <<needed_points_in_a_row<<endl;
-        //      for (int i=0; i < coordlist.size(); i++)
-        //        cout << i <<" => "<<access_single_element(coordlist[i].first,coordlist[i].second)<<'\n';
-        //      for (std::map<int,double>::iterator it=coordlist.begin(); it!=coordlist.end(); ++it)
-         //       std::cout << it->first << " => " << it->second << '\n';
-             report("Landebahn gefunden wirklich");
-             pixelPair end_point;
-             end_point.x=current_x;
-             end_point.y=current_y;
-            create_landebahn_coord(start_point,end_point);
-           }*/
         find_best_planes(coordlist);
     }
 
