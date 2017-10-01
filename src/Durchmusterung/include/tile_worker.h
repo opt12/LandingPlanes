@@ -21,52 +21,48 @@ using namespace std;
 class tile_worker {
 
     private:
-        int own_tile;
+        int own_tile; ///< Check whether the tile has to be freed or if it is the job of the caller
         void report(string report);
-        int commSocket;
-        double current_angle;
-        const tileData* tile;
+        int commSocket; ///< Socket to put results into (MongoDB)
+        double current_angle; ///< current angle of plane orientation to be scanned.
+        const tileData* tile; ///< reference to the tile data (Geo data , ...)
         float access_single_element(int x, int y);
-        void check_steigungen(/*const int direction*//*1: N -> S, 2: NNO -> SSW, 3: O -> W, 4: SSO -> NNW, 5: S -> N, 6: SSW -> NNO, 7: W -> O, 8: NNW -> SSO */);
-        double resolution_x;
-        double resolution_y;
-        double landing_plane_length;
-        double short_range_slope;
-        double long_range_slope;
-        double* not_defined;
+        void check_steigungen();
+        double resolution_x; ///< distance in [m] between two horizontal data points
+        double resolution_y; ///< distance in [m] between two vertical data points
+        double landing_plane_length; ///< minimum plane length in [m]
+        double short_range_slope; ///< max. allowed slope between two neighbours in plane direction
+        double long_range_slope; ///< max. allowed slope between first and last point of plane
+        double* not_defined; ///< if a not defined value is present is has to be set here
         int check_current_landebahn(int &current_in_a_row, const int &needed_points_in_a_row, const int &x, const int &y, vector< pair<int, int> > &coordlist, pixelPair start_point);
         void calc_optimal_vector();
-        double inc_x;
-        double inc_y;
+        double inc_x; ///< incremental step size in x-dimension
+        double inc_y;///< incremental step size in y-dimension
         void calc_start_coordinates();
-        double startx;
-        double starty;
-        double current_x;
-        double current_y;
+        double startx; ///< x-dimension of start point in tile
+        double starty; ///< y-dimension of start point in tile
+        double current_x; ///< current x-dimension of start point
+        double current_y; ///< current y-dimension of start point
         int still_needed();
-        double orth_x;
-        double orth_y;
-        int needed_points_in_a_row;
-        int needed_orthogonal_points_in_a_row;
-        double allowed_diff;
-        double allowed_orthogonal_diff;
-        //pixelPair start_point;
-        //pixelPair end_point;
-        double orthogonal_slope;
-        double width_of_plane;
+        double orth_x; ///< incremental step size in orthogonal dimension (x- part)
+        double orth_y; ///< incremental step size in orthogonal dimension (y- part)
+        int needed_points_in_a_row; ///< number of accepted data points in a row for fulfilling minimum length condition
+        int needed_orthogonal_points_in_a_row; ///< number of accepted data points in a row for fulfilling minimum width condition
+        double allowed_diff; ///< maximum difference between two neighboured tiles in direction of plane
+        double allowed_orthogonal_diff; ///< maximum difference between two neighboured tiles in orthogonal direction
+        double orthogonal_slope; ///< slope in orthogonal direction
+        double width_of_plane; ///< minimum width of plane
 
         void find_best_planes(vector< pair<int, int> > &coordlist);
         void create_landebahn_coord(pixelPair start_point, pixelPair end_point, string type, double actualRise, double actualVariance, double lenth_of_plane );
-        GeoTiffHandler* myGeoTiffHandler;
-        //vector< pair<int,int> > coordlist;
-        const json* taskDescription;
+        GeoTiffHandler* myGeoTiffHandler; ///< pointer to GeotiffhandlerObject for GeoTiff conversions
+        const json* taskDescription; ///< task identification json object for later mongoDB 
+        int direction; ///< direcion describes how to set the starting point of scanning and how to step incrementally through the area. It depends on the orientation angle of the plane
 
-        int direction;
-
-        sem_t* count_sem;
-        vector<pthread_t> threads;
+        sem_t* count_sem; ///< semaphore to control the maximum number of parallel threads
+        vector<pthread_t> threads; ///< vector hosting the thread instances
         int get_start_values(double &startposx, double &startposy);
-        pthread_mutex_t mutex_start_value;
+        pthread_mutex_t mutex_start_value; ///< mutex for blocking the critical section for requesting new start points for scanning
 
     public:
         friend class thread_data;
