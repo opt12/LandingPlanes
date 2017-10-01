@@ -14,34 +14,6 @@ extern "C" {
 using namespace std;
 
 
-struct cmpByStruct
-{
-    bool operator()(const extractionParameters &a, const extractionParameters &b) const
-    {
-        if (a.requestedxmin < b.requestedxmin)
-            return true;
-        else if (a.requestedxmin == b.requestedxmin)
-        {
-            if (a.requestedymin < b.requestedymin)
-                return true;
-            else if  (a.requestedymin == b.requestedymin)
-            {
-                if (a.requestedwidth < b.requestedwidth)
-                    return true;
-                else if (a.requestedwidth == b.requestedwidth)
-                {
-                    if (a.requestedlength < b.requestedlength)
-                        return true;
-                }
-            }
-        }
-
-        return false;
-    }
-};
-
-
-
 class tile_manager {
 
     private:
