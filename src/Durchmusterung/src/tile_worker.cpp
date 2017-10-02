@@ -656,7 +656,7 @@ void tile_worker::check_steigungen()
             fprintf(stderr, "Error joining thread\n");
             return;
         }
-
+    threads.clear();
     return;
 }
 
