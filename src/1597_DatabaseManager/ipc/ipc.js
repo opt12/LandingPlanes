@@ -54,6 +54,8 @@ const getConnectedIPC = () => {
                     if (err) console.log("error obj: ", err);
                     console.log("Error connecting to the IPC-socket " + ipc.config.socketRoot + socketId);
                     console.log("Start the 1597 searchWrapper now...");
+					console.log("Path: "+process.env.TERMINAL + process.env.WRAPPER);
+
 
                     child = exec(process.env.TERMINAL + process.env.WRAPPER,
                         function (error, stdout, stderr) {

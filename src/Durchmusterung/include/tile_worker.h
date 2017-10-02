@@ -1,7 +1,3 @@
-extern "C" {
-#include "readInTiff.h"
-}
-
 #include <iostream>
 #include <limits>
 #include <stdio.h>

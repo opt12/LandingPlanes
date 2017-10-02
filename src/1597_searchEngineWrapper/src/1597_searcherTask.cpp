@@ -12,7 +12,6 @@
 #include "1597_ipc_listener.h"
 #include <string>
 
-
 #include "json.hpp"
 
 // for convenience
@@ -21,6 +20,9 @@ using json = nlohmann::json;
 #include "../../GeoTiff_Handler/src/GeoTiffHandler.h"
 #include "../../GeoTiff_Handler/src/readInTiff.h"
 #include "../../GeoTiff_Handler/src/config.h"	//TODO: Das ist unschön, wenn wir nicht auch autoconfig und autoheaders benutzen wollen.
+
+#define MAX_TILE_SIZE MAX_SIZE	/*define MAX_SIZE for using up to the half available RAM*/
+//#define MAX_TILE_SIZE 50e6 /*define maximum size if you want to limit it artifilcially */
 
 static eResult scanForLandingPlanes(json taskDescription, int commSocket) {
 	cout << "SCAN Thread: scanning for Landing Planes" << endl;
@@ -33,12 +35,14 @@ static eResult scanForLandingPlanes(json taskDescription, int commSocket) {
 		return GEO_TIFF_READ_ERROR;
 
 	if (myGeoTiffHandler.getDatasetInfo(&info) != SUCCESS) {
-		cout << "SCAN Thread: This should have succeeded, as we tried to open a file"
+		cout
+				<< "SCAN Thread: This should have succeeded, as we tried to open a file"
 				<< endl;
 		return GEO_TIFF_READ_ERROR;
 	}
 
-	cout << "SCAN Thread: Just opened the GeoTIFF file with this info params:" << endl;
+	cout << "SCAN Thread: Just opened the GeoTIFF file with this info params:"
+			<< endl;
 	cout << info << endl;
 
 	resultType result;
@@ -50,30 +54,39 @@ static eResult scanForLandingPlanes(json taskDescription, int commSocket) {
 	float minLength = taskDescription["scanParameters"]["minLength"];
 	vector<float> headings = taskDescription["scanHeadings"];
 
-
 	tilingCharacteristics myTilingChar;
 	myGeoTiffHandler.getTilingInfo(geoTopLeft, geoBotRight, minLength,
-			MAX_SIZE,
-			&myTilingChar);
+	MAX_TILE_SIZE, &myTilingChar);
 	cout << "SCAN Thread: The file for " << geoTopLeft << " to " << geoBotRight
-			<< " will be tiled like this:\n" << myTilingChar;
+			<< " will be tiled like this:\n";
+	if(MAX_TILE_SIZE == MAX_SIZE)
+		cout << "(max. Memory: MAX)\n";
+	else 
+		cout << "(max. Memory: "<< MAX_TILE_SIZE << ")\n";
+
+	cout  << myTilingChar;
 
 	for (int idxX = 0; idxX < myTilingChar.tilesInX; idxX++) {
 		for (int idxY = 0; idxY < myTilingChar.tilesInY; idxY++) {
 			tileData tile;
 			myGeoTiffHandler.getTile(idxX, idxY, &tile);
-			cout << "SCAN Thread: just got data for tile ["<<idxX<<"]["<<idxY<<"];"<<endl;
-			for (const float actualHeading : headings){
-				cout << "SCAN Thread: scanning for heading " << actualHeading << "..." << endl;
+			cout << "SCAN Thread: just got data for tile [" << idxX << "]["
+					<< idxY << "];" << endl;
+			for (const float actualHeading : headings) {
+				cout << "SCAN Thread: scanning for heading " << actualHeading
+						<< "..." << endl;
 
-				cout << "SCAN Thread: Scan Parameters are: " << taskDescription["scanParameters"].dump(4)<<endl;
+				cout << "SCAN Thread: Scan Parameters are: "
+						<< taskDescription["scanParameters"].dump(4) << endl;
 
-				fakeScan(&tile, &myGeoTiffHandler,
-						&taskDescription, actualHeading, commSocket,info.noDataValue,info.pixelSize  );
+				fakeScan(&tile, &myGeoTiffHandler, &taskDescription,
+						actualHeading, commSocket, info.noDataValue,
+						info.pixelSize);
 				/********************************************************************
 				 * //TODO spawn threads for scanning exactly here!!!
 				 ********************************************************************/
-				cout << "SCAN Thread: scanning for heading " << actualHeading << " is finshed" << endl;
+				cout << "SCAN Thread: scanning for heading " << actualHeading
+						<< " is finshed" << endl;
 			}
 			myGeoTiffHandler.releaseTile(idxX, idxY);
 		}
@@ -96,41 +109,41 @@ void *searchTaskThreadStarter(void *par) {
 	case SUCCESS:
 		cout << "SCAN Thread: scanning finished successfully" << endl;
 		j= {
-				{"type", "SCAN"},
-				{"finished", true},
-				{"text", "success"},
-				{"parameter", p.taskDescription}
+			{	"type", "SCAN"},
+			{	"finished", true},
+			{	"text", "success"},
+			{	"parameter", p.taskDescription}
 		};
 		break;
-	case SUCCESS_NOT_ENTIRELY_COVERED:
+		case SUCCESS_NOT_ENTIRELY_COVERED:
 		cout << "SCAN Thread: scanning finished successfully, but not the whole area was covered entirely" << endl;
 		j= {
-				{"type", "SCAN"},
-				{"finished", true},
-				{"text", "area not entirely covered"},
-				{"parameter", p.taskDescription}
+			{	"type", "SCAN"},
+			{	"finished", true},
+			{	"text", "area not entirely covered"},
+			{	"parameter", p.taskDescription}
 		};
 		break;
-	case GEO_TIFF_READ_ERROR:
+		case GEO_TIFF_READ_ERROR:
 		cout << "SCAN Thread: GEO_TIFF_READ_ERROR occurred (maybe the altitude is in the wrong format (must be FLOAT32)" << endl;
 		j= {
-				{"type", "SCAN"},
-				{"finished", false},
-				{"text", "GEO_TIFF_READ_ERROR occurred"},
-				{"parameter", p.taskDescription}
+			{	"type", "SCAN"},
+			{	"finished", false},
+			{	"text", "GEO_TIFF_READ_ERROR occurred"},
+			{	"parameter", p.taskDescription}
 		};
 		break;
 		default:
-			cout << "SCAN Thread: some error occurred" << endl;
-			j= {
-					{"type", "SCAN"},
-					{"finished", false},
-					{"text", "some unspecified error occurred"},
-					{"parameter", p.taskDescription}
-			};
-			break;
+		cout << "SCAN Thread: some error occurred" << endl;
+		j= {
+			{	"type", "SCAN"},
+			{	"finished", false},
+			{	"text", "some unspecified error occurred"},
+			{	"parameter", p.taskDescription}
+		};
+		break;
 
-			break;
+		break;
 	}
 	emitReceiptMsg(p.commSocket, "taskReceipt", j);
 
@@ -138,5 +151,4 @@ void *searchTaskThreadStarter(void *par) {
 
 	return NULL;
 }
-
 

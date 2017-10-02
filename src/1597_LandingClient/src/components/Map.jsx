@@ -255,7 +255,7 @@ class MapOverview extends Component {
                         </Col>
                         <Col componentClass={ControlLabel} sm={2}>max. Varianz: (quer)</Col>
                         <Col sm={1}>
-                            <FormControl id="maxVarianceCross" type="number" defaultValue="2.30" step="0.01"/>
+                            <FormControl id="maxVarianceCross" type="number" defaultValue="3.10" step="0.01"/>
                         </Col>
                         <Col componentClass={ControlLabel} sm={1}>Threads</Col>
                         <Col sm={1}>
