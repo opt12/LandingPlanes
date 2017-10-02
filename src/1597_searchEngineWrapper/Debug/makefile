@@ -47,7 +47,7 @@ all: 1597_searchEngineWrapper
 1597_searchEngineWrapper: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C++ Linker'
-	g++  -o "1597_searchEngineWrapper" -I../../Durchmusterung/include -I/usr/include/gdal $(OBJS) $(USER_OBJS) $(LIBS) ../../Durchmusterung/lib/plane_library.a
+	g++ -L../../Durchmusterung/lib -L../../GeoTiff_Handler/lib -o "1597_searchEngineWrapper" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

@@ -16,6 +16,22 @@
 
 #include <gdal_priv.h>
 
+#include <sys/time.h>
+
+/** computes the time difference of two values of type timeval in second.
+ *  \param *t1 pointer to the later time
+ *  \param *t2 pointer to the earlier time
+ *  \return The time difference in seconds
+ */
+double difftimeval(struct timeval *t1, struct timeval *t2) {
+	double diff;
+
+	diff = (double) (t1->tv_sec - t2->tv_sec);
+	diff += (double) (t1->tv_usec - t2->tv_usec) / 1e6;
+
+	return diff;
+}
+
 //standard output operators for some structs
 std::ostream& operator<<(std::ostream& o, const datasetInfo& inf) {
 	o << "The currently loaded dataset has the following properties:\n";
@@ -412,7 +428,17 @@ resultType GeoTiffHandler::getTile(const int xTile, const int yTile,
 //		return ERROR_MEMORY_ALLOCATION;
 //	}
 
+	//check the loading time of the dataset into memoery
+	struct timeval tLoadStart, tLoadEnd;
+	double elapsedTime;
+	gettimeofday(&tLoadStart, NULL);
+
 	makeExtractFromTIFFFile(extP, &tileC, filename.c_str());
+	
+	gettimeofday(&tLoadEnd, NULL);
+	elapsedTime = difftimeval(&tLoadEnd, &tLoadStart);
+	cout << "Needed Time loading the current tile: "<< elapsedTime <<" seconds." << endl;
+
 	curTile.tileLoaded = true;
 	curTile.outstandingReferences++;
 	curTile.xTile = xTile;
@@ -487,10 +513,10 @@ geoCoord GeoTiffHandler::pixel2Geo (const int xTile, const int yTile,
 
 }
 
-pixelCoord GeoTiffHandler::geo2Pixel(const int xTile, const int yTile,
-		const geoCoord source) {
-	//TODO: ist diese funktion notwendig??? eigentlich nicht, oder...
-}
+//pixelCoord GeoTiffHandler::geo2Pixel(const int xTile, const int yTile,
+//		const geoCoord source) {
+//	//TODO: ist diese funktion notwendig??? eigentlich nicht, oder...
+//}
 
 json GeoTiffHandler::getGeoJsonPolygon(const pixelCoordFloat pix0,
 		const pixelCoordFloat pix1, const pixelCoordFloat pix2,

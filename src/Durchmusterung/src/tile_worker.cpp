@@ -553,13 +553,15 @@ void tile_worker::check_element_access()
 }
 
 
+//! @cond DoNotRaiseWarning
 /*! \brief single map element retrieval
  *
  *
  *   This function retrieves the element with the requested x and y coordinate. If requeted element is outside the map then <float>::min() is returned.
 @retval value if valid point
-@retval numeric_limits<float>::min() if point is outside range
+@retval numeric_limits<float>\::min() if point is outside range
  */
+//! @endcond
 float tile_worker::access_single_element(int x /** [in] x coordinate of requested field*/, int y /** [in] y coordinate of requested field*/)
 {
     if (tile->width.x * y + x < tile->width.x * tile->width.y)

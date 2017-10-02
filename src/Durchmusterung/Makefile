@@ -1,5 +1,3 @@
-
-
 CC=g++ -pg -g -std=c++11 -O3 -Wall
 
 GCC_AVAIL := $(shell command -v g++ 2> /dev/null)
@@ -45,9 +43,9 @@ else
     CFLAGS=-DNDEBUG
 endif
 
-all: checkdir ./bin/landebahn documentation ./lib/plane_library.a 
+all: checkdir checkGeoTiffHandlerLib documentation ./lib/plane_library.a ./bin/landebahn
 
-easylib: checkdir documentation ./lib/plane_library.a
+easylib: checkdir checkGeoTiffHandlerLib documentation ./lib/plane_library.a
 
 precheck:
 ifeq ("$(wildcard /usr/include/x86_64-linux-gnu/tiff.h)","")
@@ -60,14 +58,16 @@ endif
 
 clean:
 	rm ./bin/landebahn || true
+	rm ./lib/plane_library.a || true
 	rm -rf latex || true
 	rm -rf html || true
 	rm ./obj/*.o || true
-./bin/landebahn: ./main/landebahn.c ./obj/landing_plane.o ./obj/tile_manager.o ./obj/tile_worker.o ./obj/thread_data.o ./obj/global.o ../GeoTiff_Handler/src/GeoTiffHandler.o ../GeoTiff_Handler/src/readInTiff.o ../1597_searchEngineWrapper/Debug/src/1597_ipc_listener.o
-	$(CC) $(CFLAGS) -o ./bin/landebahn ./main/landebahn.c ../GeoTiff_Handler/src/GeoTiffHandler.o ../GeoTiff_Handler/src/readInTiff.o ./obj/tile_manager.o ./obj/tile_worker.o ./obj/landing_plane.o ./obj/thread_data.o ./obj/global.o -I../readInTiff/src/ -I./include  -I../GeoTiff_Handler/src -I../1597_searchEngineWrapper/src/ -I/usr/include/gdal/  ../1597_searchEngineWrapper/Debug/src/1597_ipc_listener.o  -ltiff -lpthread -lgdal
 
-./obj/tile_manager.o: ./src/tile_manager.cpp ./include/tile_manager.h ../GeoTiff_Handler/src/GeoTiffHandler.o
-	$(CC) $(CFLAGS) -c ./src/tile_manager.cpp -o ./obj/tile_manager.o -I../readInTiff/src/ -I./include -I../GeoTiff_Handler/src -I../1597_searchEngineWrapper/src/ -I/usr/include/gdal/
+./bin/landebahn: ./main/landebahn.c ./obj/landing_plane.o ./obj/tile_manager.o ./obj/tile_worker.o ./obj/thread_data.o ./obj/global.o  ../1597_searchEngineWrapper/obj/1597_ipc_listener.o
+	$(CC) $(CFLAGS) -o ./bin/landebahn ./main/landebahn.c ./obj/tile_manager.o ./obj/tile_worker.o ./obj/landing_plane.o ./obj/thread_data.o ./obj/global.o -I../readInTiff/src/ -I./include  -I../GeoTiff_Handler/src -I../1597_searchEngineWrapper/src/ -I/usr/include/gdal/ -L../GeoTiff_Handler/lib -lGeoTiffHandler ../1597_searchEngineWrapper/obj/1597_ipc_listener.o  -lpthread -lgdal -ltiff 
+
+./obj/tile_manager.o: ./src/tile_manager.cpp ./include/tile_manager.h 
+	$(CC) $(CFLAGS) -c ./src/tile_manager.cpp -o ./obj/tile_manager.o -I../readInTiff/src/ -I./include -I../GeoTiff_Handler/src -I../1597_searchEngineWrapper/src/ -I/usr/include/gdal/ -L../GeoTiff_Handler/lib -lGeoTiffHandler
 
 ./obj/global.o: ./src/global.cpp
 	$(CC) $(CFLAGS) -c ./src/global.cpp -o ./obj/global.o 
@@ -88,15 +88,19 @@ clean:
 ./lib/plane_library.a: ./obj/plane_library.o ./obj/tile_worker.o ./obj/landing_plane.o ./obj/thread_data.o ./obj/global.o
 	ar rcs ./lib/plane_library.a ./obj/plane_library.o ./obj/tile_worker.o ./obj/landing_plane.o ./obj/thread_data.o ./obj/global.o
 
-../GeoTiff_Handler/src/readInTiff.o: precheck
-	$(MAKE) -C ../GeoTiff_Handler/src/ -I/usr/include/gdal/
+#../GeoTiff_Handler/src/readInTiff.o: precheck
+#	$(MAKE) -C ../GeoTiff_Handler/src/ -I/usr/include/gdal/
 
-../GeoTiff_Handler/src/GeoTiffHandler.o: precheck
-	$(MAKE) -C ../GeoTiff_Handler/src/ -I/usr/include/gdal/
+#../GeoTiff_Handler/src/GeoTiffHandler.o: precheck
+#	$(MAKE) -C ../GeoTiff_Handler/src/ -I/usr/include/gdal/
 
+checkGeoTiffHandlerLib: ../GeoTiff_Handler/lib/libGeoTiffHandler.a
 
-../1597_searchEngineWrapper/Debug/src/1597_ipc_listener.o: ./lib/plane_library.a
-	$(MAKE) all -C ../1597_searchEngineWrapper/Debug/
+../GeoTiff_Handler/lib/libGeoTiffHandler.a: 
+	$(MAKE) -C ../GeoTiff_Handler/ easylib
+
+../1597_searchEngineWrapper/obj/1597_ipc_listener.o: ./lib/plane_library.a
+	$(MAKE) -C ../1597_searchEngineWrapper/
 
 documentation: html/index.html
 
@@ -111,4 +115,6 @@ ifndef DOXY_AVAIL
 else 
 	doxygen doxystyle
 endif
+
+.PHONY: all clean documentation checkdir precheck checkGeoTiffHandlerLib
 

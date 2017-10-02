@@ -930,6 +930,9 @@ Notwendig ist insbesondere:
 \item eine aktuelle Installation von Node.js ($\geq$ Version 8)
 \item eine aktuelle Installation von NPM
 \item eine aktuelle installation von bower (\texttt{npm install -g bower})
+\item eine aktuelle Version der gdal-Library, deren Header-Dateien unter \texttt{/usr/include/gdal} liegen müssen
+\item eine aktuelle Version des kompilierten \texttt{gdal-bin} Pakets (insbesondere \texttt{gdalinfo} im PATH)
+\item eine laufende Instanz einer MongoDB, welche sich auf \texttt{mongodb://localhost:27017} ansprechen lässt
 \end{itemize}
 
 Zunächst wird das gesamte Projekt von Github auf den Rechner geklont:
@@ -938,23 +941,24 @@ git clone git@github.com:opt12/LandingPlanes.git
 \end{verbatim*}
 
 \skippingparagraph
-Dann muss die Search Engine Komponente in zwei Schritten gebaut werden:
+Dann muss die Search Engine Komponente %in zwei Schritten 
+gebaut werden:
 
-Zunächst die Bibliothek zur Durchmusterung
+%Zunächst die Bibliothek zur Durchmusterung
+%\begin{verbatim*}
+%cd LandingPlanes/src/Durchmusterung
+%make all
+%\end{verbatim*}
+%
+%Hierbei wird auch die passende GDAL-Bibliothek aus dem Netz heruntergeladen und in den Ordner \texttt{./gdal} gespeichert und gebaut. \footnote{Es kann vorkommen, dass beim Build der Bibliothek ein Fehler auftritt (wenn eine ältere Version von Anaconda auf dem Rechner installiert ist.). In diesem Fall ist es meist ausreichend die GDAL Bibliothek in dem Zustand zu benutzen, den sie bis zum Fehler hat und die \texttt{plane\_library.a} nochmals manuell zu bauen:\\
+%\texttt{cd LandingPlanes/src/Durchmusterung}\\
+%\texttt{make ./lib/plane\_library.a}
+%}
+
+Die \texttt{1597\_searchEngine} Komponente und die Bibliotheken \texttt{plane\_library.a} und \texttt{libGeoTiffHandler.a} können gemeinsam erstellt werden:\footnote{In den Verzeichnissen \texttt{LandingPlanes/src/Durchmusterung} und \texttt{LandingPlanes/src/GeoTiff\_Handler} befinden sich auch Makefiles um die statischen Bibliotheken einzeln zu bauen.}
 \begin{verbatim*}
-cd LandingPlanes/src/Durchmusterung
-make all
-\end{verbatim*}
-
-Hierbei wird auch die passende GDAL-Bibliothek aus dem Netz heruntergeladen und in den Ordner \texttt{./gdal} gespeichert und gebaut. \footnote{Es kann vorkommen, dass beim Build der Bibliothek ein Fehler auftritt (wenn eine ältere Version von Anaconda auf dem Rechner installiert ist.). In diesem Fall ist es meist ausreichend die GDAL Bibliothek in dem Zustand zu benutzen, den sie bis zum Fehler hat und die \texttt{plane\_library.a} nochmals manuell zu bauen:\\
-\texttt{cd LandingPlanes/src/Durchmusterung}\\
-\texttt{make ./lib/plane\_library.a}
-}
-
-Als nächstes muss die Search engine Komponente, welche die Bibliothek \texttt{plane\_library.a} benutzt erstellt werden:
-\begin{verbatim*}
-cd LandingPlanes/src/1597_searchEngineWrapper/Debug
-make all
+cd LandingPlanes/src/1597_searchEngineWrapper/
+make
 \end{verbatim*}
 
 \skippingparagraph
@@ -979,7 +983,7 @@ npm install
 Nun muss lediglich die Datei \texttt{LandingPlanes/src/1597\_DatabaseManager/package.json} überprüft und gegebenenfalls angepasst werden. Es müssen die Pfade im Skript 
 \begin{verbatim*}
 "start": "node ./bin/www --tiffpath=/home/eckstein/dev/LandingPlanes/terrain
-         --wrapper=../1597_searchEngineWrapper/Debug/1597_searchEngineWrapper 
+         --wrapper=../1597_searchEngineWrapper/bin/1597_searchEngineWrapper 
          --clientpath='../1597_LandingClient'"
 \end{verbatim*}
 angepasst werden.
@@ -1003,7 +1007,7 @@ gestartet werden und über das Öffnen von \href{http://localhost:3000}{http://l
 
 
 \skippingparagraph
-Ein manueller Merge von überlappenden Landebahnen kann angestoßen werden durch den Aufruf von 
+Ein manueller Merge von überlappenden Landebahnen kann angestoßen werden, wenn in einem eigenen Terminal das npm-Skript \texttt{cleanup} aufgerufen wird:
 \begin{verbatim*}
 cd LandingPlanes/src/1597_DatabaseManager
 npm run cleanup

@@ -1,7 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c1a91e04-982f-4b32-9628-adff4ce078ad" name="Default" comment="" />
+<<<<<<< HEAD
+    <list default="true" id="c1a91e04-982f-4b32-9628-adff4ce078ad" name="Default" comment="- Makefiles so umgebaut, dass mit einem simplen /src/1597_DatabaseManager/make gebaut werden kann&#10;- GeoTiffHandler auf static library umgestellt">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../1597_DatabaseManager/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../1597_DatabaseManager/.idea/workspace.xml" />
+=======
+    <list default="true" id="c1a91e04-982f-4b32-9628-adff4ce078ad" name="Default" comment="- Vortrags Quelltext auf &quot;handout&quot; umgestellt und letzte Speaker Notes ergänzt&#10;- kann dann so abgegeben werden">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../1597_searchEngineWrapper/src/GeoTiffHandler.cpp" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../1597_searchEngineWrapper/src/GeoTiffHandler.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../1597_searchEngineWrapper/src/config.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../1597_searchEngineWrapper/src/errorCodes.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../1597_searchEngineWrapper/src/readInTiff.c" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../1597_searchEngineWrapper/src/readInTiff.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../GeoTiff_Handler/src/Makefile" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../GeoTiff_Handler/src/pcs.csv" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../1597_DatabaseManager/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../1597_DatabaseManager/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../1597_DatabaseManager/package.json" afterPath="$PROJECT_DIR$/../1597_DatabaseManager/package.json" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/components/Map.jsx" afterPath="$PROJECT_DIR$/src/components/Map.jsx" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../1597_searchEngineWrapper/.gitignore" afterPath="$PROJECT_DIR$/../1597_searchEngineWrapper/.gitignore" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../1597_searchEngineWrapper/Debug/makefile" afterPath="$PROJECT_DIR$/../1597_searchEngineWrapper/Debug/makefile" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../1597_searchEngineWrapper/Debug/objects.mk" afterPath="$PROJECT_DIR$/../1597_searchEngineWrapper/Debug/objects.mk" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../1597_searchEngineWrapper/Debug/src/subdir.mk" afterPath="$PROJECT_DIR$/../1597_searchEngineWrapper/Debug/src/subdir.mk" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Durchmusterung/Makefile" afterPath="$PROJECT_DIR$/../Durchmusterung/Makefile" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Durchmusterung/include/tile_worker.h" afterPath="$PROJECT_DIR$/../Durchmusterung/include/tile_worker.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Durchmusterung/src/tile_worker.cpp" afterPath="$PROJECT_DIR$/../Durchmusterung/src/tile_worker.cpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../GeoTiff_Handler/.gitignore" afterPath="$PROJECT_DIR$/../GeoTiff_Handler/.gitignore" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../GeoTiff_Handler/src/GeoTiffHandler.cpp" afterPath="$PROJECT_DIR$/../GeoTiff_Handler/src/GeoTiffHandler.cpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../GeoTiff_Handler/src/GeoTiffHandler.h" afterPath="$PROJECT_DIR$/../GeoTiff_Handler/src/GeoTiffHandler.h" />
+>>>>>>> 03eaf6c11a4db52ab378a97367e7cce4f43d0ee2
+    </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
     <ignored path="$PROJECT_DIR$/tmp/" />
@@ -21,17 +49,17 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="Map.jsx" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Map.jsx" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/components/Map.jsx">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3600">
-              <caret line="204" column="0" lean-forward="false" selection-start-line="204" selection-start-column="0" selection-end-line="204" selection-end-column="0" />
+            <state relative-caret-position="510">
+              <caret line="257" column="94" lean-forward="false" selection-start-line="257" selection-start-column="94" selection-end-line="257" selection-end-column="94" />
               <folding>
                 <element signature="e#0#36#0" expanded="true" />
-                <marker date="1504026587100" expanded="true" signature="228:278" ph="..." />
-                <marker date="1504026587100" expanded="true" signature="6606:6857" ph="..." />
-                <marker date="1504026587100" expanded="true" signature="6961:7213" ph="..." />
-                <marker date="1504026587100" expanded="true" signature="16374:16412" ph="&lt;button/&gt;" />
+                <marker date="1506970238434" expanded="true" signature="228:278" ph="..." />
+                <marker date="1506970238434" expanded="true" signature="6606:6857" ph="..." />
+                <marker date="1506970238434" expanded="true" signature="6961:7213" ph="..." />
+                <marker date="1506970238434" expanded="true" signature="16374:16412" ph="&lt;button/&gt;" />
               </folding>
             </state>
           </provider>
@@ -47,14 +75,24 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="index.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="index.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/utils/api/index.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="252">
-              <caret line="14" column="31" lean-forward="true" selection-start-line="14" selection-start-column="31" selection-end-line="14" selection-end-column="31" />
+            <state relative-caret-position="126">
+              <caret line="7" column="24" lean-forward="false" selection-start-line="7" selection-start-column="24" selection-end-line="7" selection-end-column="24" />
               <folding>
                 <element signature="n#!!doc" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="package.json" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/package.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="270">
+              <caret line="15" column="30" lean-forward="false" selection-start-line="15" selection-start-column="30" selection-end-line="15" selection-end-column="30" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -187,8 +225,8 @@
         <option value="$PROJECT_DIR$/src/actions/types.js" />
         <option value="$PROJECT_DIR$/src/reducers/landingPlanes.js" />
         <option value="$PROJECT_DIR$/src/components/Startpage.jsx" />
-        <option value="$PROJECT_DIR$/src/components/Map.jsx" />
         <option value="$PROJECT_DIR$/src/utils/api/index.js" />
+        <option value="$PROJECT_DIR$/src/components/Map.jsx" />
       </list>
     </option>
   </component>
@@ -210,10 +248,10 @@
     <handled-path value="$PROJECT_DIR$/node_modules" />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="1919" />
+    <option name="x" value="64" />
     <option name="y" value="-11" />
-    <option name="width" value="1682" />
-    <option name="height" value="1062" />
+    <option name="width" value="1857" />
+    <option name="height" value="1092" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -250,6 +288,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -290,54 +329,13 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="utils" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="api" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="1597_LandingClient" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="1597_LandingClient" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
               <option name="myItemId" value="components" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="1597_LandingClient" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="1597_LandingClient" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="actions" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
       <pane id="Scratches" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -638,6 +636,8 @@
       <workItem from="1505050008747" duration="16000" />
       <workItem from="1505051138604" duration="1447000" />
       <workItem from="1505052733120" duration="162000" />
+      <workItem from="1506970028381" duration="34000" />
+      <workItem from="1506970216542" duration="919000" />
     </task>
     <task id="LOCAL-00001" summary="- added a lot (new Receipts Form and stuff)">
       <created>1486849845496</created>
@@ -835,22 +835,36 @@
       <option name="project" value="LOCAL" />
       <updated>1503751203991</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="- Vortrags Quelltext auf &quot;handout&quot; umgestellt und letzte Speaker Notes ergänzt&#10;- kann dann so abgegeben werden">
+      <created>1506243985567</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1506243985567</updated>
+    </task>
+    <option name="localTasksCounter" value="30" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="436606000" />
+<<<<<<< HEAD
+    <option name="totallyTimeSpent" value="438642000" />
+=======
+    <option name="totallyTimeSpent" value="438638000" />
+>>>>>>> 03eaf6c11a4db52ab378a97367e7cce4f43d0ee2
   </component>
   <component name="ToolWindowManager">
-    <frame x="1919" y="-11" width="1682" height="1062" extended-state="6" />
-    <editor active="true" />
+    <frame x="64" y="-11" width="1857" height="1092" extended-state="6" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24321063" sideWeight="0.5552283" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24290393" sideWeight="0.54273504" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24777777" sideWeight="0.6016898" order="9" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24555555" sideWeight="0.62281233" order="2" side_tool="true" content_ui="tabs" x="1921" y="390" width="1677" height="366" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24555555" sideWeight="0.3771877" order="11" side_tool="false" content_ui="tabs" x="65" y="24" width="1855" height="1056" />
-      <window_info id="npm" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24321063" sideWeight="0.44477174" order="2" side_tool="true" content_ui="tabs" />
+<<<<<<< HEAD
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2451613" sideWeight="0.62445414" order="2" side_tool="true" content_ui="tabs" x="1921" y="390" width="1677" height="366" />
+=======
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2451613" sideWeight="0.62445414" order="2" side_tool="true" content_ui="tabs" x="1921" y="390" width="1677" height="366" />
+>>>>>>> 03eaf6c11a4db52ab378a97367e7cce4f43d0ee2
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2451613" sideWeight="0.37554586" order="11" side_tool="false" content_ui="tabs" x="65" y="24" width="1855" height="1056" />
+      <window_info id="npm" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24290393" sideWeight="0.45726496" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24803862" sideWeight="0.7356322" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32444444" sideWeight="0.42124322" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.50666666" sideWeight="0.67773086" order="3" side_tool="false" content_ui="tabs" />
@@ -877,7 +891,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$" />
     </ignored-roots>
-    <MESSAGE value="- added the receipts List with a reworked, now working accordion to the allocations page" />
     <MESSAGE value="- started to show the receipts for patching in ReceiptsList" />
     <MESSAGE value="- ReceiptList seems to work now including patching" />
     <MESSAGE value="-  implemented deleteReceipt (only for allocated receipts so far)" />
@@ -902,7 +915,8 @@
     <MESSAGE value="- Merge Routine hinzugefügt um Überlappende Bahnen zu einem komplexen Polygon zusammenzufassen" />
     <MESSAGE value="- Anzeige um Möglichkeit der &quot;min. Varianz Bahnen&quot; als Overlay erweitert" />
     <MESSAGE value="- Reaktive anzeige inklusive Richtungsfilter und Ein-/Ausblenden gebaut" />
-    <option name="LAST_COMMIT_MESSAGE" value="- Reaktive anzeige inklusive Richtungsfilter und Ein-/Ausblenden gebaut" />
+    <MESSAGE value="- Vortrags Quelltext auf &quot;handout&quot; umgestellt und letzte Speaker Notes ergänzt&#10;- kann dann so abgegeben werden" />
+    <option name="LAST_COMMIT_MESSAGE" value="- Vortrags Quelltext auf &quot;handout&quot; umgestellt und letzte Speaker Notes ergänzt&#10;- kann dann so abgegeben werden" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1166,14 +1180,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/package.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="71">
-          <caret line="15" column="30" lean-forward="false" selection-start-line="15" selection-start-column="30" selection-end-line="15" selection-end-column="30" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/server.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="126">
@@ -1290,35 +1296,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/Startpage.jsx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="6" column="12" lean-forward="false" selection-start-line="6" selection-start-column="12" selection-end-line="6" selection-end-column="12" />
-          <folding>
-            <marker date="1504026587100" expanded="true" signature="1788:1790" ph="{&quot;tiffinfo&quot;: PropTypes.object.isRequired...}" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/actions/getDBEntries.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="792">
           <caret line="45" column="16" lean-forward="false" selection-start-line="45" selection-start-column="16" selection-end-line="45" selection-end-column="16" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/Map.jsx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3600">
-          <caret line="204" column="0" lean-forward="false" selection-start-line="204" selection-start-column="0" selection-end-line="204" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#36#0" expanded="true" />
-            <marker date="1504026587100" expanded="true" signature="228:278" ph="..." />
-            <marker date="1504026587100" expanded="true" signature="6606:6857" ph="..." />
-            <marker date="1504026587100" expanded="true" signature="6961:7213" ph="..." />
-            <marker date="1504026587100" expanded="true" signature="16374:16412" ph="&lt;button/&gt;" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1332,10 +1314,42 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/utils/api/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="14" column="31" lean-forward="true" selection-start-line="14" selection-start-column="31" selection-end-line="14" selection-end-column="31" />
+        <state relative-caret-position="126">
+          <caret line="7" column="24" lean-forward="false" selection-start-line="7" selection-start-column="24" selection-end-line="7" selection-end-column="24" />
           <folding>
             <element signature="n#!!doc" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/package.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="15" column="30" lean-forward="false" selection-start-line="15" selection-start-column="30" selection-end-line="15" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/Startpage.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="108">
+          <caret line="6" column="12" lean-forward="false" selection-start-line="6" selection-start-column="12" selection-end-line="6" selection-end-column="12" />
+          <folding>
+            <marker date="1504026587100" expanded="true" signature="1788:1790" ph="{&quot;tiffinfo&quot;: PropTypes.object.isRequired...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/Map.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="510">
+          <caret line="257" column="94" lean-forward="false" selection-start-line="257" selection-start-column="94" selection-end-line="257" selection-end-column="94" />
+          <folding>
+            <element signature="e#0#36#0" expanded="true" />
+            <marker date="1506970238434" expanded="true" signature="228:278" ph="..." />
+            <marker date="1506970238434" expanded="true" signature="6606:6857" ph="..." />
+            <marker date="1506970238434" expanded="true" signature="6961:7213" ph="..." />
+            <marker date="1506970238434" expanded="true" signature="16374:16412" ph="&lt;button/&gt;" />
           </folding>
         </state>
       </provider>

@@ -4,5 +4,5 @@
 
 USER_OBJS :=
 
-LIBS := -lpthread -lgdal -ltiff
+LIBS := -lpthread -l:plane_library.a -lGeoTiffHandler -lgdal -ltiff
 
