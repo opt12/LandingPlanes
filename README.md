@@ -53,7 +53,7 @@ npm install
 ````
 
 Nun muss lediglich die Datei
-`LandingPlanes/src/1597_DatabaseManager/package.json` überprft und
+`LandingPlanes/src/1597_DatabaseManager/package.json` überprüft und
 gegebenenfalls angepasst werden. Es müssen die Pfade im Skript
 ````
 "start": "node ./bin/www --tiffpath=/home/xxxxx/dev/LandingPlanes/terrain
