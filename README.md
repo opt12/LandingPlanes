@@ -2,6 +2,10 @@
 
 Dieses Repo wird benutzt um die Arbeiten der Gruppe "pthreads" im Fachpraktikum 1597 der Fernuni-Hagen im SS2017 zu koordinieren.
 
+## Berichte und Vortragsfolien
+
+Die Berichte und Vortragsfolien finden sich im Unterverzeichnis [/planning](/planning). Sie lassen sich mit pdflatex übersetzen. Die PDF-Files selber sind nicht im Repo.
+
 ## Installationsanleitung
 
 Um die abgelegte Software auszuprobieren ist ein Rechner mit
