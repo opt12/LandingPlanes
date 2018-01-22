@@ -12,7 +12,7 @@ var propertiesSchema = new Schema({
         type: Number,
         required: true,
     },
-    actualRise: {
+    actualSlope: {
         type: Number,
         required: true,
     },
@@ -28,11 +28,15 @@ var propertiesSchema = new Schema({
         type: Number,
         required: true,
     },
-    maxVariance: {
+    maxShortSlopeLong: {
         type: Number,
         required: true,
     },
-    maxRise: {
+    maxShortSlopeTrans: {
+        type: Number,
+        required: true,
+    },
+    maxSlope: {
         type: Number,
         required: true,
     },

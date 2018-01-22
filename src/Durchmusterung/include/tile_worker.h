@@ -50,7 +50,7 @@ class tile_worker {
         double width_of_plane; ///< minimum width of plane
 
         void find_best_planes(vector< pair<int, int> > &coordlist);
-        void create_landebahn_coord(pixelPair start_point, pixelPair end_point, string type, double actualRise, double actualVariance, double lenth_of_plane );
+        void create_landebahn_coord(pixelPair start_point, pixelPair end_point, string type, double actualSlope, double actualVariance, double lenth_of_plane );
         GeoTiffHandler* myGeoTiffHandler; ///< pointer to GeotiffhandlerObject for GeoTiff conversions
         const json* taskDescription; ///< task identification json object for later mongoDB 
         int direction; ///< direcion describes how to set the starting point of scanning and how to step incrementally through the area. It depends on the orientation angle of the plane

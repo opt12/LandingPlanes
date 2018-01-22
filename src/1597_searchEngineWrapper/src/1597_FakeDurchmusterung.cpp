@@ -52,7 +52,14 @@ void *createFakePlaneThreadStarter(void *par) {
 	tcreateFakePlaneStarterParam p = *((tcreateFakePlaneStarterParam *) par);
 
 	cout << "Fake Plane Thread [" << p.threadNum << "] started." << endl;
-search_for_planes(p.actualTile, p.myGeoTiffHandler, p.actualHeading, (*p.taskDescription)["scanParameters"]["minLength"], (*p.taskDescription)["scanParameters"]["minWidth"] ,p.commSocket, p.taskDescription,p.noDataValue,p.pixelSize, (*p.taskDescription)["scanParameters"]["maxVarianceLong"], (*p.taskDescription)["scanParameters"]["maxRise"], (*p.taskDescription)["scanParameters"]["maxVarianceCross"], (*p.taskDescription)["scanParameters"]["numThreads"] );
+	search_for_planes(p.actualTile, p.myGeoTiffHandler, p.actualHeading,
+			(*p.taskDescription)["scanParameters"]["minLength"],
+			(*p.taskDescription)["scanParameters"]["minWidth"], p.commSocket,
+			p.taskDescription, p.noDataValue, p.pixelSize,
+			(*p.taskDescription)["scanParameters"]["maxShortSlopeLong"],
+			(*p.taskDescription)["scanParameters"]["maxSlope"],
+			(*p.taskDescription)["scanParameters"]["maxShortSlopeTrans"],
+			(*p.taskDescription)["scanParameters"]["numThreads"]);
 	/*//now start the worker
 	json fakePlane = createFakeLandingPlane(p.actualTile, p.myGeoTiffHandler,
 			p.actualHeading,

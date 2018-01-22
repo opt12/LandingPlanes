@@ -142,7 +142,10 @@ int tile_worker::get_start_values(double &startposx /** [in,out] reference to th
 /*! \brief find longest valid and plane with minimal variance within the list
  *
  *
- *  This function iterates over the vector of valid points to find two planes. The first one is the longest possible plane which fulfills the maximal allowed slope. The second one is the one with the minimal variance but still fulfilling the maximal allowed slope 
+ *  This function iterates over the vector of valid points to find two planes.
+ *  The first one is the longest possible plane which fulfills the maximal
+ *  allowed slope. The second one is the one with the minimal variance but
+ *  still fulfilling the maximal allowed slope
  */
 void tile_worker::find_best_planes(vector< pair<int, int> > &coordlist /** [in,out] reference to the vector of valid points describing a potential plane */)
 {
@@ -306,7 +309,12 @@ void tile_worker::set_GeoTiffHandler(GeoTiffHandler* master /** [in] pointer to 
  *
  *  This function creates a json object for a valid plane and pushs it to the MongoDB
  */
-void tile_worker::create_landebahn_coord(pixelPair start_point /** [in] start point of plane*/, pixelPair end_point /** [in] end point of plane*/, string type /** [in] type of plane (mergeable means it is the longest plane and can be merged later on with other planes*/, double actualRise /** [in] slope of the plane*/, double actualVariance /** [in] variance of the plane*/, double length_of_plane /** [in] length of plane in [m]*/)
+void tile_worker::create_landebahn_coord(pixelPair start_point /** [in] start point of plane*/,
+		pixelPair end_point /** [in] end point of plane*/,
+		string type /** [in] type of plane (mergeable means it is the longest plane and can be merged later on with other planes*/,
+		double actualSlope /** [in] slope of the plane*/,
+		double actualVariance /** [in] variance of the plane*/,
+		double length_of_plane /** [in] length of plane in [m]*/)
 {
     pixelCoord pixstart = { tile->offset.x + start_point.x, tile->offset.y + start_point.y};
     pixelCoord pixend;
@@ -317,7 +325,7 @@ void tile_worker::create_landebahn_coord(pixelPair start_point /** [in] start po
         json j = myGeoTiffHandler->getGeoJsonPolygon(pixstart, pixend, width_of_plane / 2.0);
         j["properties"] = (*taskDescription)["scanParameters"];
         j["properties"]["actualLength"] = length_of_plane;
-        j["properties"]["actualRise"] = actualRise;
+        j["properties"]["actualSlope"] = actualSlope;
         j["properties"]["actualVariance"] = actualVariance;
         j["properties"]["actualHeading"] = current_angle;
         j["properties"]["mergeable"] = type;
@@ -446,10 +454,12 @@ void tile_worker::calc_start_coordinates()
     }
 }
 
-/*! \brief function for fundamental check whether current list of points can form a plane according to requirements
+/*! \brief function for fundamental check whether current list of points can form
+ * a plane according to requirements
  *
  *
- *  This function checks whether the current list with points can be used for searchig for landing planes. It trunactes the list afterwards
+ *  This function checks whether the current list with points can be used for
+ *  searchig for landing planes. It trunactes the list afterwards
  */
 int tile_worker::check_current_landebahn(int &current_in_a_row /** [in,out] number of points in a row*/, vector< pair<int, int> > &coordlist /** [in,out] list with point references*/)
 {

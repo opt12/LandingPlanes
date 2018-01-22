@@ -210,12 +210,12 @@ class MapOverview extends Component {
                         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                         url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
                     />
-                    <Marker position={position}>
-                        <Popup>
-                            <span>Center of the Map:<br/>Lat: {position[0]}<br/>Long: {position[1]}</span>
-                        </Popup>
-                    </Marker>
-                    <Polygon color="lime" positions={this.extentPolygon}/>
+                    {/*<Marker position={position}>*/}
+                        {/*<Popup>*/}
+                            {/*<span>Center of the Map:<br/>Lat: {position[0]}<br/>Long: {position[1]}</span>*/}
+                        {/*</Popup>*/}
+                    {/*</Marker>*/}
+                    {/*<Polygon color="lime" positions={this.extentPolygon}/>*/}
                     {planesFeatureCollection.features.length !== 0 &&
                     <GeoJSON key={this.state.planesFeatureCollectionKey + this.props.landingPlanes.cnt}
                              data={planesFeatureCollection}
@@ -247,15 +247,15 @@ class MapOverview extends Component {
                     <FormGroup>
                         <Col componentClass={ControlLabel} sm={2}>max. Steigung [%]:</Col>
                         <Col sm={1}>
-                            <FormControl id="maxRise" type="number" defaultValue="5.0" step="0.01"/>
+                            <FormControl id="maxSlope" type="number" defaultValue="5.0" step="0.01"/>
                         </Col>
-                        <Col componentClass={ControlLabel} sm={2}>max. Varianz: (längs)</Col>
+                        <Col componentClass={ControlLabel} sm={2}>max. Steig.: (längs)</Col>
                         <Col sm={1}>
-                            <FormControl id="maxVarianceLong" type="number" defaultValue="2.1" step="0.01"/>
+                            <FormControl id="maxShortSlopeLong" type="number" defaultValue="2.1" step="0.01"/>
                         </Col>
-                        <Col componentClass={ControlLabel} sm={2}>max. Varianz: (quer)</Col>
+                        <Col componentClass={ControlLabel} sm={2}>max. Steig.: (quer)</Col>
                         <Col sm={1}>
-                            <FormControl id="maxVarianceCross" type="number" defaultValue="3.10" step="0.01"/>
+                            <FormControl id="maxShortSlopeTrans" type="number" defaultValue="3.10" step="0.01"/>
                         </Col>
                         <Col componentClass={ControlLabel} sm={1}>Threads</Col>
                         <Col sm={1}>
@@ -268,10 +268,9 @@ class MapOverview extends Component {
                                         let scanParameter = {
                                             minLength: parseInt(document.getElementById('minLength').value),
                                             minWidth: parseInt(document.getElementById('minWidth').value),
-                                            maxRise: parseFloat(document.getElementById('maxRise').value),
-                                            maxVariance: parseFloat(document.getElementById('maxVarianceLong').value), //TODO equals maxVarianceLong for compatibility, will be removed soon
-                                            maxVarianceLong: parseFloat(document.getElementById('maxVarianceLong').value),
-                                            maxVarianceCross: parseFloat(document.getElementById('maxVarianceCross').value),
+                                            maxSlope: parseFloat(document.getElementById('maxSlope').value),
+                                            maxShortSlopeLong: parseFloat(document.getElementById('maxShortSlopeLong').value),
+                                            maxShortSlopeTrans: parseFloat(document.getElementById('maxShortSlopeTrans').value),
                                             numThreads: parseInt(document.getElementById('numThreads').value),
                                         };
                                         let scanHeadings = JSON.parse(document.getElementById('headings').value);
