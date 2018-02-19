@@ -316,6 +316,8 @@ void tile_worker::create_landebahn_coord(pixelPair start_point /** [in] start po
 		double actualVariance /** [in] variance of the plane*/,
 		double length_of_plane /** [in] length of plane in [m]*/)
 {
+
+    double height = access_single_element(start_point.x, start_point.y);
     pixelCoord pixstart = { tile->offset.x + start_point.x, tile->offset.y + start_point.y};
     pixelCoord pixend;
     pixend.x = tile->offset.x + end_point.x;
@@ -329,6 +331,7 @@ void tile_worker::create_landebahn_coord(pixelPair start_point /** [in] start po
         j["properties"]["actualVariance"] = actualVariance;
         j["properties"]["actualHeading"] = current_angle;
         j["properties"]["mergeable"] = type;
+        j["properties"]["actualStartElevation"] = height;
         emitReceiptMsg(*commSocket, "landingPlane", j);
      }
      else
