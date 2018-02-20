@@ -20,6 +20,10 @@ var propertiesSchema = new Schema({
         type: Number,
         required: true,
     },
+    actualStartElevation: {
+        type: Number,
+        required: true,
+    },
     minLength: {
         type: Number,
         required: true,
