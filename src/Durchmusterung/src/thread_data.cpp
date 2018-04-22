@@ -87,6 +87,8 @@ void* thread_data::check_single_plane(
                                                  // now loop over all orthogonal elements
 						for (int k = 0; k < 2; k++) // loop in two directions
 								{
+                                                        double centered_x=i;
+                                                        double centered_y=j;
 							double new_x = i;
 							double new_y = j;
 							double factor = pow(-1, k);
@@ -117,6 +119,16 @@ void* thread_data::check_single_plane(
 											{
 										ok = 0;
 									}
+                                                                        
+                                                                        //new check short range
+                                                                        if ((abs(new_x - centered_x)*2 >= my_tile_worker->diff_short_x_transversal) &&  (abs(new_y - centered_y)*2 >= my_tile_worker->diff_short_y_transversal))
+                                                                        {
+                                                                          if( fabs(my_tile_worker->access_single_element(
+                                                                                                        new_x, new_y)
+                                                                                                        - my_tile_worker->access_single_element(
+                                                                                                                        new_x-my_tile_worker->diff_short_x_transversal, new_y-my_tile_worker->diff_short_y_transversal)) > my_tile_worker->allowed_orthogonal_diff_short_range_slope ) // transversal checl
+  ok = 0;
+                                                                        }
 
 									if (fabs(
 											my_tile_worker->access_single_element(
@@ -126,10 +138,26 @@ void* thread_data::check_single_plane(
 																	- my_tile_worker->inc_x,
 															new_y
 																	- my_tile_worker->inc_y))
-											> my_tile_worker->max_diff_neighbours /*longitudinal*/) // check for diff in plane direction for all orthogonal neighbours
+											> my_tile_worker->max_diff_neighbours /*transversal*/) // check for diff in plane direction for all orthogonal neighbours
 											{
 										ok = 0;
 									}
+
+//new check short range long
+
+    if (fabs(
+                                                                                        my_tile_worker->access_single_element(
+                                                                                                        new_x, new_y)
+                                                                                                        - my_tile_worker->access_single_element(
+                                                                                                                        new_x
+                                                                                                                                        - my_tile_worker->diff_short_x_longitudinal,
+                                                                                                                        new_y
+                                                                                                                                        - my_tile_worker->diff_short_y_longitudinal))
+                                                                                        > my_tile_worker->max_diff_neighbours /*longitudinal*/) // check for diff in plane direction for all orthogonal neighbours
+                                                                                        {
+                                                                                ok = 0;
+                                                                        }
+
 								} else {
 									ok = 0;
 								}
