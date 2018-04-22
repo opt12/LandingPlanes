@@ -8,7 +8,7 @@ int search_for_planes(const tileData* actualTile /** [in] pointer to tile object
     minLength = minLength;
     sem_t semaphore;
     sem_init(&semaphore, 0, numThreads);
-    tile_worker* worker1 = new tile_worker(actualTile, minLength, short_range_slope, long_range_slope, not_defined, heading, myGeoTiffHandler, width, orthogonal_slope, commSocket, taskDescription, &semaphore, pixelSize );
+    tile_worker* worker1 = new tile_worker(actualTile, minLength, short_range_slope, long_range_slope, not_defined, heading, myGeoTiffHandler, width, orthogonal_slope, commSocket, taskDescription, &semaphore, pixelSize,  max_diff_neighbours, slope_range_distance);
     worker1->durchmustere_kachel();
     delete (worker1);
     return 1;

@@ -48,7 +48,9 @@ class tile_worker {
         double allowed_orthogonal_diff; ///< maximum difference between two neighboured tiles in orthogonal direction
         double orthogonal_slope; ///< slope in orthogonal direction
         double width_of_plane; ///< minimum width of plane
-
+        double max_diff_neighbours; ///< max elevation diff of direct neighbours
+        double slope_range_distance; ///< slope range distance for short and orthogonal slope
+      
         void find_best_planes(vector< pair<int, int> > &coordlist);
         void create_landebahn_coord(pixelPair start_point, pixelPair end_point, string type, double actualSlope, double actualVariance, double lenth_of_plane );
         GeoTiffHandler* myGeoTiffHandler; ///< pointer to GeotiffhandlerObject for GeoTiff conversions
@@ -63,7 +65,7 @@ class tile_worker {
     public:
         friend class thread_data;
         tile_worker();
-        tile_worker(const tileData* tile_in, double landing_plane_length, double short_range_slope, double long_range_slope, double* not_defined, double angle, GeoTiffHandler* master, double width_of_plane, double orthogonal_slope, int commSocket, const json* taskDescription,  sem_t* count_sem, rectSize pixelSize);
+        tile_worker(const tileData* tile_in, double landing_plane_length, double short_range_slope, double long_range_slope, double* not_defined, double angle, GeoTiffHandler* master, double width_of_plane, double orthogonal_slope, int commSocket, const json* taskDescription,  sem_t* count_sem, rectSize pixelSize, double max_diff_neighbours, double slope_range_distance);
         ~tile_worker();
         void set_param_and_tile( tileData* tile_in);
         void set_taskDescription( const json* taskDescription);
@@ -82,4 +84,6 @@ class tile_worker {
         void set_orthogonal_slope(double orthogonal_slope);
         void set_commSocket(int commSocket);
         void set_semaphore(sem_t* count_sem);
+        void set_max_diff_neighbours(double max_diff_neighbours);
+        void set_slope_range_distance(double slope_range_distance);
 };

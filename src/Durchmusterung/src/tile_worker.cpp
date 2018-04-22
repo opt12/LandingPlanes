@@ -272,7 +272,7 @@ void tile_worker::set_semaphore(sem_t* count_sem /** [in] sempahore for parallel
  *
  *  This constructor initializes the tile_worker object. This is a sepecific constructor which assumes that the caller already created a tile and manages it itself. All scanning parameters are used for creating the object instance
  */
-tile_worker::tile_worker(const tileData* tile_in /** [in] pointer to geo tile */, double landing_plane_length /** [in] length of landing plane in [m]*/, double short_range_slope /** [in] max allowed short range slope for neighbour tiles*/, double long_range_slope /** [in] max allowed slope between first point of plane and last point of plane */, double* not_defined /** [in] pointer with value of the undefined value. NULL if such a value does not exist*/, double angle /** [in] angle for plane orientation */, GeoTiffHandler* master /** [in] pointer to a GeoTiffHandler object to perform conversion tasks*/, double width_of_plane /** [in] width of plane in [m] */, double orthogonal_slope /** [in] max allowed slope in orthogonal direction*/, int commSocket /** [in] commSocket for communication with MongoDB */, const json* taskDescription /** [in] pointer to taskDescription object describing the current scan*/, sem_t* count_sem /** [in] pointer to parallel execution managing semaphore*/, rectSize  pixelSize /** [in] scaling information parameter for GeoTiff object */)
+tile_worker::tile_worker(const tileData* tile_in /** [in] pointer to geo tile */, double landing_plane_length /** [in] length of landing plane in [m]*/, double short_range_slope /** [in] max allowed short range slope for neighbour tiles*/, double long_range_slope /** [in] max allowed slope between first point of plane and last point of plane */, double* not_defined /** [in] pointer with value of the undefined value. NULL if such a value does not exist*/, double angle /** [in] angle for plane orientation */, GeoTiffHandler* master /** [in] pointer to a GeoTiffHandler object to perform conversion tasks*/, double width_of_plane /** [in] width of plane in [m] */, double orthogonal_slope /** [in] max allowed slope in orthogonal direction*/, int commSocket /** [in] commSocket for communication with MongoDB */, const json* taskDescription /** [in] pointer to taskDescription object describing the current scan*/, sem_t* count_sem /** [in] pointer to parallel execution managing semaphore*/, rectSize  pixelSize /** [in] scaling information parameter for GeoTiff object */, double max_diff_neighbours /** [in] max allowed elevation diff of neighboured tiles in [m] */ , double slope_range_distance /** distance of elevation points to be treated for short range slope in [m] */)
 {
     own_tile = 0;
     set_param_and_tile(tile_in);
@@ -289,6 +289,9 @@ tile_worker::tile_worker(const tileData* tile_in /** [in] pointer to geo tile */
     set_commSocket(commSocket);
     set_taskDescription(taskDescription);
     set_semaphore(count_sem);
+    set_max_diff_neighbours(max_diff_neighbours);
+    set_slope_range_distance(slope_range_distance);
+
     mutex_start_value = PTHREAD_MUTEX_INITIALIZER;
     current_x = 0;
     current_y = 0;
@@ -615,6 +618,31 @@ void tile_worker::set_short_range_slope(double short_range_slope /** [in] maxima
 {
     this->short_range_slope = short_range_slope;
 }
+
+
+
+/*! \brief define distance for short range slopes
+ *
+ *
+ *  This function sets the defined short range slope distance
+ */
+void tile_worker::set_slope_range_distance(double slope_range_distance /** [in] treated short range slope in [m]*/)
+{
+    this->slope_range_distance = slope_range_distance;
+}
+
+
+/*! \brief set maximal elevation diff of direct neighbours
+ *
+ *
+ *  This function sets the maximal allowed elevation difference of direct neighbours
+ */
+void tile_worker::set_max_diff_neighbours(double max_diff_neighbours /** [in] maximal allowed elevation diff in [m]*/)
+{
+    this->max_diff_neighbours = max_diff_neighbours;
+}
+
+
 
 /*! \brief set maximal slope of start and endpoint in plane direction
  *
