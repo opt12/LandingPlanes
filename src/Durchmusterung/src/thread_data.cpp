@@ -59,9 +59,32 @@ void* thread_data::check_single_plane(
 							< my_tile_worker->max_diff_neighbours /*longitudinal*/) // check diff between
 						                                    //neighboured points in plane direction
 							{
-						// now loop over all orthogonal elements
-						int ok = 1;
+                                                int ok = 1;
+                                                // now check for short range slope
+                                                double fx = 1;
+                                                double fy = 1;
+                                                if (previous_x < i)
+                                                  fx=1;
+                                                else
+                                                  fx=-1;
+                                                if (previous_y < j)
+                                                  fy=1;
+                                                else
+                                                  fy=-1;
+                                                if ((abs (i-coordlist[0].first) > my_tile_worker->diff_short_x_longitudinal) && (abs(j-coordlist[0].second) > my_tile_worker->diff_short_y_longitudinal))
+                                                {
+                                                float myprevpoint = my_tile_worker->access_single_element((i+fx*my_tile_worker->diff_short_x_longitudinal), (j+fy*my_tile_worker->diff_short_y_longitudinal));
 
+                                                if (myprevpoint != numeric_limits<float>::min())
+                                                {
+                                                    if (fabs(
+                                                        my_tile_worker->access_single_element(i, j)
+                                                                - myprevpoint)
+                                                        > my_tile_worker->allowed_diff_short_range_slope /*longitudinal*/)
+                                                          ok =0;
+                                                }
+                                                }
+                                                 // now loop over all orthogonal elements
 						for (int k = 0; k < 2; k++) // loop in two directions
 								{
 							double new_x = i;
