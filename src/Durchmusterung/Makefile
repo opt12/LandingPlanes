@@ -52,10 +52,6 @@ ifeq ("$(wildcard /usr/include/x86_64-linux-gnu/tiff.h)","")
     	$(error tiff.h needed. This is usually in a package libtiff-dev)
 endif
 
-ifeq ("$(wildcard /usr/include/gdal/gdal_priv.h)","")
-    	$(error gdal_priv.h needed. This is usually in a package libgdal-dev)
-endif
-
 clean:
 	rm ./bin/landebahn || true
 	rm ./lib/plane_library.a || true
