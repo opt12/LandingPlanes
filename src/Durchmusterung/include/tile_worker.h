@@ -44,8 +44,8 @@ class tile_worker {
         double orth_y; ///< incremental step size in orthogonal dimension (y- part)
         int needed_points_in_a_row; ///< number of accepted data points in a row for fulfilling minimum length condition
         int needed_orthogonal_points_in_a_row; ///< number of accepted data points in a row for fulfilling minimum width condition
-        double allowed_diff; ///< maximum difference between two neighboured tiles in direction of plane
-        double allowed_orthogonal_diff; ///< maximum difference between two neighboured tiles in orthogonal direction
+        double allowed_diff_short_range_slope; ///< maximum difference between in short distance of tiles in direction of plane
+        double allowed_orthogonal_diff_short_range_slope; ///< maximum difference between in short distance of tiles in orthogonal direction
         double orthogonal_slope; ///< slope in orthogonal direction
         double width_of_plane; ///< minimum width of plane
         double max_diff_neighbours; ///< max elevation diff of direct neighbours

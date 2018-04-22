@@ -56,7 +56,7 @@ void* thread_data::check_single_plane(
 							my_tile_worker->access_single_element(i, j)
 									- my_tile_worker->access_single_element(
 											previous_x, previous_y))
-							< my_tile_worker->allowed_diff) // check diff between
+							< my_tile_worker->allowed_diff_short_range_slope) // check diff between
 						                                    //neighboured points in plane direction
 							{
 						// now loop over all orthogonal elements
@@ -90,7 +90,7 @@ void* thread_data::check_single_plane(
 													new_x, new_y)
 													- my_tile_worker->access_single_element(
 															old_x, old_y))
-											> my_tile_worker->allowed_orthogonal_diff) // check for orthogonal diff
+											> my_tile_worker->allowed_orthogonal_diff_short_range_slope) // check for orthogonal diff
 											{
 										ok = 0;
 									}
@@ -103,7 +103,7 @@ void* thread_data::check_single_plane(
 																	- my_tile_worker->inc_x,
 															new_y
 																	- my_tile_worker->inc_y))
-											> my_tile_worker->allowed_diff) // check for diff in plane direction for all orthogonal neighbours
+											> my_tile_worker->allowed_diff_short_range_slope) // check for diff in plane direction for all orthogonal neighbours
 											{
 										ok = 0;
 									}
