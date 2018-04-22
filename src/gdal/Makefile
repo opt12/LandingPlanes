@@ -2,18 +2,18 @@ all: gcore/gdal_priv.h
 
 
 
-gcore/gdal_priv.h: gdal221.zip gdal-2.2.1/configure gcore/gdal_priv.h
+gcore/gdal_priv.h: gdal223.zip gdal-2.2.3/configure gcore/gdal_priv.h
 
 
-gdal221.zip:
-	wget -O gdal221.zip http://download.osgeo.org/gdal/2.2.1/gdal221.zip
+gdal223.zip:
+	wget -O gdal223.zip http://download.osgeo.org/gdal/2.2.3/gdal223.zip
 	touch $@
 
-gdal-2.2.1/configure: gdal221.zip
-	unzip -u gdal221.zip
-	cd ./gdal-2.2.1; ./configure
+gdal-2.2.3/configure: gdal223.zip
+	unzip -u gdal223.zip
+	cd ./gdal-2.2.3; ./configure
 
 
 
 gcore/gdal_priv.h:
-	cd ./gdal-2.2.1; $(MAKE)
+	cd ./gdal-2.2.3; $(MAKE)

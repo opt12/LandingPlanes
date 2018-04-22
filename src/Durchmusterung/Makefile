@@ -15,23 +15,23 @@ clean:
 	rm -rf html || true
 	rm ./obj/*.o || true
 ./bin/landebahn: ./main/landebahn.c ./obj/landing_plane.o ./obj/tile_manager.o ./obj/tile_worker.o ./obj/thread_data.o ../GeoTiff_Handler/src/GeoTiffHandler.o ../GeoTiff_Handler/src/readInTiff.o ./bin/pcs.csv ../1597_searchEngineWrapper/Debug/src/1597_ipc_listener.o
-	$(CC) $(CFLAGS) -o ./bin/landebahn ./main/landebahn.c ../GeoTiff_Handler/src/GeoTiffHandler.o ../GeoTiff_Handler/src/readInTiff.o ./obj/tile_manager.o ./obj/tile_worker.o ./obj/landing_plane.o ./obj/thread_data.o -I../readInTiff/src/ -I./include   -I../gdal/gdal-2.2.1/gcore -I../gdal/gdal-2.2.1/port -I../gdal/gdal-2.2.1/ogr -I../GeoTiff_Handler/src -I../1597_searchEngineWrapper/src/ -I/usr/include/gdal/ ../gdal/gdal-2.2.1/.libs/libgdal.so ../1597_searchEngineWrapper/Debug/src/1597_ipc_listener.o  -ltiff -lpthread
+	$(CC) $(CFLAGS) -o ./bin/landebahn ./main/landebahn.c ../GeoTiff_Handler/src/GeoTiffHandler.o ../GeoTiff_Handler/src/readInTiff.o ./obj/tile_manager.o ./obj/tile_worker.o ./obj/landing_plane.o ./obj/thread_data.o -I../readInTiff/src/ -I./include   -I../gdal/gdal-2.2.3/gcore -I../gdal/gdal-2.2.3/port -I../gdal/gdal-2.2.3/ogr -I../GeoTiff_Handler/src -I../1597_searchEngineWrapper/src/ -I/usr/include/gdal/ ../gdal/gdal-2.2.3/.libs/libgdal.so ../1597_searchEngineWrapper/Debug/src/1597_ipc_listener.o  -ltiff -lpthread
 
 ./obj/tile_manager.o: ./src/tile_manager.cpp ./include/tile_manager.h ../GeoTiff_handler/src/GeoTiffHandler.o
-	$(CC) $(CFLAGS) -c ./src/tile_manager.cpp -o ./obj/tile_manager.o -I../readInTiff/src/ -I./include -I../gdal/gdal-2.2.1/gcore -I../gdal/gdal-2.2.1/port -I../gdal/gdal-2.2.1/ogr -I../GeoTiff_Handler/src -I../1597_searchEngineWrapper/src/ -I/usr/include/gdal/
+	$(CC) $(CFLAGS) -c ./src/tile_manager.cpp -o ./obj/tile_manager.o -I../readInTiff/src/ -I./include -I../gdal/gdal-2.2.3/gcore -I../gdal/gdal-2.2.3/port -I../gdal/gdal-2.2.3/ogr -I../GeoTiff_Handler/src -I../1597_searchEngineWrapper/src/ -I/usr/include/gdal/
 
 ./obj/tile_worker.o: ./src/tile_worker.cpp ./include/tile_worker.h
-	$(CC) $(CFLAGS) -c ./src/tile_worker.cpp -o ./obj/tile_worker.o -I../readInTiff/src/ -I./include -I../gdal/gdal-2.2.1/gcore -I../gdal/gdal-2.2.1/port -I../gdal/gdal-2.2.1/ogr -I../GeoTiff_Handler/src -I../1597_searchEngineWrapper/src/ -I/usr/include/gdal/
+	$(CC) $(CFLAGS) -c ./src/tile_worker.cpp -o ./obj/tile_worker.o -I../readInTiff/src/ -I./include -I../gdal/gdal-2.2.3/gcore -I../gdal/gdal-2.2.3/port -I../gdal/gdal-2.2.3/ogr -I../GeoTiff_Handler/src -I../1597_searchEngineWrapper/src/ -I/usr/include/gdal/
 
 
 ./obj/landing_plane.o: ./src/landing_plane.cpp ./include/landing_plane.h
 	$(CC) $(CFLAGS) -c ./src/landing_plane.cpp -o ./obj/landing_plane.o -I./include
 
 ./obj/plane_library.o: ./src/plane_library.cpp ./src/tile_worker.cpp ./include/tile_worker.h
-	$(CC) $(CFLAGS) -c ./src/plane_library.cpp -o ./obj/plane_library.o -I../readInTiff/src/ -I./include -I../GeoTiff_Handler/src -I../gdal/gdal-2.2.1/gcore -I../gdal/gdal-2.2.1/port -I../gdal/gdal-2.2.1/ogr -I../1597_searchEngineWrapper/src/
+	$(CC) $(CFLAGS) -c ./src/plane_library.cpp -o ./obj/plane_library.o -I../readInTiff/src/ -I./include -I../GeoTiff_Handler/src -I../gdal/gdal-2.2.3/gcore -I../gdal/gdal-2.2.3/port -I../gdal/gdal-2.2.3/ogr -I../1597_searchEngineWrapper/src/
 
 ./obj/thread_data.o: ./src/thread_data.cpp ./include/thread_data.h
-	$(CC) $(CFLAGS) -c ./src/thread_data.cpp -o ./obj/thread_data.o -I./include -I../readInTiff/src/ -I../GeoTiff_Handler/src -I../gdal/gdal-2.2.1/gcore -I../gdal/gdal-2.2.1/port -I../gdal/gdal-2.2.1/ogr -I../1597_searchEngineWrapper/src/
+	$(CC) $(CFLAGS) -c ./src/thread_data.cpp -o ./obj/thread_data.o -I./include -I../readInTiff/src/ -I../GeoTiff_Handler/src -I../gdal/gdal-2.2.3/gcore -I../gdal/gdal-2.2.3/port -I../gdal/gdal-2.2.3/ogr -I../1597_searchEngineWrapper/src/
 
 ./lib/plane_library.a: ./obj/plane_library.o ./obj/tile_worker.o ./obj/landing_plane.o ./obj/thread_data.o
 	ar rcs ./lib/plane_library.a ./obj/plane_library.o ./obj/tile_worker.o ./obj/landing_plane.o ./obj/thread_data.o
@@ -43,8 +43,8 @@ clean:
 	$(MAKE) -C ../GeoTiff_Handler/src/ -I/usr/include/gdal/
 
 
-./bin/pcs.csv: ../gdal/gdal-2.2.1/data/pcs.csv
-	cp  ../gdal/gdal-2.2.1/data/pcs.csv ./bin
+./bin/pcs.csv: ../gdal/gdal-2.2.3/data/pcs.csv
+	cp  ../gdal/gdal-2.2.3/data/pcs.csv ./bin
 
 ../1597_searchEngineWrapper/Debug/src/1597_ipc_listener.o: ./lib/plane_library.a
 	$(MAKE) all -C ../1597_searchEngineWrapper/Debug/

@@ -172,6 +172,8 @@ vector< pair<int,int> > coordlist;
     {
     if (previous_valid)
     {
+      //my_tile_worker->report("diff is "+floattostring(fabs(my_tile_worker->access_single_element(i,j) - my_tile_worker->access_single_element(previous_x,previous_y))));
+      //my_tile_worker->report("allowed is "+floattostring(my_tile_worker->allowed_diff));
       if (fabs(my_tile_worker->access_single_element(i,j) - my_tile_worker->access_single_element(previous_x,previous_y)) < my_tile_worker->allowed_diff)
       {
         // now loop over all orthogonal elements
@@ -226,6 +228,8 @@ vector< pair<int,int> > coordlist;
       }
       else
       {
+          if (coordlist.size() > 99)
+        my_tile_worker->report("not accepted after"+to_string(coordlist.size()));
         my_tile_worker->check_current_landebahn(current_in_a_row, my_tile_worker->needed_points_in_a_row,i,j,coordlist, start_point);
     //    printf("not accept sh.sl. %lf und %lf\n",access_single_element(i,j),access_single_element(previous_x,previous_y)); 
       }
@@ -234,6 +238,7 @@ vector< pair<int,int> > coordlist;
     }
     else
     {
+ //    my_tile_worker->report("point undef");
      //current point not def
      previous_valid=0;
      current_in_a_row=0;
@@ -457,9 +462,11 @@ void tile_worker::set_semaphore(sem_t *count_sem)
 
 tile_worker::tile_worker(const tileData* tile_in, double landing_plane_length, double short_range_slope, double long_range_slope, double* not_defined, double angle, GeoTiffHandler* master, double width_of_plane, double orthogonal_slope, int commSocket, const json *taskDescription, sem_t *count_sem, rectSize  pixelSize )
 {
+  report("start scan");
 own_tile=0;
  set_param_and_tile(tile_in);
  // cout << "before call to worker"<<endl;
+ report("Resolution X "+to_string(pixelSize.x));
  set_x_resolution(pixelSize.x);
  set_y_resolution(pixelSize.y); // ask Felix how to retrieve this information from tiff
  set_landing_plane_length(landing_plane_length);
@@ -552,7 +559,7 @@ void tile_worker::calc_optimal_vector()
 //  cout << "inc x is "<<inc_x<<endl;
 //  cout << "inc y is "<<inc_y<<endl; 
 
- // report("inc x is "+floattostring(inc_x));
+  //report("inc x is "+floattostring(inc_x));
   //report("inc y is "+floattostring(inc_y)); 
   orth_x=-sin((current_angle+90.0)*PI/180.0);
   orth_y= cos((current_angle+90.0)*PI/180.0);
@@ -561,6 +568,10 @@ void tile_worker::calc_optimal_vector()
   if (fabs(orth_y) < IMPRECISION)
     orth_y=0.0;
   needed_points_in_a_row=ceil((double) landing_plane_length/sqrt(pow(((double) resolution_x*inc_x),2)+pow(((double) resolution_y*inc_y),2)));
+  //report("plane length ="+floattostring(landing_plane_length));
+  //report("resx ="+floattostring(resolution_x));
+  // report("resy ="+floattostring(resolution_y));
+ // report("needed_points_in_a_row ="+floattostring(needed_points_in_a_row));
   allowed_diff=short_range_slope*sqrt(pow(resolution_x*inc_x,2)+pow(resolution_y*inc_y,2))/100.0;
   allowed_orthogonal_diff=orthogonal_slope*sqrt(pow(resolution_x*orth_x,2)+pow(resolution_y*orth_y,2))/100.0;
  // cout << "allowed from "<<short_range_slope << " and " <<resolution_x<< " and incx " <<inc_x<<" and res y" <<resolution_y <<" and inc_y 2"<<inc_y<<endl;
@@ -747,10 +758,20 @@ void tile_worker::check_element_access()
  */
 float tile_worker::access_single_element(int x, int y)
 {
+  //report("access "+to_string(x)+" und "+to_string(y));
+  //report("left "+to_string(tile->width.x*y+x));
+  //report("right "+to_string(tile->width.x*tile->width.y));
   if (tile->width.x*y+x < tile->width.x*tile->width.y)
+  {
+    //report("access on position "+to_string(tile->width.x*y+x));
+    //report("value is "+floattostring(tile->buf[tile->width.x*y+x]));
     return(tile->buf[tile->width.x*y+x]);
+  }
   else
+  {
+   //report("min");
    return numeric_limits<float>::min();
+  }
 
 }
 
