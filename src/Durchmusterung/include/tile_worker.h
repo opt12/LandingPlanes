@@ -62,6 +62,10 @@ class tile_worker {
         int get_start_values(double &startposx, double &startposy);
         pthread_mutex_t mutex_start_value; ///< mutex for blocking the critical section for requesting new start points for scanning
 
+        double diff_short_x_longitudinal; ///< number of points in x dimension for checking short range slope
+        double diff_short_y_longitudinal; ///< number of points in y dimension for checking short range slope
+        double diff_short_x_transversal; ///< number of points in x dimension for checking short range slope
+        double diff_short_y_transversal; ///< number of points in y dimension for checking short range slope
     public:
         friend class thread_data;
         tile_worker();

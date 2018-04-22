@@ -400,9 +400,22 @@ void tile_worker::calc_optimal_vector()
         orth_y = 0.0;
 
     needed_points_in_a_row = ceil((double) landing_plane_length / sqrt(pow(((double) resolution_x * inc_x), 2) + pow(((double) resolution_y * inc_y), 2)));
-    allowed_diff_short_range_slope = short_range_slope * sqrt(pow(resolution_x * inc_x, 2) + pow(resolution_y * inc_y, 2)) / 100.0;
-    allowed_orthogonal_diff_short_range_slope = orthogonal_slope * sqrt(pow(resolution_x * orth_x, 2) + pow(resolution_y * orth_y, 2)) / 100.0;
+    allowed_diff_short_range_slope = short_range_slope * slope_range_distance / 100.0;
+    allowed_orthogonal_diff_short_range_slope = orthogonal_slope * slope_range_distance / 100.0; 
+
+    /*allowed_diff_short_range_slope = short_range_slope * sqrt(pow(resolution_x * inc_x, 2) + pow(resolution_y * inc_y, 2)) / 100.0;
+    allowed_orthogonal_diff_short_range_slope = orthogonal_slope * sqrt(pow(resolution_x * orth_x, 2) + pow(resolution_y * orth_y, 2)) / 100.0;*/
+
+    diff_short_x_longitudinal =  ceil((double) slope_range_distance / sqrt(pow(((double) resolution_x * inc_x), 2) + pow(((double) resolution_y * inc_y), 2))); 
+    diff_short_y_longitudinal =  ceil ((double) diff_short_x_longitudinal * fabs((double) resolution_y * inc_y));
+    diff_short_x_longitudinal =  ceil ((double) diff_short_x_longitudinal * fabs((double) resolution_x * inc_x));
+   
     needed_orthogonal_points_in_a_row = ceil(0.5 * (double) width_of_plane / sqrt(pow(((double) resolution_x * orth_x), 2) + pow(((double) resolution_y * orth_y), 2)));
+
+    diff_short_x_transversal =  ceil((double) slope_range_distance / sqrt(pow(((double) resolution_x * inc_x), 2) + pow(((double) resolution_y * inc_y), 2))); 
+    diff_short_y_transversal =  ceil ((double) diff_short_x_transversal * fabs((double) resolution_y * inc_y));
+    diff_short_x_transversal =  ceil ((double) diff_short_x_transversal * fabs((double) resolution_x * inc_x));
+
 }
 
 /*! \brief function for initialization of start point for scanning
