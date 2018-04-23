@@ -3,7 +3,7 @@
 // const baseUrl = 'http://localhost:3000';
 // const baseUrl = 'http://10.52.248.92:3000';
 const baseUrl = 'http://localhost:3000';
-// const baseUrl = 'http://192.168.178.59:3000';
+// const baseUrl = 'http://192.168.178.23:3000';
 
 const apiPrefix = 'api';
 

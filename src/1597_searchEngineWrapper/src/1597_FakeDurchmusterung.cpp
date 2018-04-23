@@ -59,7 +59,9 @@ void *createFakePlaneThreadStarter(void *par) {
 			(*p.taskDescription)["scanParameters"]["maxShortSlopeLong"],
 			(*p.taskDescription)["scanParameters"]["maxSlope"],
 			(*p.taskDescription)["scanParameters"]["maxShortSlopeTrans"],
-			(*p.taskDescription)["scanParameters"]["numThreads"]);
+			(*p.taskDescription)["scanParameters"]["numThreads"],
+			(*p.taskDescription)["scanParameters"]["maxDiffNeighbours"],
+			(*p.taskDescription)["scanParameters"]["shortRangeSlopeDistance"]);
 	/*//now start the worker
 	json fakePlane = createFakeLandingPlane(p.actualTile, p.myGeoTiffHandler,
 			p.actualHeading,

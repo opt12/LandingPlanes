@@ -1,6 +1,8 @@
 import {connect} from 'react-redux';
 import React, {Component} from 'react';
-import {Map, TileLayer, Marker, Popup, Polygon, GeoJSON} from 'react-leaflet';
+import {Map, TileLayer, Marker, Popup, Polygon, GeoJSON, LayersControl,} from 'react-leaflet';
+
+const {BaseLayer, Overlay} = LayersControl
 // import {GeoJsonCluster} from 'react-leaflet-geojson-cluster';
 import {Form, ControlLabel, FormControl, FormGroup, Col, Checkbox} from 'react-bootstrap'
 import {scanForLandingPlanes, save2MFileOnServer} from '../actions/sendTask2Server';
@@ -96,7 +98,7 @@ class MapOverview extends Component {
         const chkboxes = {
             showMergedPlanes: document.getElementById('showMergedPlanes').checked,
             showMinVariance: document.getElementById('showMinVariance').checked,
-            planesFeatureCollectionKey: this.state.planesFeatureCollectionKey+1,
+            planesFeatureCollectionKey: this.state.planesFeatureCollectionKey + 1,
         };
         this.setState(chkboxes, () =>    //update landingPlanes after updating the state
             this.queryLandingPlanesDB(this.getExtentGeoJSON(),
@@ -109,13 +111,13 @@ class MapOverview extends Component {
         // console.log("New Filter: ", e.target.value);
         if (e.target.value.trim() === "") {
             // console.log("empty filter");
-            this.setState({viewFilter: [], planesFeatureCollectionKey: this.state.planesFeatureCollectionKey+1});
+            this.setState({viewFilter: [], planesFeatureCollectionKey: this.state.planesFeatureCollectionKey + 1});
         }
         try {
             let filter = JSON.parse(e.target.value);
             filter = filter.constructor === Array ? filter : [filter];
             // console.log("Parsed filter Array = ", filter);
-            this.setState({viewFilter: filter, planesFeatureCollectionKey: this.state.planesFeatureCollectionKey+1});
+            this.setState({viewFilter: filter, planesFeatureCollectionKey: this.state.planesFeatureCollectionKey + 1});
         } catch (e) {
             //obviously there is no valid array in the entry field
             //silently swallow the error and don't touch the current filter
@@ -205,17 +207,48 @@ class MapOverview extends Component {
 
         return (
             <div>
+                {/*check out http://www.matchingnotes.com/using-google-map-tiles-with-leaflet to use Google Maps layers*/}
+                {/*check out https://github.com/tmcw/mapmakers-cheatsheet for a leaflet cheat sheet*/}
+                {/*see https://answers.splunk.com/answers/186394/how-to-specify-google-maps-url-for-map-tiles-in-sp.html for Google URLs*/}
                 <Map id="map" bounds={this.boundingBox} draw="true" onMoveend={this.moveend} onLoad={this.moveend}>
-                    <TileLayer
-                        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                        url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
-                    />
-                    {/*<Marker position={position}>*/}
-                        {/*<Popup>*/}
-                            {/*<span>Center of the Map:<br/>Lat: {position[0]}<br/>Long: {position[1]}</span>*/}
-                        {/*</Popup>*/}
-                    {/*</Marker>*/}
-                    {/*<Polygon color="lime" positions={this.extentPolygon}/>*/}
+                    {/*for layers control see https://github.com/PaulLeCam/react-leaflet/blob/master/example/components/layers-control.js*/}
+                    <LayersControl position="topright">
+                        <BaseLayer checked name="Open Street Maps">
+                            <TileLayer
+                                attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                                url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
+                            />
+                        </BaseLayer>
+                        <BaseLayer name="OpenStreetMap.BlackAndWhite">
+                            <TileLayer
+                                attribution="&amp;copy <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
+                                url="https://tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png"
+                            />
+                        </BaseLayer>
+                        <BaseLayer name="Google Maps Hybrid">
+                            <TileLayer
+                                attribution='&copy; Images courtesy of <a>Google.com</a>'
+                                url='http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}'
+                                subdomains={['mt0', 'mt1', 'mt2', 'mt3']}
+                            />
+                        </BaseLayer>
+                        <BaseLayer name="Google Maps terrain">
+                            <TileLayer
+                                attribution='&copy; Images courtesy of <a>Google.com</a>'
+                                url='http://{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}'
+                                subdomains={['mt0', 'mt1', 'mt2', 'mt3']}
+                            />
+                        </BaseLayer>
+                        <BaseLayer name="Google Maps Satellite">
+                            <TileLayer
+                                attribution='&copy; Images courtesy of <a>Google.com</a>'
+                                url='http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}'
+                                subdomains={['mt0', 'mt1', 'mt2', 'mt3']}
+                            />
+                        </BaseLayer>
+                    </LayersControl>
+                    <Polygon color="red" fillOpacity="0.0" positions={this.extentPolygon}/>
+                    {/*<Polygon positions={this.extentPolygon}/>*/}
                     {planesFeatureCollection.features.length !== 0 &&
                     <GeoJSON key={this.state.planesFeatureCollectionKey + this.props.landingPlanes.cnt}
                              data={planesFeatureCollection}
@@ -230,58 +263,75 @@ class MapOverview extends Component {
                     {planesFeatureCollection.features.length}/{this.props.landingPlanes.landingPlanes.length} </span>
 
                 <Form horizontal>
-                    <FormGroup>
-                        <Col componentClass={ControlLabel} sm={2}>min. Länge [m]:</Col>
-                        <Col sm={2}>
-                            <FormControl id="minLength" type="number" defaultValue="2000" step="1"/>
-                        </Col>
-                        <Col componentClass={ControlLabel} sm={2}>min. Breite [m]:</Col>
-                        <Col sm={1}>
-                            <FormControl id="minWidth" type="number" defaultValue="30" step="1"/>
-                        </Col>
-                        <Col componentClass={ControlLabel} sm={2}>Richtungen [°, °, ]:</Col>
-                        <Col sm={3}>
-                            <FormControl id="headings" type="text" defaultValue="[45, 135]"/>
-                        </Col>
-                    </FormGroup>
-                    <FormGroup>
-                        <Col componentClass={ControlLabel} sm={2}>max. Steigung [%]:</Col>
-                        <Col sm={1}>
-                            <FormControl id="maxSlope" type="number" defaultValue="5.0" step="0.01"/>
-                        </Col>
-                        <Col componentClass={ControlLabel} sm={2}>max. Steig.: (längs)</Col>
-                        <Col sm={1}>
-                            <FormControl id="maxShortSlopeLong" type="number" defaultValue="2.1" step="0.01"/>
-                        </Col>
-                        <Col componentClass={ControlLabel} sm={2}>max. Steig.: (quer)</Col>
-                        <Col sm={1}>
-                            <FormControl id="maxShortSlopeTrans" type="number" defaultValue="3.10" step="0.01"/>
-                        </Col>
-                        <Col componentClass={ControlLabel} sm={1}>Threads</Col>
-                        <Col sm={1}>
-                            <FormControl id="numThreads" type="number" defaultValue="8" step="1"/>
-                        </Col>
+                    <div class="form-row">
+                        <FormGroup>
+                            <Col componentClass={ControlLabel} sm={2}>min. Länge [m]:</Col>
+                            <Col sm={2}>
+                                <FormControl id="minLength" type="number" defaultValue="2000" step="1"/>
+                            </Col>
+                            <Col componentClass={ControlLabel} sm={2}>min. Breite [m]:</Col>
+                            <Col sm={1}>
+                                <FormControl id="minWidth" type="number" defaultValue="30" step="1"/>
+                            </Col>
+                            <Col componentClass={ControlLabel} sm={2}>Richtungen [°, °, ]:</Col>
+                            <Col sm={3}>
+                                <FormControl id="headings" type="text" defaultValue="[45, 135]"/>
+                            </Col>
+                        </FormGroup>
+                    </div>
+                    <div class="form-row">
+                        <FormGroup>
+                            <Col componentClass={ControlLabel} sm={2}>short slope Range [m]</Col>
+                            <Col sm={1}>
+                                <FormControl id="shortRangeSlopeDistance" type="number" defaultValue="10" step="1"/>
+                            </Col>
+                            <Col componentClass={ControlLabel} sm={3}>max. Steig.: (short longit.) [%]</Col>
+                            <Col sm={1}>
+                                <FormControl id="maxShortSlopeLong" type="number" defaultValue="2.1" step="0.01"/>
+                            </Col>
+                            <Col componentClass={ControlLabel} sm={3}>max. Steig.: (short transv.) [%]</Col>
+                            <Col sm={1}>
+                                <FormControl id="maxShortSlopeTrans" type="number" defaultValue="3.10" step="0.01"/>
+                            </Col>
+                        </FormGroup>
+                    </div>
+                    <div class="form-row">
+                        <FormGroup>
+                            <Col componentClass={ControlLabel} sm={2}>Steigung (long) [%]:</Col>
+                            <Col sm={1}>
+                                <FormControl id="maxSlope" type="number" defaultValue="5.0" step="0.01"/>
+                            </Col>
+                            <Col smOffset={1} componentClass={ControlLabel} sm={2}>direkte Nachbarn [m]:</Col>
+                            <Col sm={1}>
+                                <FormControl id="maxDiffNeighbours" type="number" defaultValue="0.3" step="0.01"/>
+                            </Col>
+                            <Col smOffset={1} componentClass={ControlLabel} sm={1}>Threads</Col>
+                            <Col sm={1}>
+                                <FormControl id="numThreads" type="number" defaultValue="8" step="1"/>
+                            </Col>
+                            <Col smOffset={0} sm={2}>
+                                <button class="col-sm-12 btn btn-primary"
+                                        onClick={e => {
+                                            let scanParameter = {
+                                                minLength: parseInt(document.getElementById('minLength').value),
+                                                minWidth: parseInt(document.getElementById('minWidth').value),
+                                                maxSlope: parseFloat(document.getElementById('maxSlope').value),
+                                                maxShortSlopeLong: parseFloat(document.getElementById('maxShortSlopeLong').value),
+                                                maxShortSlopeTrans: parseFloat(document.getElementById('maxShortSlopeTrans').value),
+                                                maxDiffNeighbours: parseFloat(document.getElementById('maxDiffNeighbours').value),
+                                                shortRangeSlopeDistance: parseFloat(document.getElementById('shortRangeSlopeDistance').value),
+                                                numThreads: parseInt(document.getElementById('numThreads').value),
+                                            };
+                                            let scanHeadings = JSON.parse(document.getElementById('headings').value);
+                                            scanHeadings = scanHeadings.constructor === Array ? scanHeadings : [scanHeadings];
 
-                        <Col sm={1}>
-                            <button class="btn btn-primary"
-                                    onClick={e => {
-                                        let scanParameter = {
-                                            minLength: parseInt(document.getElementById('minLength').value),
-                                            minWidth: parseInt(document.getElementById('minWidth').value),
-                                            maxSlope: parseFloat(document.getElementById('maxSlope').value),
-                                            maxShortSlopeLong: parseFloat(document.getElementById('maxShortSlopeLong').value),
-                                            maxShortSlopeTrans: parseFloat(document.getElementById('maxShortSlopeTrans').value),
-                                            numThreads: parseInt(document.getElementById('numThreads').value),
-                                        };
-                                        let scanHeadings = JSON.parse(document.getElementById('headings').value);
-                                        scanHeadings = scanHeadings.constructor === Array ? scanHeadings : [scanHeadings];
-
-                                        this.startScan(e, scanParameter, scanHeadings);
-                                    }}>
-                                Scan
-                            </button>
-                        </Col>
-                    </FormGroup>
+                                            this.startScan(e, scanParameter, scanHeadings);
+                                        }}>
+                                    Scan
+                                </button>
+                            </Col>
+                        </FormGroup>
+                    </div>
                     <FormGroup>
                         <Col smOffset={0} sm={2}>
                             <button class="col-sm-12 btn btn-danger"

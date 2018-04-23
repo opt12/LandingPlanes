@@ -19,7 +19,7 @@ int search_for_planes(
 		double long_range_slope /** [in] max allowed slope between starting and endpoint of plane */,
 		double orthogonal_slope /** [in] maximum allowed slope in orthogonal direction of neighboured tiles */,
 		int numThreads /** [in] number of threads that should be used */,
-                double max_diff_neighbours = 0.5 /** [in] max allowed elevation diff of neighboured tiles in [m] */, 
-                double slope_range_distance = 10 /** distance of elevation points to be treated for short range slope in [m] */
+		double max_diff_neighbours = 0.5 /** [in] max allowed elevation diff of neighboured tiles in [m] */,
+		double slope_range_distance = 10 /** distance of elevation points to be treated for short range slope in [m] */
 		);
 

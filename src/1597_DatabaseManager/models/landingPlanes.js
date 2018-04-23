@@ -32,11 +32,19 @@ var propertiesSchema = new Schema({
         type: Number,
         required: true,
     },
+    maxDiffNeighbours: {
+        type: Number,
+        required: true,
+    },
     maxShortSlopeLong: {
         type: Number,
         required: true,
     },
     maxShortSlopeTrans: {
+        type: Number,
+        required: true,
+    },
+    shortRangeSlopeDistance: {
         type: Number,
         required: true,
     },
