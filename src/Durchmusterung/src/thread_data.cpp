@@ -71,6 +71,7 @@ void* thread_data::check_single_plane(
                                                   fy=1;
                                                 else
                                                   fy=-1;
+                                                if (coordlist.size() > 0)
                                                 if ((abs (i-coordlist[0].first) > my_tile_worker->diff_short_x_longitudinal) && (abs(j-coordlist[0].second) > my_tile_worker->diff_short_y_longitudinal))
                                                 {
                                                 float myprevpoint = my_tile_worker->access_single_element((i+fx*my_tile_worker->diff_short_x_longitudinal), (j+fy*my_tile_worker->diff_short_y_longitudinal));
