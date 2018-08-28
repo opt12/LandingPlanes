@@ -593,7 +593,7 @@ void tile_worker::check_element_access()
 //! @endcond
 float tile_worker::access_single_element(int x /** [in] x coordinate of requested field*/, int y /** [in] y coordinate of requested field*/)
 {
-    if (tile->width.x * y + x < tile->width.x * tile->width.y)
+    if ((tile->width.x * y + x < tile->width.x * tile->width.y) && (tile->width.x * y + x >=0))
         return (tile->buf[tile->width.x * y + x]);
     else
         return numeric_limits<float>::min();
@@ -690,13 +690,14 @@ void tile_worker::check_steigungen()
     calc_start_coordinates();
     current_x = startx;
     current_y = starty;
-
+    int i=1;
     while (still_needed())
     {
         sem_wait (count_sem);
+        printf("New thread created\n");
         pthread_t newthread;
         thread_data* thread_data_temp = new thread_data(this);
-
+        thread_data_temp->threadnum=i++;
         if (pthread_create(&newthread, NULL, thread_data::check_single_plane, thread_data_temp))
         {
             fprintf(stderr, "Error creating thread\n");
@@ -704,6 +705,7 @@ void tile_worker::check_steigungen()
         }
 
         threads.push_back(newthread);
+        printf("Size is %d\n",threads.size());
     }
 
     for (int i = 0; i < (int) threads.size(); i++)
